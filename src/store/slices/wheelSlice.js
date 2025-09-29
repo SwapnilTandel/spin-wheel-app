@@ -1,29 +1,30 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-  categories: {
-    50: [
-      { id: 1, name: 'Free Spin', color: '#2E7D32', image: null },
-      { id: 2, name: 'Try Again', color: '#8B0000', image: null },
-      { id: 3, name: 'Small Prize', color: '#FFD700', image: null },
-      { id: 4, name: 'Bonus Points', color: '#FFFFFF', image: null },
-      { id: 5, name: 'Lucky Day', color: '#2E7D32', image: null },
-      { id: 6, name: 'Jackpot!', color: '#8B0000', image: null },
-    ],
-    100: [
-      { id: 1, name: 'Premium Prize', color: '#FFD700', image: null },
-      { id: 2, name: 'Double Win', color: '#2E7D32', image: null },
-      { id: 3, name: 'Mega Bonus', color: '#8B0000', image: null },
-      { id: 4, name: 'Super Spin', color: '#FFFFFF', image: null },
-      { id: 5, name: 'Golden Ticket', color: '#FFD700', image: null },
-      { id: 6, name: 'Grand Prize!', color: '#2E7D32', image: null },
-    ]
-  },
-  settings: {
-    soundEnabled: true,
-    animationsEnabled: true,
-    hapticFeedback: true,
-  },
+      categories: {
+        50: [
+          { id: 1, name: 'Free Spin', color: '#B22222', image: null },
+          { id: 2, name: 'Try Again', color: '#FFD700', image: null },
+          { id: 3, name: 'Small Prize', color: '#FFF8E6', image: null },
+          { id: 4, name: 'Bonus Points', color: '#B22222', image: null },
+          { id: 5, name: 'Lucky Day', color: '#FFD700', image: null },
+          { id: 6, name: 'Jackpot!', color: '#FFF8E6', image: null },
+        ],
+        100: [
+          { id: 1, name: 'Premium Prize', color: '#B22222', image: null },
+          { id: 2, name: 'Double Win', color: '#FFD700', image: null },
+          { id: 3, name: 'Mega Bonus', color: '#FFF8E6', image: null },
+          { id: 4, name: 'Super Spin', color: '#B22222', image: null },
+          { id: 5, name: 'Golden Ticket', color: '#FFD700', image: null },
+          { id: 6, name: 'Grand Prize!', color: '#FFF8E6', image: null },
+        ]
+      },
+      settings: {
+        soundEnabled: true,
+        animationsEnabled: true,
+        hapticFeedback: true,
+        labelTextSize: 14, // Default text size for wheel labels
+      },
   history: [],
   isSpinning: false,
   lastResult: null,

@@ -21,21 +21,21 @@ const App = () => {
     const toValue = isFabExpanded ? 0 : 1;
     setIsFabExpanded(!isFabExpanded);
     
-    Animated.timing(fabAnimation, {
-      toValue,
-      duration: 200,
-      useNativeDriver: true,
-    }).start();
+        Animated.timing(fabAnimation, {
+          toValue,
+          duration: 200,
+          useNativeDriver: false,
+        }).start();
   };
 
   const handleTabChange = (tab) => {
     setActiveTab(tab);
     setIsFabExpanded(false);
-    Animated.timing(fabAnimation, {
-      toValue: 0,
-      duration: 200,
-      useNativeDriver: true,
-    }).start();
+        Animated.timing(fabAnimation, {
+          toValue: 0,
+          duration: 200,
+          useNativeDriver: false,
+        }).start();
   };
 
   const renderTabContent = () => {
@@ -147,7 +147,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
   },
   catchphraseContainer: {
-    backgroundColor: '#8B0000',
+    backgroundColor: '#B22222',
     paddingVertical: 12,
     paddingHorizontal: 20,
     borderBottomWidth: 2,
@@ -162,7 +162,7 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
   },
   header: {
-    backgroundColor: '#2E7D32',
+    backgroundColor: '#B22222',
     paddingVertical: 15,
     paddingHorizontal: 20,
     borderBottomWidth: 2,
@@ -197,7 +197,7 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 25,
-    backgroundColor: '#8B0000',
+    backgroundColor: '#B22222',
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 10,
@@ -224,7 +224,7 @@ const styles = StyleSheet.create({
   },
   mainFabText: {
     fontSize: 32,
-    color: '#8B0000',
+    color: '#B22222',
     fontWeight: 'bold',
   },
   mainFabTextRotated: {

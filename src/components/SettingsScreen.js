@@ -7,7 +7,8 @@ import {
   TextInput, 
   Switch,
   ScrollView,
-  Modal 
+  Modal,
+  Pressable 
 } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 // Removed react-native-vector-icons import due to web compatibility issues
@@ -16,9 +17,10 @@ import { addCategory, removeCategory, updateCategory, updateSettings } from '../
 const SettingsScreen = () => {
   const dispatch = useDispatch();
   const { categories, settings, history } = useSelector(state => state.wheel);
+  console.log('SettingsScreen - Current settings:', settings);
   const [activeTab, setActiveTab] = useState(50);
   const [showAddModal, setShowAddModal] = useState(false);
-  const [newCategory, setNewCategory] = useState({ name: '', color: '#2E7D32' });
+  const [newCategory, setNewCategory] = useState({ name: '', color: '#B22222' });
 
   const handleAddCategory = () => {
     if (!newCategory.name.trim()) {
@@ -31,7 +33,7 @@ const SettingsScreen = () => {
       category: newCategory
     }));
 
-    setNewCategory({ name: '', color: '#2E7D32' });
+      setNewCategory({ name: '', color: '#B22222' });
     setShowAddModal(false);
     alert('Success: Category added successfully!');
   };
@@ -49,12 +51,15 @@ const SettingsScreen = () => {
   };
 
   const handleSettingChange = (key, value) => {
+    console.log('handleSettingChange called:', key, value);
+    console.log('Current settings before:', settings);
     dispatch(updateSettings({ [key]: value }));
+    console.log('Dispatch called for:', key, value);
   };
 
   const colorOptions = [
-    // Primary theme colors
-    '#2E7D32', '#8B0000', '#FFD700', '#FFFFFF',
+    // Primary Maharaja theme colors
+    '#B22222', '#FFD700', '#FFF8E6', '#FFFFFF',
     // Vibrant colors
     '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4',
     '#FF9F43', '#10AC84', '#5F27CD', '#00D2D3',
@@ -166,6 +171,43 @@ const SettingsScreen = () => {
             thumbColor={settings.hapticFeedback ? '#f5dd4b' : '#f4f3f4'}
           />
         </View>
+
+        <View style={styles.settingItem}>
+          <Text style={styles.settingLabel}>Label Text Size</Text>
+          <View style={styles.textSizeContainer}>
+            <Pressable 
+              style={({ pressed }) => [
+                styles.textSizeButton, 
+                { backgroundColor: pressed ? '#FFA500' : '#FFD700' }
+              ]}
+              onPress={() => {
+                console.log('Increase button pressed - current size:', settings.labelTextSize);
+                alert('Increase button clicked!');
+                const currentSize = settings.labelTextSize || 14;
+                const newSize = Math.min(20, currentSize + 1);
+                console.log('Setting new size to:', newSize);
+                dispatch(updateSettings({ labelTextSize: newSize }));
+              }}
+            >
+              <Text style={[styles.textSizeButtonText, { color: '#B22222' }]}>+</Text>
+            </Pressable>
+            <Text style={styles.textSizeValue}>{settings.labelTextSize || 14}px</Text>
+            <TouchableOpacity 
+              style={styles.textSizeButton}
+              onPress={() => {
+                console.log('Decrease button pressed - current size:', settings.labelTextSize);
+                alert('Decrease button clicked!');
+                const currentSize = settings.labelTextSize || 14;
+                const newSize = Math.max(10, currentSize - 1);
+                console.log('Setting new size to:', newSize);
+                dispatch(updateSettings({ labelTextSize: newSize }));
+              }}
+              activeOpacity={0.7}
+            >
+              <Text style={styles.textSizeButtonText}>-</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
       </View>
 
       <View style={styles.section}>
@@ -242,13 +284,13 @@ const SettingsScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#2E7D32',
+    backgroundColor: '#FFFFFF',
     padding: 20,
   },
   tabContainer: {
     flexDirection: 'row',
     marginBottom: 20,
-    backgroundColor: '#8B0000',
+    backgroundColor: '#B22222',
     borderRadius: 10,
     padding: 4,
   },
@@ -266,7 +308,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   activeTabText: {
-    color: '#8B0000',
+    color: '#B22222',
   },
   section: {
     backgroundColor: '#FFFFFF',
@@ -288,10 +330,10 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#8B0000',
+    color: '#B22222',
   },
   addButton: {
-    backgroundColor: '#2E7D32',
+    backgroundColor: '#B22222',
     width: 40,
     height: 40,
     borderRadius: 20,
@@ -384,7 +426,7 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#8B0000',
+    color: '#B22222',
     textAlign: 'center',
     marginBottom: 20,
   },
@@ -417,7 +459,7 @@ const styles = StyleSheet.create({
     borderColor: 'transparent',
   },
   selectedColor: {
-    borderColor: '#8B0000',
+    borderColor: '#B22222',
     borderWidth: 3,
   },
   modalButtons: {
@@ -435,7 +477,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#CCCCCC',
   },
   modalAddButton: {
-    backgroundColor: '#2E7D32',
+    backgroundColor: '#B22222',
   },
   cancelButtonText: {
     color: '#666666',
@@ -444,6 +486,40 @@ const styles = StyleSheet.create({
   modalAddButtonText: {
     color: '#FFFFFF',
     fontWeight: 'bold',
+  },
+  textSizeContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    width: 160,
+  },
+  textSizeButton: {
+    backgroundColor: '#B22222',
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.4,
+    shadowRadius: 3,
+    zIndex: 100,
+    borderWidth: 2,
+    borderColor: '#FFD700',
+  },
+  textSizeButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  textSizeValue: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#B22222',
+    minWidth: 40,
+    textAlign: 'center',
   },
 });
 

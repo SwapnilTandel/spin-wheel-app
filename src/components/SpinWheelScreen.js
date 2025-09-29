@@ -166,7 +166,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#CCCCCC',
   },
   spinButtonText: {
-    color: '#8B0000',
+    color: '#B22222',
     fontSize: 18,
     fontWeight: 'bold',
     textAlign: 'center',
@@ -184,12 +184,12 @@ const styles = StyleSheet.create({
     boxShadow: '0 6px 8px rgba(0, 0, 0, 0.5)',
     zIndex: 300,
     borderWidth: 3,
-    borderColor: '#8B0000',
+    borderColor: '#B22222',
     justifyContent: 'center',
     alignItems: 'center',
   },
   resultText: {
-    color: '#8B0000',
+    color: '#B22222',
     fontSize: 28,
     fontWeight: 'bold',
     textAlign: 'center',

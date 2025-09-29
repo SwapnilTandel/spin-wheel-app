@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, Dimensions, Image, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Dimensions, TouchableOpacity, Image } from 'react-native';
+import { useSelector } from 'react-redux';
 import Svg, { Circle, Path, Text as SvgText } from 'react-native-svg';
 
 const { width, height } = Dimensions.get('window');
@@ -9,6 +10,7 @@ const CENTER_LOGO_SIZE = Math.min(WHEEL_SIZE * 0.25, 150);
 const SpinWheel = ({ categories, isSpinning, winner, onReset }) => {
   const wheelRef = useRef(null);
   const currentRotationRef = useRef(0);
+  const { settings } = useSelector(state => state.wheel);
   
   useEffect(() => {
     if (isSpinning && wheelRef.current) {
@@ -87,41 +89,59 @@ const SpinWheel = ({ categories, isSpinning, winner, onReset }) => {
     const midAngle = (index * anglePerSlice) + (anglePerSlice / 2);
     const midAngleRad = (midAngle * Math.PI) / 180;
     
-    // Position text at 70% of the radius
-    const textRadius = radius * 0.7;
+    // Position text at 65% of the radius for better balance
+    const textRadius = radius * 0.65;
     const textX = centerX + textRadius * Math.cos(midAngleRad);
     const textY = centerY + textRadius * Math.sin(midAngleRad);
     
     return { x: textX, y: textY, angle: midAngle };
   };
 
+  const getTextColor = (backgroundColor) => {
+    // Use dark text for light backgrounds, light text for dark backgrounds
+    if (backgroundColor === '#FFF8E6' || backgroundColor === '#FFD700') {
+      return '#333333'; // Dark gray for light backgrounds
+    }
+    return '#FFFFFF'; // White for dark backgrounds
+  };
+
   const renderWheelSegments = () => {
     return categories.map((category, index) => {
       const pathData = createPieSlice(category, index, categories.length);
       const textPos = getTextPosition(category, index, categories.length);
+      const textColor = getTextColor(category.color);
       
       return (
         <React.Fragment key={category.id}>
-          {/* Pie slice */}
+          {/* Pie slice with gold border */}
           <Path
             d={pathData}
             fill={category.color}
-            stroke="#FFFFFF"
-            strokeWidth="2"
+            stroke="#FFD700"
+            strokeWidth="3"
           />
           
-          {/* Text label - always vertical orientation */}
+          
+          {/* Text label - polished typography */}
           <SvgText
             x={textPos.x}
             y={textPos.y}
-            fontSize="12"
-            fontWeight="bold"
-            fill="#FFFFFF"
+            fontSize={`${settings.labelTextSize || 14}`}
+            fontWeight="700"
+            fontFamily="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
+            fill={textColor}
             textAnchor="middle"
             dominantBaseline="middle"
+            letterSpacing="0.5px"
             style={{
-              textShadow: '2px 2px 4px rgba(0,0,0,0.8)',
-              filter: 'drop-shadow(2px 2px 4px rgba(0,0,0,0.8))'
+              textShadow: textColor === '#FFFFFF' ? 
+                '3px 3px 6px rgba(0,0,0,0.9), 1px 1px 2px rgba(0,0,0,0.5)' : 
+                '2px 2px 4px rgba(255,255,255,0.9), 1px 1px 2px rgba(0,0,0,0.3)',
+              filter: textColor === '#FFFFFF' ? 
+                'drop-shadow(3px 3px 6px rgba(0,0,0,0.9)) drop-shadow(1px 1px 2px rgba(0,0,0,0.5))' : 
+                'drop-shadow(2px 2px 4px rgba(255,255,255,0.9)) drop-shadow(1px 1px 2px rgba(0,0,0,0.3))',
+              stroke: textColor === '#FFFFFF' ? 'rgba(0,0,0,0.3)' : 'rgba(255,255,255,0.3)',
+              strokeWidth: '0.5px'
             }}
           >
             {category.name}
@@ -143,26 +163,26 @@ const SpinWheel = ({ categories, isSpinning, winner, onReset }) => {
             height={WHEEL_SIZE}
             viewBox={`0 0 ${WHEEL_SIZE} ${WHEEL_SIZE}`}
           >
-            {/* Outer circle border */}
+            {/* Outer circle border - Gold rim */}
                 <Circle
                   cx={WHEEL_SIZE / 2}
                   cy={WHEEL_SIZE / 2}
                   r={(WHEEL_SIZE - Math.max(WHEEL_SIZE * 0.01, 6)) / 2}
                   fill="transparent"
-                  stroke="#FFFFFF"
-                  strokeWidth={Math.max(WHEEL_SIZE * 0.008, 3)}
+                  stroke="#FFD700"
+                  strokeWidth={Math.max(WHEEL_SIZE * 0.012, 5)}
                 />
             
             {/* Pie slices */}
             {renderWheelSegments()}
             
-            {/* Inner circle (center area) */}
+            {/* Inner circle (center area) - Ivory background with red border */}
             <Circle
               cx={WHEEL_SIZE / 2}
               cy={WHEEL_SIZE / 2}
               r={CENTER_LOGO_SIZE / 2}
-              fill="#FFFFFF"
-              stroke="#8B0000"
+              fill="#FFF8E6"
+              stroke="#B22222"
               strokeWidth={Math.max(CENTER_LOGO_SIZE * 0.03, 4)}
             />
           </Svg>
@@ -200,26 +220,38 @@ const styles = StyleSheet.create({
   },
   centerLogo: {
     position: 'absolute',
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: '#FFFFFF',
+    width: CENTER_LOGO_SIZE,
+    height: CENTER_LOGO_SIZE,
+    borderRadius: CENTER_LOGO_SIZE / 2,
+    backgroundColor: '#FFF8E6',
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 4,
-    borderColor: '#8B0000',
+    borderColor: '#B22222',
     elevation: 15,
     boxShadow: '0 4px 6px rgba(0, 0, 0, 0.4)',
     zIndex: 200,
+    padding: 4,
   },
-      logoText: {
-        fontSize: 32,
-        fontWeight: 'bold',
-      },
-      logoImage: {
-        width: CENTER_LOGO_SIZE * 0.8,
-        height: CENTER_LOGO_SIZE * 0.8,
-      },
+  logoImage: {
+    width: CENTER_LOGO_SIZE * 0.7,
+    height: CENTER_LOGO_SIZE * 0.7,
+  },
+  brandText1: {
+    fontSize: Math.max(CENTER_LOGO_SIZE * 0.06, 8),
+    fontWeight: 'bold',
+    color: '#B22222',
+    textAlign: 'center',
+    lineHeight: Math.max(CENTER_LOGO_SIZE * 0.07, 9),
+  },
+  brandText2: {
+    fontSize: Math.max(CENTER_LOGO_SIZE * 0.08, 10),
+    fontWeight: 'bold',
+    color: '#B22222',
+    textAlign: 'center',
+    lineHeight: Math.max(CENTER_LOGO_SIZE * 0.09, 11),
+    marginTop: 1,
+  },
   pointer: {
     position: 'absolute',
     top: -10,
@@ -230,7 +262,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 30,
     borderLeftColor: 'transparent',
     borderRightColor: 'transparent',
-    borderBottomColor: '#8B0000',
+    borderBottomColor: '#B22222',
     zIndex: 150,
   },
 });
