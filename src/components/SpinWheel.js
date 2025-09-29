@@ -161,7 +161,7 @@ const SpinWheel = ({ categories, isSpinning, winner, onReset }) => {
               cx={WHEEL_SIZE / 2}
               cy={WHEEL_SIZE / 2}
               r={CENTER_LOGO_SIZE / 2}
-              fill="#FFD700"
+              fill="#FFFFFF"
               stroke="#8B0000"
               strokeWidth={Math.max(CENTER_LOGO_SIZE * 0.03, 4)}
             />
@@ -203,7 +203,7 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: '#FFD700',
+    backgroundColor: '#FFFFFF',
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 4,

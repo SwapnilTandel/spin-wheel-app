@@ -136,7 +136,7 @@ const SpinWheelScreen = ({ value, onReset }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#2E7D32',
+    backgroundColor: '#FFFFFF',
     justifyContent: 'center',
     alignItems: 'center',
     paddingVertical: 40,

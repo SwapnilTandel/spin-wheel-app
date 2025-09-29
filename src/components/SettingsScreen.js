@@ -52,7 +52,40 @@ const SettingsScreen = () => {
     dispatch(updateSettings({ [key]: value }));
   };
 
-  const colorOptions = ['#2E7D32', '#8B0000', '#FFD700', '#FFFFFF', '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4'];
+  const colorOptions = [
+    // Primary theme colors
+    '#2E7D32', '#8B0000', '#FFD700', '#FFFFFF',
+    // Vibrant colors
+    '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4',
+    '#FF9F43', '#10AC84', '#5F27CD', '#00D2D3',
+    // Blue tones
+    '#0066CC', '#3366FF', '#0099FF', '#00CCFF',
+    '#0066FF', '#3399FF', '#66CCFF', '#99DDFF',
+    // Green tones
+    '#00CC66', '#33FF99', '#66FFCC', '#99FFDD',
+    '#009966', '#00FF99', '#33CC99', '#66FF99',
+    // Red tones
+    '#FF3366', '#FF6699', '#FF99CC', '#FFCCDD',
+    '#CC0033', '#FF0033', '#FF3366', '#FF6699',
+    // Purple tones
+    '#9966FF', '#CC99FF', '#DDCCFF', '#EEEEFF',
+    '#6633CC', '#9933FF', '#CC66FF', '#DD99FF',
+    // Orange tones
+    '#FF6633', '#FF9966', '#FFCC99', '#FFDDCC',
+    '#FF3300', '#FF6600', '#FF9900', '#FFCC00',
+    // Pink tones
+    '#FF33CC', '#FF66DD', '#FF99EE', '#FFCCFF',
+    '#CC0099', '#FF00CC', '#FF33DD', '#FF66EE',
+    // Yellow tones
+    '#FFFF00', '#FFFF33', '#FFFF66', '#FFFF99',
+    '#FFCC00', '#FFDD33', '#FFEE66', '#FFFFCC',
+    // Dark colors
+    '#333333', '#666666', '#999999', '#CCCCCC',
+    '#000000', '#1A1A1A', '#333366', '#663333',
+    // Light colors
+    '#F0F0F0', '#F5F5F5', '#FAFAFA', '#FFFFFF',
+    '#E6F3FF', '#F0F8FF', '#FFF8DC', '#F5FFFA'
+  ];
 
   return (
     <ScrollView style={styles.container}>
@@ -373,12 +406,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     marginBottom: 20,
+    justifyContent: 'space-between',
   },
   colorOption: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    margin: 5,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    margin: 3,
     borderWidth: 2,
     borderColor: 'transparent',
   },
