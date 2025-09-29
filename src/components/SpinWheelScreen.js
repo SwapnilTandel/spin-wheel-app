@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Alert, Modal, Animated } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import SpinWheel from './SpinWheel';
 import { setSpinning, setLastResult, addToHistory } from '../store/slices/wheelSlice';
@@ -9,14 +9,20 @@ const SpinWheelScreen = ({ value, onReset }) => {
   const { categories, settings, isSpinning } = useSelector(state => state.wheel);
   const [winner, setWinner] = useState(null);
   const [resetKey, setResetKey] = useState(0);
+  const [showCelebrationModal, setShowCelebrationModal] = useState(false);
   
   // Simple confetti effect using CSS
   const [showConfetti, setShowConfetti] = useState(false);
+  
+  // Animation for celebration modal
+  const modalScale = useRef(new Animated.Value(0)).current;
+  const modalOpacity = useRef(new Animated.Value(0)).current;
 
   // Handle reset functionality
   const handleReset = () => {
     setWinner(null);
     setShowConfetti(false);
+    setShowCelebrationModal(false);
     // Reset any spinning state
     dispatch(setSpinning(false));
     // Force component re-render to reset label orientation
@@ -29,6 +35,51 @@ const SpinWheelScreen = ({ value, onReset }) => {
       onReset.current = handleReset;
     }
   }, [onReset]);
+
+  // Handle celebration modal animation
+  useEffect(() => {
+    if (winner) {
+      setShowCelebrationModal(true);
+      
+      // Animate modal entrance
+      Animated.parallel([
+        Animated.timing(modalScale, {
+          toValue: 1,
+          duration: 500,
+          useNativeDriver: false,
+        }),
+        Animated.timing(modalOpacity, {
+          toValue: 1,
+          duration: 500,
+          useNativeDriver: false,
+        }),
+      ]).start();
+
+      // Auto-close modal after 5 seconds
+      const timer = setTimeout(() => {
+        closeCelebrationModal();
+      }, 5000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [winner]);
+
+  const closeCelebrationModal = () => {
+    Animated.parallel([
+      Animated.timing(modalScale, {
+        toValue: 0,
+        duration: 300,
+        useNativeDriver: false,
+      }),
+      Animated.timing(modalOpacity, {
+        toValue: 0,
+        duration: 300,
+        useNativeDriver: false,
+      }),
+    ]).start(() => {
+      setShowCelebrationModal(false);
+    });
+  };
   
   // Sound setup - placeholder for web compatibility
   const playSound = (type) => {
@@ -90,6 +141,20 @@ const SpinWheelScreen = ({ value, onReset }) => {
 
   return (
     <View style={styles.container}>
+      {/* Festive Background with Sparkles */}
+      <View style={styles.backgroundContainer}>
+        <View style={styles.sparkleContainer}>
+          <Text style={styles.sparkle}>✨</Text>
+          <Text style={[styles.sparkle, styles.sparkle2]}>⭐</Text>
+          <Text style={[styles.sparkle, styles.sparkle3]}>✨</Text>
+          <Text style={[styles.sparkle, styles.sparkle4]}>⭐</Text>
+          <Text style={[styles.sparkle, styles.sparkle5]}>✨</Text>
+          <Text style={[styles.sparkle, styles.sparkle6]}>⭐</Text>
+          <Text style={[styles.sparkle, styles.sparkle7]}>✨</Text>
+          <Text style={[styles.sparkle, styles.sparkle8]}>⭐</Text>
+        </View>
+      </View>
+
       <View style={styles.wheelContainer}>
         <SpinWheel 
           key={resetKey}
@@ -129,6 +194,49 @@ const SpinWheelScreen = ({ value, onReset }) => {
           <Text style={styles.confettiText}>🎉🎊🎉🎊🎉</Text>
         </View>
       )}
+
+      {/* Celebration Modal */}
+      <Modal
+        visible={showCelebrationModal}
+        transparent={true}
+        animationType="none"
+        onRequestClose={closeCelebrationModal}
+      >
+        <View style={styles.modalOverlay}>
+          <Animated.View 
+            style={[
+              styles.celebrationModal,
+              {
+                transform: [{ scale: modalScale }],
+                opacity: modalOpacity,
+              }
+            ]}
+          >
+            {/* Burst Confetti Background */}
+            <View style={styles.burstConfetti}>
+              <Text style={styles.burstConfettiText}>🎉</Text>
+              <Text style={[styles.burstConfettiText, styles.burstConfettiText2]}>🎊</Text>
+              <Text style={[styles.burstConfettiText, styles.burstConfettiText3]}>✨</Text>
+              <Text style={[styles.burstConfettiText, styles.burstConfettiText4]}>⭐</Text>
+              <Text style={[styles.burstConfettiText, styles.burstConfettiText5]}>🎉</Text>
+              <Text style={[styles.burstConfettiText, styles.burstConfettiText6]}>🎊</Text>
+            </View>
+            
+            {/* Prize Display */}
+            <Text style={styles.celebrationTitle}>🎉 CONGRATULATIONS! 🎉</Text>
+            <Text style={styles.celebrationPrize}>{winner?.name}</Text>
+            <Text style={styles.celebrationSubtext}>You've won an amazing prize!</Text>
+            
+            {/* Close Button */}
+            <TouchableOpacity 
+              style={styles.closeButton}
+              onPress={closeCelebrationModal}
+            >
+              <Text style={styles.closeButtonText}>Close</Text>
+            </TouchableOpacity>
+          </Animated.View>
+        </View>
+      </Modal>
     </View>
   );
 };
@@ -149,6 +257,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     position: 'relative',
+    zIndex: 10,
   },
   spinButton: {
     position: 'absolute',
@@ -211,6 +320,169 @@ const styles = StyleSheet.create({
     color: '#FFD700',
     textAlign: 'center',
     marginVertical: 5,
+  },
+  backgroundContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: 1,
+  },
+  sparkleContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+  },
+  sparkle: {
+    position: 'absolute',
+    fontSize: 20,
+    color: '#FFD700',
+    opacity: 0.7,
+  },
+  sparkle2: {
+    top: '10%',
+    left: '15%',
+    fontSize: 16,
+  },
+  sparkle3: {
+    top: '20%',
+    right: '20%',
+    fontSize: 18,
+  },
+  sparkle4: {
+    top: '30%',
+    left: '10%',
+    fontSize: 14,
+  },
+  sparkle5: {
+    bottom: '25%',
+    right: '15%',
+    fontSize: 20,
+  },
+  sparkle6: {
+    bottom: '15%',
+    left: '20%',
+    fontSize: 16,
+  },
+  sparkle7: {
+    top: '60%',
+    left: '5%',
+    fontSize: 18,
+  },
+  sparkle8: {
+    top: '40%',
+    right: '10%',
+    fontSize: 14,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 1000,
+  },
+  celebrationModal: {
+    backgroundColor: '#FFF8E6',
+    borderRadius: 20,
+    padding: 30,
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '80%',
+    maxWidth: 400,
+    borderWidth: 4,
+    borderColor: '#FFD700',
+    elevation: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.5,
+    shadowRadius: 20,
+    position: 'relative',
+  },
+  burstConfetti: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: 1,
+  },
+  burstConfettiText: {
+    position: 'absolute',
+    fontSize: 30,
+    color: '#FFD700',
+  },
+  burstConfettiText2: {
+    top: '10%',
+    right: '10%',
+    fontSize: 25,
+  },
+  burstConfettiText3: {
+    top: '20%',
+    left: '15%',
+    fontSize: 35,
+  },
+  burstConfettiText4: {
+    bottom: '20%',
+    right: '20%',
+    fontSize: 28,
+  },
+  burstConfettiText5: {
+    bottom: '30%',
+    left: '10%',
+    fontSize: 32,
+  },
+  burstConfettiText6: {
+    top: '60%',
+    right: '5%',
+    fontSize: 26,
+  },
+  celebrationTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#B22222',
+    textAlign: 'center',
+    marginBottom: 10,
+    textShadow: '2px 2px 4px rgba(255,215,0,0.8)',
+    zIndex: 10,
+  },
+  celebrationPrize: {
+    fontSize: 32,
+    fontWeight: '900',
+    color: '#FFD700',
+    textAlign: 'center',
+    marginBottom: 10,
+    textShadow: '3px 3px 6px rgba(178,34,34,0.8)',
+    zIndex: 10,
+    textTransform: 'uppercase',
+    letterSpacing: 2,
+  },
+  celebrationSubtext: {
+    fontSize: 16,
+    color: '#B22222',
+    textAlign: 'center',
+    marginBottom: 20,
+    fontStyle: 'italic',
+    zIndex: 10,
+  },
+  closeButton: {
+    backgroundColor: '#B22222',
+    paddingHorizontal: 30,
+    paddingVertical: 12,
+    borderRadius: 25,
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+    zIndex: 10,
+  },
+  closeButtonText: {
+    color: '#FFFFFF',
+    fontSize: 18,
+    fontWeight: 'bold',
   },
 });
 

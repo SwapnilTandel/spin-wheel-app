@@ -1,7 +1,7 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, StyleSheet, Dimensions, TouchableOpacity, Image } from 'react-native';
 import { useSelector } from 'react-redux';
-import Svg, { Circle, Path, Text as SvgText } from 'react-native-svg';
+import Svg, { Circle, Path, Text as SvgText, Defs, LinearGradient, Stop } from 'react-native-svg';
 
 const { width, height } = Dimensions.get('window');
 const WHEEL_SIZE = Math.min(width * 0.95, height * 0.70);
@@ -11,6 +11,27 @@ const SpinWheel = ({ categories, isSpinning, winner, onReset }) => {
   const wheelRef = useRef(null);
   const currentRotationRef = useRef(0);
   const { settings } = useSelector(state => state.wheel);
+  const [winningIndex, setWinningIndex] = useState(null);
+  const [showShimmer, setShowShimmer] = useState(false);
+  
+  // Handle shimmer animation when winner is determined
+  useEffect(() => {
+    if (winner) {
+      const index = categories.findIndex(cat => cat.id === winner.id);
+      setWinningIndex(index);
+      setShowShimmer(true);
+      
+      // Hide shimmer after 2 seconds
+      const timer = setTimeout(() => {
+        setShowShimmer(false);
+      }, 2000);
+      
+      return () => clearTimeout(timer);
+    } else {
+      setWinningIndex(null);
+      setShowShimmer(false);
+    }
+  }, [winner, categories]);
   
   useEffect(() => {
     if (isSpinning && wheelRef.current) {
@@ -98,11 +119,8 @@ const SpinWheel = ({ categories, isSpinning, winner, onReset }) => {
   };
 
   const getTextColor = (backgroundColor) => {
-    // Use dark text for light backgrounds, light text for dark backgrounds
-    if (backgroundColor === '#FFF8E6' || backgroundColor === '#FFD700') {
-      return '#333333'; // Dark gray for light backgrounds
-    }
-    return '#FFFFFF'; // White for dark backgrounds
+    // Always use dark text for high contrast
+    return '#B22222'; // Dark red for all backgrounds
   };
 
   const renderWheelSegments = () => {
@@ -111,37 +129,48 @@ const SpinWheel = ({ categories, isSpinning, winner, onReset }) => {
       const textPos = getTextPosition(category, index, categories.length);
       const textColor = getTextColor(category.color);
       
+      const isWinningSlice = winningIndex === index && showShimmer;
+      
       return (
         <React.Fragment key={category.id}>
-          {/* Pie slice with gold border */}
+          {/* Pie slice with gold border and shimmer effect */}
           <Path
             d={pathData}
             fill={category.color}
-            stroke="#FFD700"
-            strokeWidth="3"
+            stroke={isWinningSlice ? "#FFD700" : "#FFD700"}
+            strokeWidth={isWinningSlice ? "6" : "3"}
+            opacity={isWinningSlice ? 0.9 : 1}
+            style={{
+              filter: isWinningSlice ? 'drop-shadow(0 0 20px rgba(255,215,0,0.8)) drop-shadow(0 0 10px rgba(255,215,0,0.6))' : 'none',
+              animation: isWinningSlice ? 'shimmer 1s ease-in-out infinite alternate' : 'none'
+            }}
           />
           
+          {/* Shimmer overlay for winning slice */}
+          {isWinningSlice && (
+            <Path
+              d={pathData}
+              fill="url(#shimmerGradient)"
+              opacity="0.3"
+            />
+          )}
           
-          {/* Text label - polished typography */}
+          {/* Text label - premium typography with gold shadow */}
           <SvgText
             x={textPos.x}
             y={textPos.y}
             fontSize={`${settings.labelTextSize || 14}`}
-            fontWeight="700"
+            fontWeight="800"
             fontFamily="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
             fill={textColor}
             textAnchor="middle"
             dominantBaseline="middle"
-            letterSpacing="0.5px"
+            letterSpacing="0.8px"
             style={{
-              textShadow: textColor === '#FFFFFF' ? 
-                '3px 3px 6px rgba(0,0,0,0.9), 1px 1px 2px rgba(0,0,0,0.5)' : 
-                '2px 2px 4px rgba(255,255,255,0.9), 1px 1px 2px rgba(0,0,0,0.3)',
-              filter: textColor === '#FFFFFF' ? 
-                'drop-shadow(3px 3px 6px rgba(0,0,0,0.9)) drop-shadow(1px 1px 2px rgba(0,0,0,0.5))' : 
-                'drop-shadow(2px 2px 4px rgba(255,255,255,0.9)) drop-shadow(1px 1px 2px rgba(0,0,0,0.3))',
-              stroke: textColor === '#FFFFFF' ? 'rgba(0,0,0,0.3)' : 'rgba(255,255,255,0.3)',
-              strokeWidth: '0.5px'
+              textShadow: '3px 3px 8px rgba(255,215,0,0.8), 2px 2px 4px rgba(0,0,0,0.6), 1px 1px 2px rgba(255,255,255,0.4)',
+              filter: 'drop-shadow(3px 3px 8px rgba(255,215,0,0.8)) drop-shadow(2px 2px 4px rgba(0,0,0,0.6)) drop-shadow(1px 1px 2px rgba(255,255,255,0.4))',
+              stroke: 'rgba(255,215,0,0.3)',
+              strokeWidth: '1px'
             }}
           >
             {category.name}
@@ -158,12 +187,21 @@ const SpinWheel = ({ categories, isSpinning, winner, onReset }) => {
           ref={wheelRef}
           style={styles.wheelContainer}
         >
-          <Svg
-            width={WHEEL_SIZE}
-            height={WHEEL_SIZE}
-            viewBox={`0 0 ${WHEEL_SIZE} ${WHEEL_SIZE}`}
-          >
-            {/* Outer circle border - Gold rim */}
+            <Svg
+              width={WHEEL_SIZE}
+              height={WHEEL_SIZE}
+              viewBox={`0 0 ${WHEEL_SIZE} ${WHEEL_SIZE}`}
+            >
+              {/* Shimmer gradient definition */}
+              <Defs>
+                <LinearGradient id="shimmerGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <Stop offset="0%" stopColor="#FFD700" stopOpacity="0.8" />
+                  <Stop offset="50%" stopColor="#FFA500" stopOpacity="0.6" />
+                  <Stop offset="100%" stopColor="#FFD700" stopOpacity="0.8" />
+                </LinearGradient>
+              </Defs>
+              
+              {/* Outer circle border - Gold rim */}
                 <Circle
                   cx={WHEEL_SIZE / 2}
                   cy={WHEEL_SIZE / 2}
@@ -217,6 +255,14 @@ const styles = StyleSheet.create({
   },
   wheelContainer: {
     // Clean container without shadows
+  },
+  '@keyframes shimmer': {
+    '0%': {
+      filter: 'drop-shadow(0 0 20px rgba(255,215,0,0.8)) drop-shadow(0 0 10px rgba(255,215,0,0.6))',
+    },
+    '100%': {
+      filter: 'drop-shadow(0 0 30px rgba(255,215,0,1)) drop-shadow(0 0 15px rgba(255,215,0,0.8))',
+    },
   },
   centerLogo: {
     position: 'absolute',
