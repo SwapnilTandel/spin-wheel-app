@@ -1,50 +1,42 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
-import Animated, { 
-  useSharedValue, 
-  useAnimatedStyle, 
-  withTiming, 
-  withSequence,
-  runOnJS 
-} from 'react-native-reanimated';
 import SpinWheel from './SpinWheel';
-import ConfettiCannon from 'react-native-confetti-cannon';
-import Sound from 'react-native-sound';
 import { setSpinning, setLastResult, addToHistory } from '../store/slices/wheelSlice';
 
-const SpinWheelScreen = ({ route }) => {
-  const { value } = route.params;
+const SpinWheelScreen = ({ value, onReset }) => {
   const dispatch = useDispatch();
   const { categories, settings, isSpinning } = useSelector(state => state.wheel);
-  const [showConfetti, setShowConfetti] = useState(false);
   const [winner, setWinner] = useState(null);
-  const confettiRef = useRef(null);
+  const [resetKey, setResetKey] = useState(0);
   
-  // Sound setup
-  const tickingSound = useRef(null);
-  const winSound = useRef(null);
-  
-  React.useEffect(() => {
-    if (settings.soundEnabled) {
-      tickingSound.current = new Sound('tick.mp3', Sound.MAIN_BUNDLE, (error) => {
-        if (error) {
-          console.log('Failed to load ticking sound', error);
-        }
-      });
-      
-      winSound.current = new Sound('win.mp3', Sound.MAIN_BUNDLE, (error) => {
-        if (error) {
-          console.log('Failed to load win sound', error);
-        }
-      });
+  // Simple confetti effect using CSS
+  const [showConfetti, setShowConfetti] = useState(false);
+
+  // Handle reset functionality
+  const handleReset = () => {
+    setWinner(null);
+    setShowConfetti(false);
+    // Reset any spinning state
+    dispatch(setSpinning(false));
+    // Force component re-render to reset label orientation
+    setResetKey(prev => prev + 1);
+  };
+
+  // Expose reset function to parent component
+  useEffect(() => {
+    if (onReset && onReset.current !== undefined) {
+      onReset.current = handleReset;
     }
-    
-    return () => {
-      tickingSound.current?.release();
-      winSound.current?.release();
-    };
-  }, [settings.soundEnabled]);
+  }, [onReset]);
+  
+  // Sound setup - placeholder for web compatibility
+  const playSound = (type) => {
+    if (settings.soundEnabled) {
+      console.log(`Playing ${type} sound`);
+      // Web audio implementation would go here
+    }
+  };
 
   const handleSpin = () => {
     if (isSpinning) return;
@@ -55,15 +47,13 @@ const SpinWheelScreen = ({ route }) => {
       return;
     }
 
-    dispatch(setSpinning(true));
+    // Reset everything before spinning
     setWinner(null);
     setShowConfetti(false);
+    dispatch(setSpinning(true));
 
     // Play ticking sound
-    if (settings.soundEnabled && tickingSound.current) {
-      tickingSound.current.setNumberOfLoops(-1);
-      tickingSound.current.play();
-    }
+    playSound('tick');
 
     // Simulate spin duration
     setTimeout(() => {
@@ -73,15 +63,8 @@ const SpinWheelScreen = ({ route }) => {
       dispatch(setSpinning(false));
       setWinner(selectedCategory);
       
-      // Stop ticking sound
-      if (tickingSound.current) {
-        tickingSound.current.stop();
-      }
-      
       // Play win sound
-      if (settings.soundEnabled && winSound.current) {
-        winSound.current.play();
-      }
+      playSound('win');
       
       // Show confetti
       setShowConfetti(true);
@@ -109,13 +92,14 @@ const SpinWheelScreen = ({ route }) => {
     <View style={styles.container}>
       <View style={styles.wheelContainer}>
         <SpinWheel 
+          key={resetKey}
           categories={categories[value]} 
           isSpinning={isSpinning}
           winner={winner}
+          onReset={onReset}
         />
-      </View>
-      
-      <View style={styles.controlsContainer}>
+        
+        {/* Spin Button positioned at top right */}
         <TouchableOpacity 
           style={[
             styles.spinButton, 
@@ -128,24 +112,22 @@ const SpinWheelScreen = ({ route }) => {
             {isSpinning ? '🎰 Spinning...' : '🎰 SPIN THE WHEEL'}
           </Text>
         </TouchableOpacity>
-        
-        {winner && (
-          <View style={styles.resultContainer}>
-            <Text style={styles.resultText}>
-              🎉 Winner: {winner.name}
-            </Text>
-          </View>
-        )}
       </View>
       
+      {winner && (
+        <View style={styles.resultContainer}>
+          <Text style={styles.resultText}>
+            🎉 Winner: {winner.name}
+          </Text>
+        </View>
+      )}
+      
       {showConfetti && (
-        <ConfettiCannon
-          ref={confettiRef}
-          count={200}
-          origin={{ x: -10, y: 0 }}
-          colors={['#FFD700', '#2E7D32', '#8B0000', '#FFFFFF']}
-          fadeOut={true}
-        />
+        <View style={styles.confettiContainer}>
+          <Text style={styles.confettiText}>🎉🎊🎉🎊🎉</Text>
+          <Text style={styles.confettiText}>🎊🎉🎊🎉🎊</Text>
+          <Text style={styles.confettiText}>🎉🎊🎉🎊🎉</Text>
+        </View>
       )}
     </View>
   );
@@ -157,27 +139,28 @@ const styles = StyleSheet.create({
     backgroundColor: '#2E7D32',
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 20,
+    paddingVertical: 40,
+    paddingHorizontal: 0,
   },
   wheelContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  controlsContainer: {
-    paddingVertical: 20,
-    alignItems: 'center',
+    width: '100%',
+    height: '100%',
+    position: 'relative',
   },
   spinButton: {
+    position: 'absolute',
+    top: 20,
+    right: 20,
     backgroundColor: '#FFD700',
-    paddingHorizontal: 40,
-    paddingVertical: 15,
-    borderRadius: 25,
-    elevation: 5,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
+    paddingHorizontal: 30,
+    paddingVertical: 12,
+    borderRadius: 20,
+    elevation: 10,
+    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.4)',
+    zIndex: 100,
   },
   spinButtonDisabled: {
     backgroundColor: '#CCCCCC',
@@ -189,19 +172,45 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   resultContainer: {
-    marginTop: 20,
-    backgroundColor: '#8B0000',
-    paddingHorizontal: 20,
-    paddingVertical: 10,
+    position: 'absolute',
+    bottom: 60,
+    left: 20,
+    right: 20,
+    minHeight: 70,
+    padding: 15,
+    backgroundColor: '#FFD700',
     borderRadius: 15,
-    borderWidth: 2,
-    borderColor: '#FFD700',
+    elevation: 10,
+    boxShadow: '0 6px 8px rgba(0, 0, 0, 0.5)',
+    zIndex: 300,
+    borderWidth: 3,
+    borderColor: '#8B0000',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   resultText: {
-    color: '#FFFFFF',
-    fontSize: 16,
+    color: '#8B0000',
+    fontSize: 28,
     fontWeight: 'bold',
     textAlign: 'center',
+    textTransform: 'uppercase',
+    letterSpacing: 2,
+  },
+  confettiContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+    pointerEvents: 'none',
+  },
+  confettiText: {
+    fontSize: 24,
+    color: '#FFD700',
+    textAlign: 'center',
+    marginVertical: 5,
   },
 });
 

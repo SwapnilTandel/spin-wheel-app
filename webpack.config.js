@@ -1,5 +1,6 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const webpack = require('webpack');
 
 module.exports = {
   entry: './index.web.js',
@@ -8,15 +9,34 @@ module.exports = {
     filename: 'bundle.js',
     publicPath: '/'
   },
+  plugins: [
+    new HtmlWebpackPlugin({
+      template: './public/index.html',
+      filename: 'index.html'
+    }),
+    new webpack.DefinePlugin({
+      'process.env': JSON.stringify(process.env),
+      'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
+    }),
+    new webpack.ProvidePlugin({
+      process: 'process/browser',
+    }),
+  ],
   module: {
     rules: [
       {
-        test: /\.(js|jsx)$/,
-        exclude: /node_modules/,
+        test: /\.(js|jsx|ts|tsx)$/,
+        exclude: /node_modules\/(?!react-native-reanimated|react-native-confetti-cannon|react-native-vector-icons)/,
         use: {
           loader: 'babel-loader',
           options: {
-            presets: ['@babel/preset-env', '@babel/preset-react']
+            presets: ['@babel/preset-env', '@babel/preset-react'],
+            plugins: [
+              ['@babel/plugin-proposal-class-properties', { loose: true }],
+              ['@babel/plugin-transform-flow-strip-types'],
+              ['@babel/plugin-proposal-object-rest-spread'],
+              ['@babel/plugin-transform-runtime']
+            ]
           }
         }
       },
@@ -35,14 +55,15 @@ module.exports = {
     extensions: ['.web.js', '.js', '.web.jsx', '.jsx'],
     alias: {
       'react-native$': 'react-native-web'
+    },
+    fallback: {
+      "process": require.resolve("process/browser"),
+      "buffer": require.resolve("buffer"),
+      "util": require.resolve("util/"),
+      "stream": require.resolve("stream-browserify"),
+      "path": require.resolve("path-browserify"),
     }
   },
-  plugins: [
-    new HtmlWebpackPlugin({
-      template: './public/index.html',
-      filename: 'index.html'
-    })
-  ],
   devServer: {
     static: {
       directory: path.join(__dirname, 'public')

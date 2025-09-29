@@ -6,12 +6,11 @@ import {
   TouchableOpacity, 
   TextInput, 
   Switch,
-  Alert,
   ScrollView,
   Modal 
 } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+// Removed react-native-vector-icons import due to web compatibility issues
 import { addCategory, removeCategory, updateCategory, updateSettings } from '../store/slices/wheelSlice';
 
 const SettingsScreen = () => {
@@ -23,7 +22,7 @@ const SettingsScreen = () => {
 
   const handleAddCategory = () => {
     if (!newCategory.name.trim()) {
-      Alert.alert('Error', 'Please enter a category name!');
+      alert('Error: Please enter a category name!');
       return;
     }
 
@@ -34,27 +33,19 @@ const SettingsScreen = () => {
 
     setNewCategory({ name: '', color: '#2E7D32' });
     setShowAddModal(false);
-    Alert.alert('Success', 'Category added successfully!');
+    alert('Success: Category added successfully!');
   };
 
   const handleRemoveCategory = (categoryId) => {
     if (categories[activeTab].length <= 2) {
-      Alert.alert('Error', 'You need at least 2 categories to spin the wheel!');
+      alert('Error: You need at least 2 categories to spin the wheel!');
       return;
     }
 
-    Alert.alert(
-      'Confirm Delete',
-      'Are you sure you want to delete this category?',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        { 
-          text: 'Delete', 
-          style: 'destructive',
-          onPress: () => dispatch(removeCategory({ wheelValue: activeTab, categoryId }))
-        }
-      ]
-    );
+    const confirmDelete = window.confirm('Are you sure you want to delete this category?');
+    if (confirmDelete) {
+      dispatch(removeCategory({ wheelValue: activeTab, categoryId }));
+    }
   };
 
   const handleSettingChange = (key, value) => {
@@ -91,7 +82,7 @@ const SettingsScreen = () => {
             style={styles.addButton}
             onPress={() => setShowAddModal(true)}
           >
-            <Icon name="add" size={24} color="#FFFFFF" />
+            <Text style={styles.addButtonText}>+</Text>
           </TouchableOpacity>
         </View>
 
@@ -102,8 +93,9 @@ const SettingsScreen = () => {
             <TouchableOpacity 
               style={styles.deleteButton}
               onPress={() => handleRemoveCategory(category.id)}
+              activeOpacity={0.7}
             >
-              <Icon name="delete" size={20} color="#FF6B6B" />
+              <Text style={styles.deleteButtonText}>🗑️</Text>
             </TouchableOpacity>
           </View>
         ))}
@@ -201,10 +193,10 @@ const SettingsScreen = () => {
                 <Text style={styles.cancelButtonText}>Cancel</Text>
               </TouchableOpacity>
               <TouchableOpacity 
-                style={[styles.modalButton, styles.addButton]}
+                style={[styles.modalButton, styles.modalAddButton]}
                 onPress={handleAddCategory}
               >
-                <Text style={styles.addButtonText}>Add</Text>
+                <Text style={styles.modalAddButtonText}>Add</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -273,6 +265,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  addButtonText: {
+    color: '#FFFFFF',
+    fontSize: 24,
+    fontWeight: 'bold',
+  },
   categoryItem: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -294,7 +291,16 @@ const styles = StyleSheet.create({
     color: '#333333',
   },
   deleteButton: {
-    padding: 5,
+    padding: 8,
+    backgroundColor: '#FFE6E6',
+    borderRadius: 6,
+    minWidth: 36,
+    minHeight: 36,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  deleteButtonText: {
+    fontSize: 18,
   },
   settingItem: {
     flexDirection: 'row',
@@ -394,14 +400,14 @@ const styles = StyleSheet.create({
   cancelButton: {
     backgroundColor: '#CCCCCC',
   },
-  addButton: {
+  modalAddButton: {
     backgroundColor: '#2E7D32',
   },
   cancelButtonText: {
     color: '#666666',
     fontWeight: 'bold',
   },
-  addButtonText: {
+  modalAddButtonText: {
     color: '#FFFFFF',
     fontWeight: 'bold',
   },

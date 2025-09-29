@@ -1,76 +1,132 @@
-import React, { useEffect } from 'react';
-import { View, Text, StyleSheet, Dimensions } from 'react-native';
-import Animated, { 
-  useSharedValue, 
-  useAnimatedStyle, 
-  withTiming, 
-  interpolate,
-  runOnJS 
-} from 'react-native-reanimated';
-import Svg, { Circle, Text as SvgText, G } from 'react-native-svg';
+import React, { useEffect, useRef } from 'react';
+import { View, Text, StyleSheet, Dimensions, Image, TouchableOpacity } from 'react-native';
+import Svg, { Circle, Path, Text as SvgText } from 'react-native-svg';
 
-const { width } = Dimensions.get('window');
-const WHEEL_SIZE = Math.min(width * 0.8, 300);
+const { width, height } = Dimensions.get('window');
+const WHEEL_SIZE = Math.min(width * 0.95, height * 0.70);
+const CENTER_LOGO_SIZE = Math.min(WHEEL_SIZE * 0.25, 150);
 
-const SpinWheel = ({ categories, isSpinning, winner }) => {
-  const rotation = useSharedValue(0);
+const SpinWheel = ({ categories, isSpinning, winner, onReset }) => {
+  const wheelRef = useRef(null);
+  const currentRotationRef = useRef(0);
   
   useEffect(() => {
-    if (isSpinning) {
-      const randomRotation = Math.random() * 360 + 1800; // 5 full rotations + random
-      rotation.value = withTiming(randomRotation, { duration: 3000 });
+    if (isSpinning && wheelRef.current) {
+      // Reset transition first
+      wheelRef.current.style.transition = 'none';
+      wheelRef.current.style.transform = `rotate(${currentRotationRef.current}deg)`;
+
+      // Force a reflow to ensure the reset is applied
+      wheelRef.current.offsetHeight;
+
+      // Calculate new rotation (always add to current rotation for consistency)
+      const additionalRotation = Math.random() * 360 + 1800; // 5 full rotations + random
+      currentRotationRef.current += additionalRotation;
+
+      // Apply the transition and new rotation
+      wheelRef.current.style.transition = 'transform 3s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+      wheelRef.current.style.transform = `rotate(${currentRotationRef.current}deg)`;
     }
   }, [isSpinning]);
 
-  const animatedStyle = useAnimatedStyle(() => {
-    return {
-      transform: [{ rotate: `${rotation.value}deg` }],
-    };
-  });
+  const resetWheel = () => {
+    if (wheelRef.current) {
+      // Reset to initial position
+      currentRotationRef.current = 0;
+      wheelRef.current.style.transition = 'transform 0.5s ease-out';
+      wheelRef.current.style.transform = 'rotate(0deg)';
+    }
+    // Reset wheel labels to initial orientation
+    // This will be handled by the parent component via key prop
+  };
+
+  // Expose resetWheel function to parent component
+  useEffect(() => {
+    if (onReset && onReset.current !== undefined) {
+      onReset.current = resetWheel;
+    }
+  }, [onReset]);
+
+  const createPieSlice = (category, index, totalCategories) => {
+    const centerX = WHEEL_SIZE / 2;
+    const centerY = WHEEL_SIZE / 2;
+    const radius = (WHEEL_SIZE - 6) / 2; // Account for border
+    const anglePerSlice = 360 / totalCategories;
+    const startAngle = index * anglePerSlice;
+    const endAngle = (index + 1) * anglePerSlice;
+    
+    // Convert angles to radians
+    const startAngleRad = (startAngle * Math.PI) / 180;
+    const endAngleRad = (endAngle * Math.PI) / 180;
+    
+    // Calculate start and end points
+    const x1 = centerX + radius * Math.cos(startAngleRad);
+    const y1 = centerY + radius * Math.sin(startAngleRad);
+    const x2 = centerX + radius * Math.cos(endAngleRad);
+    const y2 = centerY + radius * Math.sin(endAngleRad);
+    
+    // Large arc flag (1 if angle > 180 degrees, 0 otherwise)
+    const largeArcFlag = anglePerSlice > 180 ? 1 : 0;
+    
+    // Create the path for the pie slice
+    const pathData = [
+      `M ${centerX} ${centerY}`,
+      `L ${x1} ${y1}`,
+      `A ${radius} ${radius} 0 ${largeArcFlag} 1 ${x2} ${y2}`,
+      'Z'
+    ].join(' ');
+    
+    return pathData;
+  };
+
+  const getTextPosition = (category, index, totalCategories) => {
+    const centerX = WHEEL_SIZE / 2;
+    const centerY = WHEEL_SIZE / 2;
+    const radius = (WHEEL_SIZE - 6) / 2;
+    const anglePerSlice = 360 / totalCategories;
+    const midAngle = (index * anglePerSlice) + (anglePerSlice / 2);
+    const midAngleRad = (midAngle * Math.PI) / 180;
+    
+    // Position text at 70% of the radius
+    const textRadius = radius * 0.7;
+    const textX = centerX + textRadius * Math.cos(midAngleRad);
+    const textY = centerY + textRadius * Math.sin(midAngleRad);
+    
+    return { x: textX, y: textY, angle: midAngle };
+  };
 
   const renderWheelSegments = () => {
-    const segmentAngle = 360 / categories.length;
-    const radius = WHEEL_SIZE / 2;
-    
     return categories.map((category, index) => {
-      const startAngle = index * segmentAngle;
-      const endAngle = (index + 1) * segmentAngle;
-      const largeArcFlag = endAngle - startAngle <= 180 ? "0" : "1";
-      
-      const x1 = radius + radius * Math.cos((startAngle * Math.PI) / 180);
-      const y1 = radius + radius * Math.sin((startAngle * Math.PI) / 180);
-      const x2 = radius + radius * Math.cos((endAngle * Math.PI) / 180);
-      const y2 = radius + radius * Math.sin((endAngle * Math.PI) / 180);
-      
-      const textX = radius + (radius * 0.7) * Math.cos(((startAngle + endAngle) / 2 * Math.PI) / 180);
-      const textY = radius + (radius * 0.7) * Math.sin(((startAngle + endAngle) / 2 * Math.PI) / 180);
+      const pathData = createPieSlice(category, index, categories.length);
+      const textPos = getTextPosition(category, index, categories.length);
       
       return (
-        <G key={category.id}>
-          <Circle
-            cx={radius}
-            cy={radius}
-            r={radius - 10}
+        <React.Fragment key={category.id}>
+          {/* Pie slice */}
+          <Path
+            d={pathData}
             fill={category.color}
             stroke="#FFFFFF"
-            strokeWidth="3"
-            transform={`rotate(${startAngle} ${radius} ${radius})`}
-            strokeDasharray={`${segmentAngle * Math.PI * radius / 180} ${Math.PI * radius * 2}`}
-            strokeDashoffset="0"
+            strokeWidth="2"
           />
+          
+          {/* Text label - always vertical orientation */}
           <SvgText
-            x={textX}
-            y={textY}
-            fontSize="14"
+            x={textPos.x}
+            y={textPos.y}
+            fontSize="12"
             fontWeight="bold"
-            textAnchor="middle"
             fill="#FFFFFF"
-            stroke="#000000"
-            strokeWidth="1"
+            textAnchor="middle"
+            dominantBaseline="middle"
+            style={{
+              textShadow: '2px 2px 4px rgba(0,0,0,0.8)',
+              filter: 'drop-shadow(2px 2px 4px rgba(0,0,0,0.8))'
+            }}
           >
             {category.name}
           </SvgText>
-        </G>
+        </React.Fragment>
       );
     });
   };
@@ -78,16 +134,48 @@ const SpinWheel = ({ categories, isSpinning, winner }) => {
   return (
     <View style={styles.container}>
       <View style={styles.wheelWrapper}>
-        <Animated.View style={[styles.wheel, animatedStyle]}>
-          <Svg width={WHEEL_SIZE} height={WHEEL_SIZE}>
+        <View 
+          ref={wheelRef}
+          style={styles.wheelContainer}
+        >
+          <Svg
+            width={WHEEL_SIZE}
+            height={WHEEL_SIZE}
+            viewBox={`0 0 ${WHEEL_SIZE} ${WHEEL_SIZE}`}
+          >
+            {/* Outer circle border */}
+                <Circle
+                  cx={WHEEL_SIZE / 2}
+                  cy={WHEEL_SIZE / 2}
+                  r={(WHEEL_SIZE - Math.max(WHEEL_SIZE * 0.01, 6)) / 2}
+                  fill="transparent"
+                  stroke="#FFFFFF"
+                  strokeWidth={Math.max(WHEEL_SIZE * 0.008, 3)}
+                />
+            
+            {/* Pie slices */}
             {renderWheelSegments()}
+            
+            {/* Inner circle (center area) */}
+            <Circle
+              cx={WHEEL_SIZE / 2}
+              cy={WHEEL_SIZE / 2}
+              r={CENTER_LOGO_SIZE / 2}
+              fill="#FFD700"
+              stroke="#8B0000"
+              strokeWidth={Math.max(CENTER_LOGO_SIZE * 0.03, 4)}
+            />
           </Svg>
-        </Animated.View>
-        
-        {/* Center Logo */}
-        <View style={styles.centerLogo}>
-          <Text style={styles.logoText}>🎰</Text>
         </View>
+        
+            {/* Center Logo */}
+            <View style={styles.centerLogo}>
+              <Image 
+                source={{ uri: 'https://maharajafarmersmarketusa.com/wp-content/uploads/2024/04/mfm_logo.webp' }}
+                style={styles.logoImage}
+                resizeMode="contain"
+              />
+            </View>
         
         {/* Pointer */}
         <View style={styles.pointer} />
@@ -100,21 +188,15 @@ const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
     justifyContent: 'center',
+    position: 'relative',
   },
   wheelWrapper: {
     position: 'relative',
     alignItems: 'center',
     justifyContent: 'center',
   },
-  wheel: {
-    width: WHEEL_SIZE,
-    height: WHEEL_SIZE,
-    borderRadius: WHEEL_SIZE / 2,
-    elevation: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 5,
+  wheelContainer: {
+    // Clean container without shadows
   },
   centerLogo: {
     position: 'absolute',
@@ -127,15 +209,17 @@ const styles = StyleSheet.create({
     borderWidth: 4,
     borderColor: '#8B0000',
     elevation: 15,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.4,
-    shadowRadius: 6,
+    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.4)',
+    zIndex: 200,
   },
-  logoText: {
-    fontSize: 32,
-    fontWeight: 'bold',
-  },
+      logoText: {
+        fontSize: 32,
+        fontWeight: 'bold',
+      },
+      logoImage: {
+        width: CENTER_LOGO_SIZE * 0.8,
+        height: CENTER_LOGO_SIZE * 0.8,
+      },
   pointer: {
     position: 'absolute',
     top: -10,
@@ -147,7 +231,7 @@ const styles = StyleSheet.create({
     borderLeftColor: 'transparent',
     borderRightColor: 'transparent',
     borderBottomColor: '#8B0000',
-    zIndex: 10,
+    zIndex: 150,
   },
 });
 
