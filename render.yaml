@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: spin-wheel-app
+    env: node
+    plan: free
+    nodeVersion: 18
+    buildCommand: npm install && npm run build:web
+    startCommand: node server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: REACT_APP_SOUND_ENABLED
+        value: true
+      - key: REACT_APP_ANIMATIONS_ENABLED
+        value: true
+      - key: REACT_APP_HAPTIC_FEEDBACK
+        value: true
