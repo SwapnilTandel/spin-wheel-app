@@ -7,31 +7,42 @@ const { width, height } = Dimensions.get('window');
 const WHEEL_SIZE = Math.min(width * 0.95, height * 0.70);
 const CENTER_LOGO_SIZE = Math.min(WHEEL_SIZE * 0.25, 150);
 
-const SpinWheel = ({ categories, isSpinning, winner, isKeyboardSpinning, canStopSpin, userRequestedStop, onReset, onSpinComplete, resetRef }) => {
+const SpinWheel = ({ categories, isSpinning, winner, selectedCategory, isColorToggling, isKeyboardSpinning, canStopSpin, userRequestedStop, onReset, onSpinComplete, resetRef }) => {
   const wheelRef = useRef(null);
   const currentRotationRef = useRef(0);
   const { settings } = useSelector(state => state.wheel);
   const [winningIndex, setWinningIndex] = useState(null);
-  const [showShimmer, setShowShimmer] = useState(false);
+  const [colorToggle, setColorToggle] = useState(false);
   
-  // Handle shimmer animation when winner is determined
+  // Handle winning slice highlighting when winner is determined
   useEffect(() => {
     if (winner) {
       const index = categories.findIndex(cat => cat.id === winner.id);
       setWinningIndex(index);
-      setShowShimmer(true);
-      
-      // Hide shimmer after 2 seconds
-      const timer = setTimeout(() => {
-        setShowShimmer(false);
-      }, 2000);
-      
-      return () => clearTimeout(timer);
     } else {
       setWinningIndex(null);
-      setShowShimmer(false);
     }
   }, [winner, categories]);
+
+  // Handle color toggling effect
+  useEffect(() => {
+    let interval;
+    if (isColorToggling) {
+      // Start toggling every 500ms
+      interval = setInterval(() => {
+        setColorToggle(prev => !prev);
+      }, 500);
+    } else {
+      // Reset toggle state when toggling stops
+      setColorToggle(false);
+    }
+
+    return () => {
+      if (interval) {
+        clearInterval(interval);
+      }
+    };
+  }, [isColorToggling]);
   
   // Calculate which segment the pointer lands on
   const calculateWinner = (finalRotation) => {
@@ -270,6 +281,30 @@ const SpinWheel = ({ categories, isSpinning, winner, isKeyboardSpinning, canStop
     return '#333333';
   };
 
+  // Function to invert a hex color
+  const invertColor = (hexColor) => {
+    // Remove # if present
+    const color = hexColor.replace('#', '');
+    
+    // Convert to RGB
+    const r = parseInt(color.substr(0, 2), 16);
+    const g = parseInt(color.substr(2, 2), 16);
+    const b = parseInt(color.substr(4, 2), 16);
+    
+    // Invert RGB values
+    const invertedR = 255 - r;
+    const invertedG = 255 - g;
+    const invertedB = 255 - b;
+    
+    // Convert back to hex
+    const toHex = (n) => {
+      const hex = n.toString(16);
+      return hex.length === 1 ? '0' + hex : hex;
+    };
+    
+    return `#${toHex(invertedR)}${toHex(invertedG)}${toHex(invertedB)}`;
+  };
+
   const renderDiwaliDecorations = () => {
     const centerX = WHEEL_SIZE / 2;
     const centerY = WHEEL_SIZE / 2;
@@ -390,33 +425,30 @@ const SpinWheel = ({ categories, isSpinning, winner, isKeyboardSpinning, canStop
     return categories.map((category, index) => {
       const pathData = createPieSlice(category, index, categories.length);
       const textPos = getTextPosition(category, index, categories.length);
-      const textColor = getTextColor(category.color);
       
-      const isWinningSlice = winningIndex === index && showShimmer;
+      // Check if this is the selected category for background inversion
+      const isSelectedCategory = selectedCategory && selectedCategory.id === category.id;
+      // Toggle between original and inverted color every 500ms
+      const sliceColor = isSelectedCategory && isColorToggling 
+        ? (colorToggle ? invertColor(category.color) : category.color)
+        : category.color;
+      const textColor = getTextColor(sliceColor);
+      
+      const isWinningSlice = winningIndex === index;
       
       return (
         <React.Fragment key={category.id}>
-          {/* Pie slice with gold border and shimmer effect */}
+          {/* Pie slice with gold border */}
           <Path
             d={pathData}
-            fill={category.color}
+            fill={sliceColor}
             stroke={isWinningSlice ? "#FFD700" : "#FFD700"}
             strokeWidth={isWinningSlice ? "6" : "3"}
             opacity={isWinningSlice ? 0.9 : 1}
             style={{
-              filter: isWinningSlice ? 'drop-shadow(0 0 20px rgba(255,215,0,0.8)) drop-shadow(0 0 10px rgba(255,215,0,0.6))' : 'none',
-              animation: isWinningSlice ? 'shimmer 1s ease-in-out infinite alternate' : 'none'
+              filter: isWinningSlice ? 'drop-shadow(0 0 20px rgba(255,215,0,0.8))' : 'none'
             }}
           />
-          
-          {/* Shimmer overlay for winning slice */}
-          {isWinningSlice && (
-            <Path
-              d={pathData}
-              fill="url(#shimmerGradient)"
-              opacity="0.3"
-            />
-          )}
           
           {/* Text label - vibrant and catchy typography */}
           {/* Outer glow/shadow layer */}
@@ -454,11 +486,6 @@ const SpinWheel = ({ categories, isSpinning, winner, isKeyboardSpinning, canStop
             >
               {/* Diwali-themed gradients and patterns */}
               <Defs>
-                <LinearGradient id="shimmerGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <Stop offset="0%" stopColor="#FFD700" stopOpacity="0.8" />
-                  <Stop offset="50%" stopColor="#FFA500" stopOpacity="0.6" />
-                  <Stop offset="100%" stopColor="#FFD700" stopOpacity="0.8" />
-                </LinearGradient>
                 
                 {/* Diwali fire gradient */}
                 <LinearGradient id="fireGradient" x1="0%" y1="100%" x2="0%" y2="0%">
@@ -585,14 +612,6 @@ const styles = StyleSheet.create({
   },
   wheelContainer: {
     // Clean container without shadows
-  },
-  '@keyframes shimmer': {
-    '0%': {
-      filter: 'drop-shadow(0 0 20px rgba(255,215,0,0.8)) drop-shadow(0 0 10px rgba(255,215,0,0.6))',
-    },
-    '100%': {
-      filter: 'drop-shadow(0 0 30px rgba(255,215,0,1)) drop-shadow(0 0 15px rgba(255,215,0,0.8))',
-    },
   },
   centerLogo: {
     position: 'absolute',

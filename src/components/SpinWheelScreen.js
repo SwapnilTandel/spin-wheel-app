@@ -10,6 +10,8 @@ const SpinWheelScreen = ({ value, onReset }) => {
   const dispatch = useDispatch();
   const { categories, settings, isSpinning } = useSelector(state => state.wheel);
   const [winner, setWinner] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [isColorToggling, setIsColorToggling] = useState(false);
   const [resetKey, setResetKey] = useState(0);
   const [showCelebrationModal, setShowCelebrationModal] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
@@ -137,6 +139,10 @@ const SpinWheelScreen = ({ value, onReset }) => {
     dispatch(setSpinning(false));
     setIsKeyboardSpinning(false);
     
+    // Set selected category and start color toggling
+    setSelectedCategory(selectedCategory);
+    setIsColorToggling(true);
+    
     // Play win sound
     playSound('win');
     
@@ -146,8 +152,10 @@ const SpinWheelScreen = ({ value, onReset }) => {
       category: selectedCategory,
     }));
     
-    // Set winner and trigger celebration modal after 3 seconds
+    // Stop toggling after 3 seconds and set winner
     setTimeout(() => {
+      setIsColorToggling(false);
+      setSelectedCategory(null); // Revert background color
       setWinner(selectedCategory);
       console.log('Winner set, modal should appear');
     }, 3000);
@@ -260,6 +268,8 @@ const SpinWheelScreen = ({ value, onReset }) => {
           canStopSpin={canStopSpin}
           userRequestedStop={userRequestedStop}
           winner={winner}
+          selectedCategory={selectedCategory}
+          isColorToggling={isColorToggling}
           onReset={onReset}
           onSpinComplete={handleSpinComplete}
           resetRef={wheelResetRef}
