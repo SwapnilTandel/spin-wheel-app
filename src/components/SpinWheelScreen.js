@@ -17,6 +17,9 @@ const SpinWheelScreen = ({ value, onReset }) => {
   // Animation for celebration modal
   const modalScale = useRef(new Animated.Value(0)).current;
   const modalOpacity = useRef(new Animated.Value(0)).current;
+  
+  // Ref to access SpinWheel reset function
+  const wheelResetRef = useRef(null);
 
   // Handle reset functionality
   const handleReset = () => {
@@ -78,6 +81,13 @@ const SpinWheelScreen = ({ value, onReset }) => {
       }),
     ]).start(() => {
       setShowCelebrationModal(false);
+      // Reset the wheel to its original state when dialog closes
+      if (wheelResetRef.current) {
+        wheelResetRef.current();
+      }
+      // Also reset the winner state
+      setWinner(null);
+      setShowConfetti(false);
     });
   };
   
@@ -87,6 +97,34 @@ const SpinWheelScreen = ({ value, onReset }) => {
       console.log(`Playing ${type} sound`);
       // Web audio implementation would go here
     }
+  };
+
+  const handleSpinComplete = (selectedCategory) => {
+    
+    dispatch(setSpinning(false));
+    setWinner(selectedCategory);
+    
+    // Play win sound
+    playSound('win');
+    
+    // Show confetti
+    setShowConfetti(true);
+    setTimeout(() => setShowConfetti(false), 3000);
+    
+    // Add to history
+    dispatch(addToHistory({
+      wheelValue: value,
+      category: selectedCategory,
+    }));
+    
+    dispatch(setLastResult(selectedCategory));
+    
+    // Show result alert
+    Alert.alert(
+      '🎉 Congratulations!',
+      `You won: ${selectedCategory.name}`,
+      [{ text: 'Awesome!', style: 'default' }]
+    );
   };
 
   const handleSpin = () => {
@@ -105,55 +143,49 @@ const SpinWheelScreen = ({ value, onReset }) => {
 
     // Play ticking sound
     playSound('tick');
-
-    // Simulate spin duration
-    setTimeout(() => {
-      const randomIndex = Math.floor(Math.random() * wheelCategories.length);
-      const selectedCategory = wheelCategories[randomIndex];
-      
-      dispatch(setSpinning(false));
-      setWinner(selectedCategory);
-      
-      // Play win sound
-      playSound('win');
-      
-      // Show confetti
-      setShowConfetti(true);
-      setTimeout(() => setShowConfetti(false), 3000);
-      
-      // Add to history
-      dispatch(addToHistory({
-        wheelValue: value,
-        category: selectedCategory,
-      }));
-      
-      dispatch(setLastResult(selectedCategory));
-      
-      // Show result alert
-      Alert.alert(
-        '🎉 Congratulations!',
-        `You won: ${selectedCategory.name}`,
-        [{ text: 'Awesome!', style: 'default' }]
-      );
-      
-    }, 3000);
   };
 
   return (
-    <View style={styles.container}>
-      {/* Festive Background with Sparkles */}
-      <View style={styles.backgroundContainer}>
-        <View style={styles.sparkleContainer}>
-          <Text style={styles.sparkle}>✨</Text>
-          <Text style={[styles.sparkle, styles.sparkle2]}>⭐</Text>
-          <Text style={[styles.sparkle, styles.sparkle3]}>✨</Text>
-          <Text style={[styles.sparkle, styles.sparkle4]}>⭐</Text>
-          <Text style={[styles.sparkle, styles.sparkle5]}>✨</Text>
-          <Text style={[styles.sparkle, styles.sparkle6]}>⭐</Text>
-          <Text style={[styles.sparkle, styles.sparkle7]}>✨</Text>
-          <Text style={[styles.sparkle, styles.sparkle8]}>⭐</Text>
-        </View>
-      </View>
+    <View style={[
+      styles.container,
+      settings.backgroundTheme === 'custom' && styles.containerCustom
+    ]}>
+      {/* Custom Background Video */}
+      {settings.backgroundTheme === 'custom' && settings.backgroundVideo && (
+        <video 
+          src={settings.backgroundVideo}
+          autoPlay
+          loop
+          muted
+          playsInline
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            zIndex: 0,
+          }}
+        />
+      )}
+
+      {/* Custom Background Image */}
+      {settings.backgroundTheme === 'custom' && settings.backgroundImage && !settings.backgroundVideo && (
+        <img 
+          src={settings.backgroundImage} 
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            zIndex: 0,
+          }}
+          alt="Custom Background"
+        />
+      )}
 
       <View style={styles.wheelContainer}>
         <SpinWheel 
@@ -162,9 +194,13 @@ const SpinWheelScreen = ({ value, onReset }) => {
           isSpinning={isSpinning}
           winner={winner}
           onReset={onReset}
+          onSpinComplete={handleSpinComplete}
+          resetRef={wheelResetRef}
         />
-        
-        {/* Spin Button positioned at top right */}
+      </View>
+      
+      {/* Spin Button positioned at bottom, outside wheel container */}
+      <View style={styles.buttonContainer}>
         <TouchableOpacity 
           style={[
             styles.spinButton, 
@@ -174,7 +210,7 @@ const SpinWheelScreen = ({ value, onReset }) => {
           disabled={isSpinning}
         >
           <Text style={styles.spinButtonText}>
-            {isSpinning ? '🎰 Spinning...' : '🎰 SPIN THE WHEEL'}
+            {isSpinning ? 'SPINNING...' : 'SPIN'}
           </Text>
         </TouchableOpacity>
       </View>
@@ -211,13 +247,6 @@ const SpinWheelScreen = ({ value, onReset }) => {
             <Text style={styles.celebrationPrize}>{winner?.name}</Text>
             <Text style={styles.celebrationSubtext}>You've won an amazing prize!</Text>
             
-            {/* Close Button */}
-            <TouchableOpacity 
-              style={styles.closeButton}
-              onPress={closeCelebrationModal}
-            >
-              <Text style={styles.closeButtonText}>Close</Text>
-            </TouchableOpacity>
           </Animated.View>
         </View>
       </Modal>
@@ -233,36 +262,48 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 40,
     paddingHorizontal: 0,
+    position: 'relative',
+    overflow: 'hidden',
+  },
+  containerCustom: {
+    backgroundColor: '#FFFFFF',
   },
   wheelContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     width: '100%',
-    height: '100%',
     position: 'relative',
     zIndex: 10,
+    maxHeight: '75%',
+  },
+  buttonContainer: {
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 20,
+    paddingBottom: 30,
+    zIndex: 5,
   },
   spinButton: {
-    position: 'absolute',
-    top: 20,
-    right: 20,
     backgroundColor: '#FFD700',
-    paddingHorizontal: 30,
-    paddingVertical: 12,
-    borderRadius: 20,
+    paddingHorizontal: 80,
+    paddingVertical: 22,
+    borderRadius: 35,
     elevation: 10,
-    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.4)',
-    zIndex: 100,
+    boxShadow: '0 6px 12px rgba(0, 0, 0, 0.4)',
+    borderWidth: 4,
+    borderColor: '#B22222',
   },
   spinButtonDisabled: {
     backgroundColor: '#CCCCCC',
   },
   spinButtonText: {
     color: '#B22222',
-    fontSize: 18,
-    fontWeight: 'bold',
+    fontSize: 28,
+    fontWeight: '900',
     textAlign: 'center',
+    letterSpacing: 2,
   },
   resultContainer: {
     position: 'absolute',
@@ -304,14 +345,6 @@ const styles = StyleSheet.create({
     color: '#FFD700',
     textAlign: 'center',
     marginVertical: 5,
-  },
-  backgroundContainer: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    zIndex: 1,
   },
   sparkleContainer: {
     position: 'absolute',

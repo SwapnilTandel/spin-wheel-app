@@ -1,15 +1,16 @@
 import React, { useState, useRef } from 'react';
-import { View, StyleSheet, StatusBar, SafeAreaView, Text, TouchableOpacity, Animated } from 'react-native';
+import { View, StyleSheet, StatusBar, SafeAreaView, Text, TouchableOpacity, Animated, Alert } from 'react-native';
 import SpinWheelScreen from './components/SpinWheelScreen';
 import SettingsScreen from './components/SettingsScreen';
-import { Provider } from 'react-redux';
+import { Provider, useSelector } from 'react-redux';
 import { store } from './store/store';
 
-const App = () => {
+const AppContent = () => {
   const [activeTab, setActiveTab] = useState('spin50');
   const [isFabExpanded, setIsFabExpanded] = useState(false);
   const resetWheelRef = useRef(null);
   const fabAnimation = useRef(new Animated.Value(0)).current;
+  const settings = useSelector(state => state.wheel.settings);
 
   const handleResetWheel = () => {
     if (resetWheelRef.current) {
@@ -29,6 +30,21 @@ const App = () => {
   };
 
   const handleTabChange = (tab) => {
+    // Check if settings requires password
+    if (tab === 'settings' && settings.settingsPassword) {
+      const password = prompt('Enter settings password:');
+      if (password !== settings.settingsPassword) {
+        alert('Incorrect password!');
+        setIsFabExpanded(false);
+        Animated.timing(fabAnimation, {
+          toValue: 0,
+          duration: 200,
+          useNativeDriver: false,
+        }).start();
+        return;
+      }
+    }
+    
     setActiveTab(tab);
     setIsFabExpanded(false);
         Animated.timing(fabAnimation, {
@@ -52,7 +68,6 @@ const App = () => {
   };
 
   return (
-    <Provider store={store}>
       <SafeAreaView style={styles.container}>
         <StatusBar barStyle="light-content" backgroundColor="#2E7D32" />
         
@@ -137,7 +152,6 @@ const App = () => {
           </TouchableOpacity>
         </View>
       </SafeAreaView>
-    </Provider>
   );
 };
 
@@ -148,18 +162,22 @@ const styles = StyleSheet.create({
   },
   catchphraseContainer: {
     backgroundColor: '#B22222',
-    paddingVertical: 12,
+    paddingVertical: 20,
     paddingHorizontal: 20,
-    borderBottomWidth: 2,
+    borderBottomWidth: 3,
     borderBottomColor: '#FFD700',
+    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.3)',
   },
   catchphrase: {
     color: '#FFD700',
-    fontSize: 18,
-    fontWeight: 'bold',
+    fontSize: 32,
+    fontWeight: '900',
     textAlign: 'center',
     textTransform: 'uppercase',
-    letterSpacing: 1,
+    letterSpacing: 3,
+    textShadowColor: 'rgba(0, 0, 0, 0.5)',
+    textShadowOffset: { width: 2, height: 2 },
+    textShadowRadius: 4,
   },
   header: {
     backgroundColor: '#B22222',
@@ -231,5 +249,13 @@ const styles = StyleSheet.create({
     transform: [{ rotate: '45deg' }],
   },
 });
+
+const App = () => {
+  return (
+    <Provider store={store}>
+      <AppContent />
+    </Provider>
+  );
+};
 
 export default App;

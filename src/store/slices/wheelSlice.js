@@ -3,20 +3,30 @@ import { createSlice } from '@reduxjs/toolkit';
 const initialState = {
       categories: {
         50: [
-          { id: 1, name: 'Free Spin', color: '#B22222', image: null },
-          { id: 2, name: 'Try Again', color: '#FFD700', image: null },
-          { id: 3, name: 'Small Prize', color: '#FFF8E6', image: null },
-          { id: 4, name: 'Bonus Points', color: '#B22222', image: null },
-          { id: 5, name: 'Lucky Day', color: '#FFD700', image: null },
-          { id: 6, name: 'Jackpot!', color: '#FFF8E6', image: null },
+          { id: 1, name: '$200', color: '#B22222', image: null },
+          { id: 2, name: '$20', color: '#FFD700', image: null },
+          { id: 3, name: '$10', color: '#FFF8E6', image: null },
+          { id: 4, name: '$5', color: '#B22222', image: null },
+          { id: 5, name: 'Sugar 4LB', color: '#FFD700', image: null },
+          { id: 6, name: 'Maggie Masala - 700 gm', color: '#FFF8E6', image: null },
+          { id: 7, name: 'Parle - G 10pcs', color: '#B22222', image: null },
+          { id: 8, name: 'Yogurt 2LB', color: '#FFD700', image: null },
+          { id: 9, name: 'Bakery Product - $5', color: '#FFF8E6', image: null },
+          { id: 10, name: 'Deep Naan (1pk-5 pcs)', color: '#B22222', image: null },
+          { id: 11, name: 'Better Luck Next Time', color: '#FFD700', image: null },
         ],
         100: [
-          { id: 1, name: 'Premium Prize', color: '#B22222', image: null },
-          { id: 2, name: 'Double Win', color: '#FFD700', image: null },
-          { id: 3, name: 'Mega Bonus', color: '#FFF8E6', image: null },
-          { id: 4, name: 'Super Spin', color: '#B22222', image: null },
-          { id: 5, name: 'Golden Ticket', color: '#FFD700', image: null },
-          { id: 6, name: 'Grand Prize!', color: '#FFF8E6', image: null },
+          { id: 1, name: '$300', color: '#B22222', image: null },
+          { id: 2, name: '$50', color: '#FFD700', image: null },
+          { id: 3, name: '$25', color: '#FFF8E6', image: null },
+          { id: 4, name: '$10', color: '#B22222', image: null },
+          { id: 5, name: 'Olivelila Oil', color: '#FFD700', image: null },
+          { id: 6, name: 'Any Basmati Rice - 10 LB', color: '#FFF8E6', image: null },
+          { id: 7, name: 'Rajbhog Dahi - 4 LB', color: '#B22222', image: null },
+          { id: 8, name: 'Maharaja Brand Almond - 3 LB', color: '#FFD700', image: null },
+          { id: 9, name: 'Any Bakery Product - $10', color: '#FFF8E6', image: null },
+          { id: 10, name: 'Deep Tandoori Naan - Family PK', color: '#B22222', image: null },
+          { id: 11, name: 'Better Luck Next Time', color: '#FFD700', image: null },
         ]
       },
       settings: {
@@ -24,6 +34,11 @@ const initialState = {
         animationsEnabled: true,
         hapticFeedback: true,
         labelTextSize: 18, // Default text size for wheel labels
+        backgroundTheme: 'white', // Options: 'white', 'custom'
+        backgroundImage: null, // URL or base64 image for custom background
+        backgroundVideo: null, // URL or base64 video for custom background
+        settingsPassword: '1222', // Password to access settings (default: 1222)
+        recentColors: [], // Recently used colors
       },
   history: [],
   isSpinning: false,

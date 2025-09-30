@@ -7,7 +7,7 @@ const { width, height } = Dimensions.get('window');
 const WHEEL_SIZE = Math.min(width * 0.95, height * 0.70);
 const CENTER_LOGO_SIZE = Math.min(WHEEL_SIZE * 0.25, 150);
 
-const SpinWheel = ({ categories, isSpinning, winner, onReset }) => {
+const SpinWheel = ({ categories, isSpinning, winner, onReset, onSpinComplete, resetRef }) => {
   const wheelRef = useRef(null);
   const currentRotationRef = useRef(0);
   const { settings } = useSelector(state => state.wheel);
@@ -33,6 +33,28 @@ const SpinWheel = ({ categories, isSpinning, winner, onReset }) => {
     }
   }, [winner, categories]);
   
+  // Calculate which segment the pointer lands on
+  const calculateWinner = (finalRotation) => {
+    const totalCategories = categories.length;
+    const anglePerSlice = 360 / totalCategories;
+    
+    // Normalize rotation to 0-360 range
+    const normalizedRotation = ((finalRotation % 360) + 360) % 360;
+    console.log('normalizedRotation', normalizedRotation);
+    
+    // Find which segment the pointer is pointing to
+    // The pointer is at 0 degrees (12 o'clock position), so we need to find
+    // which segment contains the angle that's now at 0 degrees after rotation
+    const segmentAtPointer = Math.floor((360 - normalizedRotation) % 360 / anglePerSlice);
+    const winnerIndex = segmentAtPointer % totalCategories;
+    
+    console.log('segmentAtPointer', segmentAtPointer);
+    console.log('winnerIndex', winnerIndex);
+    console.log('winner category:', categories[winnerIndex]?.name);
+    
+    return categories[winnerIndex];
+  };
+
   useEffect(() => {
     if (isSpinning && wheelRef.current) {
       // Reset transition first
@@ -42,15 +64,43 @@ const SpinWheel = ({ categories, isSpinning, winner, onReset }) => {
       // Force a reflow to ensure the reset is applied
       wheelRef.current.offsetHeight;
 
-      // Calculate new rotation (always add to current rotation for consistency)
-      const additionalRotation = Math.random() * 360 + 1800; // 5 full rotations + random
-      currentRotationRef.current += additionalRotation;
+      // Calculate random final position for variety
+      // Add many more full rotations for dramatic visual effect
+      const fullRotations = Math.floor(Math.random() * 8) + 8; // 8-15 full rotations
+      const randomFinalAngle = Math.random() * 360; // Random final angle (0-360 degrees)
+      const targetRotation = fullRotations * 360 + randomFinalAngle;
+      currentRotationRef.current = targetRotation;
 
-      // Apply the transition and new rotation
-      wheelRef.current.style.transition = 'transform 3s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
-      wheelRef.current.style.transform = `rotate(${currentRotationRef.current}deg)`;
+      // Random spin duration between 4.1-10.0 seconds
+      const spinDuration = Math.random() * (10.0 - 4.1) + 4.1;
+      const spinDurationMs = Math.round(spinDuration * 1000);
+
+      // Create smooth animation with subtle speed variations
+      const smoothEasingOptions = [
+        'cubic-bezier(0.25, 0.46, 0.45, 0.94)', // Smooth ease-out
+        'cubic-bezier(0.4, 0, 0.2, 1)', // Smooth ease-in-out
+        'cubic-bezier(0.55, 0.085, 0.68, 0.53)', // Gentle ease-in
+        'cubic-bezier(0.25, 0.46, 0.45, 0.94)', // Standard ease-out
+        'cubic-bezier(0.4, 0, 0.2, 1)', // Material design ease
+        'cubic-bezier(0.25, 0.46, 0.45, 0.94)' // Smooth deceleration
+      ];
+      const randomEasing = smoothEasingOptions[Math.floor(Math.random() * smoothEasingOptions.length)];
+
+      // Apply smooth transition with subtle randomization
+      wheelRef.current.style.transition = `transform ${spinDuration}s ${randomEasing}`;
+      wheelRef.current.style.transform = `rotate(${targetRotation}deg)`;
+      
+      // Calculate and return the winner after animation completes
+      setTimeout(() => {
+        // Calculate the final rotation after the animation completes
+        const finalRotation = currentRotationRef.current;
+        const winner = calculateWinner(finalRotation);
+        if (onSpinComplete) {
+          onSpinComplete(winner);
+        }
+      }, spinDurationMs); // Match the CSS transition duration
     }
-  }, [isSpinning]);
+  }, [isSpinning, categories, onSpinComplete]);
 
   const resetWheel = () => {
     if (wheelRef.current) {
@@ -69,6 +119,13 @@ const SpinWheel = ({ categories, isSpinning, winner, onReset }) => {
       onReset.current = resetWheel;
     }
   }, [onReset]);
+
+  // Expose resetWheel function via resetRef
+  useEffect(() => {
+    if (resetRef && resetRef.current !== undefined) {
+      resetRef.current = resetWheel;
+    }
+  }, [resetRef]);
 
   const createPieSlice = (category, index, totalCategories) => {
     const centerX = WHEEL_SIZE / 2;
@@ -119,21 +176,26 @@ const SpinWheel = ({ categories, isSpinning, winner, onReset }) => {
   };
 
   const getTextColor = (backgroundColor) => {
-    // Use vibrant, highly visible colors based on background
+    // Use contrasting colors based on background for better readability
     const bgColor = backgroundColor.toLowerCase();
     
-    // For light/gold backgrounds, use bright vibrant red
-    if (bgColor.includes('fff') || bgColor.includes('ffd700') || bgColor.includes('ffe') || bgColor.includes('ffa')) {
-      return '#FF0000'; // Bright vivid red for light backgrounds
+    // For light/cream/gold backgrounds, use dark colors
+    if (bgColor.includes('fff') || bgColor.includes('ffd700') || bgColor.includes('ffe') || bgColor.includes('ffa') || bgColor.includes('fff8e6')) {
+      return '#8B0000'; // Deep maroon for light/cream backgrounds
     }
     
-    // For red backgrounds, use bright white with yellow tint
-    if (bgColor.includes('b22') || bgColor.includes('red')) {
-      return '#FFFF00'; // Bright yellow for red backgrounds
+    // For red/dark backgrounds, use light colors
+    if (bgColor.includes('b22') || bgColor.includes('red') || bgColor.includes('dark')) {
+      return '#FFFFFF'; // White for red/dark backgrounds
     }
     
-    // Default to bright vivid red
-    return '#FF0000';
+    // For other colors, use contrasting text
+    if (bgColor.includes('blue') || bgColor.includes('green') || bgColor.includes('purple')) {
+      return '#FFFFFF'; // White for colored backgrounds
+    }
+    
+    // Default to dark color for light backgrounds
+    return '#333333';
   };
 
   const renderDiwaliDecorations = () => {
@@ -286,57 +348,18 @@ const SpinWheel = ({ categories, isSpinning, winner, onReset }) => {
           
           {/* Text label - vibrant and catchy typography */}
           {/* Outer glow/shadow layer */}
+          {/* Rotated text aligned with wedge - like the reference image */}
           <SvgText
             x={textPos.x}
             y={textPos.y}
             fontSize={`${settings.labelTextSize || 14}`}
-            fontWeight="900"
-            fontFamily="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
-            fill="rgba(0,0,0,0.5)"
-            textAnchor="middle"
-            dominantBaseline="middle"
-            letterSpacing="1.2px"
-            stroke="rgba(0,0,0,0.8)"
-            strokeWidth="4"
-          >
-            {category.name}
-          </SvgText>
-          
-          {/* Golden outline layer */}
-          <SvgText
-            x={textPos.x}
-            y={textPos.y}
-            fontSize={`${settings.labelTextSize || 14}`}
-            fontWeight="900"
-            fontFamily="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
-            fill="none"
-            textAnchor="middle"
-            dominantBaseline="middle"
-            letterSpacing="1.2px"
-            stroke="#FFD700"
-            strokeWidth="3"
-            style={{
-              filter: 'drop-shadow(0 0 8px rgba(255,215,0,1))'
-            }}
-          >
-            {category.name}
-          </SvgText>
-          
-          {/* Main text layer - vibrant color */}
-          <SvgText
-            x={textPos.x}
-            y={textPos.y}
-            fontSize={`${settings.labelTextSize || 14}`}
-            fontWeight="900"
+            fontWeight="700"
             fontFamily="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
             fill={textColor}
             textAnchor="middle"
             dominantBaseline="middle"
-            letterSpacing="1.2px"
-            style={{
-              filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.8)) drop-shadow(0 0 10px rgba(255,255,255,0.6))',
-              textShadow: '0 2px 4px rgba(0,0,0,0.8), 0 0 10px rgba(255,255,255,0.6)'
-            }}
+            letterSpacing="0.5px"
+            transform={`rotate(${textPos.angle}, ${textPos.x}, ${textPos.y})`}
           >
             {category.name}
           </SvgText>
@@ -488,16 +511,18 @@ const styles = StyleSheet.create({
   },
   pointer: {
     position: 'absolute',
-    top: -10,
+    right: -10,
+    top: '50%',
     width: 0,
     height: 0,
-    borderLeftWidth: 15,
-    borderRightWidth: 15,
-    borderBottomWidth: 30,
-    borderLeftColor: 'transparent',
-    borderRightColor: 'transparent',
-    borderBottomColor: '#B22222',
+    borderTopWidth: 15,
+    borderBottomWidth: 15,
+    borderLeftWidth: 30,
+    borderTopColor: 'transparent',
+    borderBottomColor: 'transparent',
+    borderLeftColor: '#B22222',
     zIndex: 150,
+    transform: [{ translateY: -15 }, { rotate: '180deg' }],
   },
 });
 

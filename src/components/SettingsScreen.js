@@ -20,7 +20,9 @@ const SettingsScreen = () => {
   console.log('SettingsScreen - Current settings:', settings);
   const [activeTab, setActiveTab] = useState(50);
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
   const [newCategory, setNewCategory] = useState({ name: '', color: '#B22222' });
+  const [editingCategory, setEditingCategory] = useState(null);
 
   const handleAddCategory = () => {
     if (!newCategory.name.trim()) {
@@ -32,6 +34,9 @@ const SettingsScreen = () => {
       wheelValue: activeTab,
       category: newCategory
     }));
+    
+    // Add color to recent colors
+    addToRecentColors(newCategory.color);
 
       setNewCategory({ name: '', color: '#B22222' });
     setShowAddModal(false);
@@ -50,6 +55,34 @@ const SettingsScreen = () => {
     }
   };
 
+  const handleEditCategory = (category) => {
+    setEditingCategory({ ...category });
+    setShowEditModal(true);
+  };
+
+  const handleSaveEdit = () => {
+    if (!editingCategory.name.trim()) {
+      alert('Error: Please enter a category name!');
+      return;
+    }
+
+    dispatch(updateCategory({
+      wheelValue: activeTab,
+      categoryId: editingCategory.id,
+      updates: {
+        name: editingCategory.name,
+        color: editingCategory.color
+      }
+    }));
+    
+    // Add color to recent colors
+    addToRecentColors(editingCategory.color);
+
+    setShowEditModal(false);
+    setEditingCategory(null);
+    alert('Success: Category updated successfully!');
+  };
+
   const handleSettingChange = (key, value) => {
     console.log('handleSettingChange called:', key, value);
     console.log('Current settings before:', settings);
@@ -57,40 +90,157 @@ const SettingsScreen = () => {
     console.log('Dispatch called for:', key, value);
   };
 
+  const handleImageUpload = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      // Check file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        alert('Error: Image size should be less than 5MB');
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const imageDataUrl = e.target.result;
+        handleSettingChange('backgroundImage', imageDataUrl);
+        // Clear video if image is uploaded
+        handleSettingChange('backgroundVideo', null);
+        alert('Success: Background image uploaded!');
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleVideoUpload = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      // Check file size (max 50MB for video)
+      if (file.size > 50 * 1024 * 1024) {
+        alert('Error: Video size should be less than 50MB');
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const videoDataUrl = e.target.result;
+        handleSettingChange('backgroundVideo', videoDataUrl);
+        // Clear image if video is uploaded
+        handleSettingChange('backgroundImage', null);
+        alert('Success: Background video uploaded!');
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const colorOptions = [
     // Primary Maharaja theme colors
-    '#B22222', '#FFD700', '#FFF8E6', '#FFFFFF',
+    { color: '#B22222', name: 'Fire Brick' },
+    { color: '#FFD700', name: 'Gold' },
+    { color: '#FFF8E6', name: 'Cream' },
+    { color: '#FFFFFF', name: 'White' },
     // Vibrant colors
-    '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4',
-    '#FF9F43', '#10AC84', '#5F27CD', '#00D2D3',
+    { color: '#FF6B6B', name: 'Coral Red' },
+    { color: '#4ECDC4', name: 'Turquoise' },
+    { color: '#45B7D1', name: 'Sky Blue' },
+    { color: '#96CEB4', name: 'Mint' },
+    { color: '#FF9F43', name: 'Orange' },
+    { color: '#10AC84', name: 'Emerald' },
+    { color: '#5F27CD', name: 'Purple' },
+    { color: '#00D2D3', name: 'Cyan' },
     // Blue tones
-    '#0066CC', '#3366FF', '#0099FF', '#00CCFF',
-    '#0066FF', '#3399FF', '#66CCFF', '#99DDFF',
+    { color: '#0066CC', name: 'Royal Blue' },
+    { color: '#3366FF', name: 'Blue' },
+    { color: '#0099FF', name: 'Azure' },
+    { color: '#00CCFF', name: 'Light Blue' },
+    { color: '#0066FF', name: 'Bright Blue' },
+    { color: '#3399FF', name: 'Dodger Blue' },
+    { color: '#66CCFF', name: 'Sky' },
+    { color: '#99DDFF', name: 'Pale Blue' },
     // Green tones
-    '#00CC66', '#33FF99', '#66FFCC', '#99FFDD',
-    '#009966', '#00FF99', '#33CC99', '#66FF99',
+    { color: '#00CC66', name: 'Sea Green' },
+    { color: '#33FF99', name: 'Spring Green' },
+    { color: '#66FFCC', name: 'Aquamarine' },
+    { color: '#99FFDD', name: 'Pale Green' },
+    { color: '#009966', name: 'Jade' },
+    { color: '#00FF99', name: 'Mint Green' },
+    { color: '#33CC99', name: 'Teal' },
+    { color: '#66FF99', name: 'Light Green' },
     // Red tones
-    '#FF3366', '#FF6699', '#FF99CC', '#FFCCDD',
-    '#CC0033', '#FF0033', '#FF3366', '#FF6699',
+    { color: '#FF3366', name: 'Rose' },
+    { color: '#FF6699', name: 'Pink Red' },
+    { color: '#FF99CC', name: 'Light Pink' },
+    { color: '#FFCCDD', name: 'Blush' },
+    { color: '#CC0033', name: 'Crimson' },
+    { color: '#FF0033', name: 'Red' },
+    { color: '#FF6699', name: 'Hot Pink' },
     // Purple tones
-    '#9966FF', '#CC99FF', '#DDCCFF', '#EEEEFF',
-    '#6633CC', '#9933FF', '#CC66FF', '#DD99FF',
+    { color: '#9966FF', name: 'Violet' },
+    { color: '#CC99FF', name: 'Lavender' },
+    { color: '#DDCCFF', name: 'Lilac' },
+    { color: '#EEEEFF', name: 'Pale Purple' },
+    { color: '#6633CC', name: 'Indigo' },
+    { color: '#9933FF', name: 'Purple' },
+    { color: '#CC66FF', name: 'Orchid' },
+    { color: '#DD99FF', name: 'Mauve' },
     // Orange tones
-    '#FF6633', '#FF9966', '#FFCC99', '#FFDDCC',
-    '#FF3300', '#FF6600', '#FF9900', '#FFCC00',
+    { color: '#FF6633', name: 'Coral' },
+    { color: '#FF9966', name: 'Peach' },
+    { color: '#FFCC99', name: 'Apricot' },
+    { color: '#FFDDCC', name: 'Pale Orange' },
+    { color: '#FF3300', name: 'Orange Red' },
+    { color: '#FF6600', name: 'Bright Orange' },
+    { color: '#FF9900', name: 'Amber' },
+    { color: '#FFCC00', name: 'Yellow Orange' },
     // Pink tones
-    '#FF33CC', '#FF66DD', '#FF99EE', '#FFCCFF',
-    '#CC0099', '#FF00CC', '#FF33DD', '#FF66EE',
+    { color: '#FF33CC', name: 'Magenta' },
+    { color: '#FF66DD', name: 'Pink' },
+    { color: '#FF99EE', name: 'Light Magenta' },
+    { color: '#FFCCFF', name: 'Pale Pink' },
+    { color: '#CC0099', name: 'Deep Pink' },
+    { color: '#FF00CC', name: 'Fuchsia' },
+    { color: '#FF33DD', name: 'Hot Magenta' },
+    { color: '#FF66EE', name: 'Bright Pink' },
     // Yellow tones
-    '#FFFF00', '#FFFF33', '#FFFF66', '#FFFF99',
-    '#FFCC00', '#FFDD33', '#FFEE66', '#FFFFCC',
+    { color: '#FFFF00', name: 'Yellow' },
+    { color: '#FFFF33', name: 'Bright Yellow' },
+    { color: '#FFFF66', name: 'Light Yellow' },
+    { color: '#FFFF99', name: 'Pale Yellow' },
+    { color: '#FFCC00', name: 'Golden Yellow' },
+    { color: '#FFDD33', name: 'Canary' },
+    { color: '#FFEE66', name: 'Lemon' },
+    { color: '#FFFFCC', name: 'Cream Yellow' },
     // Dark colors
-    '#333333', '#666666', '#999999', '#CCCCCC',
-    '#000000', '#1A1A1A', '#333366', '#663333',
+    { color: '#333333', name: 'Dark Gray' },
+    { color: '#666666', name: 'Gray' },
+    { color: '#999999', name: 'Silver' },
+    { color: '#CCCCCC', name: 'Light Gray' },
+    { color: '#000000', name: 'Black' },
+    { color: '#1A1A1A', name: 'Almost Black' },
+    { color: '#333366', name: 'Dark Blue' },
+    { color: '#663333', name: 'Dark Brown' },
     // Light colors
-    '#F0F0F0', '#F5F5F5', '#FAFAFA', '#FFFFFF',
-    '#E6F3FF', '#F0F8FF', '#FFF8DC', '#F5FFFA'
+    { color: '#F0F0F0', name: 'Off White' },
+    { color: '#F5F5F5', name: 'White Smoke' },
+    { color: '#FAFAFA', name: 'Snow' },
+    { color: '#E6F3FF', name: 'Alice Blue' },
+    { color: '#F0F8FF', name: 'Azure White' },
+    { color: '#FFF8DC', name: 'Cornsilk' },
+    { color: '#F5FFFA', name: 'Mint Cream' }
   ];
+  
+  const addToRecentColors = (color) => {
+    const recentColors = settings.recentColors || [];
+    // Remove color if it already exists
+    const filtered = recentColors.filter(c => c !== color);
+    // Add to beginning and keep max 12 recent colors
+    const updated = [color, ...filtered].slice(0, 12);
+    handleSettingChange('recentColors', updated);
+  };
+
+  const getColorName = (colorHex) => {
+    const colorInfo = colorOptions.find(c => c.color.toUpperCase() === colorHex.toUpperCase());
+    return colorInfo ? colorInfo.name : colorHex;
+  };
 
   return (
     <ScrollView style={styles.container}>
@@ -127,14 +277,26 @@ const SettingsScreen = () => {
         {categories[activeTab].map((category) => (
           <View key={category.id} style={styles.categoryItem}>
             <View style={[styles.colorIndicator, { backgroundColor: category.color }]} />
-            <Text style={styles.categoryName}>{category.name}</Text>
-            <TouchableOpacity 
-              style={styles.deleteButton}
-              onPress={() => handleRemoveCategory(category.id)}
-              activeOpacity={0.7}
-            >
-              <Text style={styles.deleteButtonText}>🗑️</Text>
-            </TouchableOpacity>
+            <View style={styles.categoryInfo}>
+              <Text style={styles.categoryName}>{category.name}</Text>
+              <Text style={styles.categoryColorName}>{getColorName(category.color)}</Text>
+            </View>
+            <View style={styles.categoryActions}>
+              <TouchableOpacity 
+                style={styles.editButton}
+                onPress={() => handleEditCategory(category)}
+                activeOpacity={0.7}
+              >
+                <Text style={styles.editButtonText}>✏️</Text>
+              </TouchableOpacity>
+              <TouchableOpacity 
+                style={styles.deleteButton}
+                onPress={() => handleRemoveCategory(category.id)}
+                activeOpacity={0.7}
+              >
+                <Text style={styles.deleteButtonText}>🗑️</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         ))}
       </View>
@@ -171,6 +333,136 @@ const SettingsScreen = () => {
             thumbColor={settings.hapticFeedback ? '#f5dd4b' : '#f4f3f4'}
           />
         </View>
+
+        <View style={styles.settingItem}>
+          <Text style={styles.settingLabel}>Label Text Size</Text>
+          <View style={styles.textSizeContainer}>
+            <Pressable 
+              style={styles.textSizeButton}
+              onPress={() => handleSettingChange('labelTextSize', Math.max(10, (settings.labelTextSize || 18) - 1))}
+            >
+              <Text style={styles.textSizeButtonText}>-</Text>
+            </Pressable>
+            <Text style={styles.textSizeValue}>{settings.labelTextSize || 18}</Text>
+            <Pressable 
+              style={styles.textSizeButton}
+              onPress={() => handleSettingChange('labelTextSize', Math.min(32, (settings.labelTextSize || 18) + 1))}
+            >
+              <Text style={styles.textSizeButtonText}>+</Text>
+            </Pressable>
+          </View>
+        </View>
+
+        <View style={styles.settingItem}>
+          <Text style={styles.settingLabel}>Background Theme</Text>
+          <View style={styles.themeButtons}>
+            <TouchableOpacity
+              style={[
+                styles.themeButton,
+                settings.backgroundTheme === 'white' && styles.themeButtonActive
+              ]}
+              onPress={() => handleSettingChange('backgroundTheme', 'white')}
+            >
+              <Text style={[
+                styles.themeButtonText,
+                settings.backgroundTheme === 'white' && styles.themeButtonTextActive
+              ]}>
+                White
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.themeButton,
+                settings.backgroundTheme === 'custom' && styles.themeButtonActive
+              ]}
+              onPress={() => handleSettingChange('backgroundTheme', 'custom')}
+            >
+              <Text style={[
+                styles.themeButtonText,
+                settings.backgroundTheme === 'custom' && styles.themeButtonTextActive
+              ]}>
+                🖼️ Custom
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        {settings.backgroundTheme === 'custom' && (
+          <>
+            <View style={styles.settingItem}>
+              <Text style={styles.settingLabel}>Background Image</Text>
+              <View style={styles.imageUploadContainer}>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  style={{ display: 'none' }}
+                  id="background-image-upload"
+                />
+                <TouchableOpacity
+                  style={styles.uploadButton}
+                  onPress={() => document.getElementById('background-image-upload').click()}
+                >
+                  <Text style={styles.uploadButtonText}>
+                    {settings.backgroundImage ? '✓ Change Image' : '📁 Upload Image'}
+                  </Text>
+                </TouchableOpacity>
+                {settings.backgroundImage && (
+                  <TouchableOpacity
+                    style={styles.clearButton}
+                    onPress={() => handleSettingChange('backgroundImage', null)}
+                  >
+                    <Text style={styles.clearButtonText}>✕ Clear</Text>
+                  </TouchableOpacity>
+                )}
+              </View>
+            </View>
+
+            <View style={styles.settingItem}>
+              <Text style={styles.settingLabel}>Background Video</Text>
+              <View style={styles.imageUploadContainer}>
+                <input
+                  type="file"
+                  accept="video/*"
+                  onChange={handleVideoUpload}
+                  style={{ display: 'none' }}
+                  id="background-video-upload"
+                />
+                <TouchableOpacity
+                  style={styles.uploadButton}
+                  onPress={() => document.getElementById('background-video-upload').click()}
+                >
+                  <Text style={styles.uploadButtonText}>
+                    {settings.backgroundVideo ? '✓ Change Video' : '🎥 Upload Video'}
+                  </Text>
+                </TouchableOpacity>
+                {settings.backgroundVideo && (
+                  <TouchableOpacity
+                    style={styles.clearButton}
+                    onPress={() => handleSettingChange('backgroundVideo', null)}
+                  >
+                    <Text style={styles.clearButtonText}>✕ Clear</Text>
+                  </TouchableOpacity>
+                )}
+              </View>
+            </View>
+          </>
+        )}
+
+        <View style={styles.settingItem}>
+          <Text style={styles.settingLabel}>Settings Password</Text>
+          <TextInput
+            style={styles.passwordInput}
+            value={settings.settingsPassword}
+            onChangeText={(value) => handleSettingChange('settingsPassword', value)}
+            placeholder="Enter password (empty = no protection)"
+            placeholderTextColor="#999"
+            secureTextEntry={false}
+          />
+        </View>
+        <Text style={styles.passwordHint}>
+          Set a password to protect settings. Leave empty for no protection.
+        </Text>
 
       </View>
 
@@ -210,19 +502,55 @@ const SettingsScreen = () => {
             />
 
             <Text style={styles.colorLabel}>Choose Color:</Text>
-            <View style={styles.colorGrid}>
-              {colorOptions.map((color) => (
-                <TouchableOpacity
-                  key={color}
-                  style={[
-                    styles.colorOption,
-                    { backgroundColor: color },
-                    newCategory.color === color && styles.selectedColor
-                  ]}
-                  onPress={() => setNewCategory({ ...newCategory, color })}
-                />
-              ))}
-            </View>
+            
+            {/* Recently Used Colors */}
+            {settings.recentColors && settings.recentColors.length > 0 && (
+              <View style={styles.recentColorsSection}>
+                <Text style={styles.recentColorsLabel}>Recently Used:</Text>
+                <View style={styles.recentColorsGrid}>
+                  {settings.recentColors.map((color, index) => {
+                    const colorInfo = colorOptions.find(c => c.color === color);
+                    return (
+                      <View key={`recent-${index}`} style={styles.colorWithName}>
+                        <TouchableOpacity
+                          style={[
+                            styles.colorOption,
+                            { backgroundColor: color },
+                            newCategory.color === color && styles.selectedColor
+                          ]}
+                          onPress={() => setNewCategory({ ...newCategory, color })}
+                        />
+                        <Text style={styles.colorName} numberOfLines={1}>
+                          {colorInfo ? colorInfo.name : color}
+                        </Text>
+                      </View>
+                    );
+                  })}
+                </View>
+              </View>
+            )}
+            
+            {/* All Colors */}
+            <Text style={styles.allColorsLabel}>All Colors:</Text>
+            <ScrollView style={styles.colorScrollView} nestedScrollEnabled={true}>
+              <View style={styles.colorGrid}>
+                {colorOptions.map((colorObj) => (
+                  <View key={colorObj.color} style={styles.colorWithName}>
+                    <TouchableOpacity
+                      style={[
+                        styles.colorOption,
+                        { backgroundColor: colorObj.color },
+                        newCategory.color === colorObj.color && styles.selectedColor
+                      ]}
+                      onPress={() => setNewCategory({ ...newCategory, color: colorObj.color })}
+                    />
+                    <Text style={styles.colorName} numberOfLines={1}>
+                      {colorObj.name}
+                    </Text>
+                  </View>
+                ))}
+              </View>
+            </ScrollView>
 
             <View style={styles.modalButtons}>
               <TouchableOpacity 
@@ -238,6 +566,100 @@ const SettingsScreen = () => {
                 <Text style={styles.modalAddButtonText}>Add</Text>
               </TouchableOpacity>
             </View>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Edit Category Modal */}
+      <Modal
+        visible={showEditModal}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={() => setShowEditModal(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Edit Category</Text>
+            
+            {editingCategory && (
+              <>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Category name"
+                  value={editingCategory.name}
+                  onChangeText={(text) => setEditingCategory({ ...editingCategory, name: text })}
+                />
+
+                <Text style={styles.colorLabel}>Choose Color:</Text>
+                
+                {/* Recently Used Colors */}
+                {settings.recentColors && settings.recentColors.length > 0 && (
+                  <View style={styles.recentColorsSection}>
+                    <Text style={styles.recentColorsLabel}>Recently Used:</Text>
+                    <View style={styles.recentColorsGrid}>
+                      {settings.recentColors.map((color, index) => {
+                        const colorInfo = colorOptions.find(c => c.color === color);
+                        return (
+                          <View key={`recent-${index}`} style={styles.colorWithName}>
+                            <TouchableOpacity
+                              style={[
+                                styles.colorOption,
+                                { backgroundColor: color },
+                                editingCategory.color === color && styles.selectedColor
+                              ]}
+                              onPress={() => setEditingCategory({ ...editingCategory, color })}
+                            />
+                            <Text style={styles.colorName} numberOfLines={1}>
+                              {colorInfo ? colorInfo.name : color}
+                            </Text>
+                          </View>
+                        );
+                      })}
+                    </View>
+                  </View>
+                )}
+                
+                {/* All Colors */}
+                <Text style={styles.allColorsLabel}>All Colors:</Text>
+                <ScrollView style={styles.colorScrollView} nestedScrollEnabled={true}>
+                  <View style={styles.colorGrid}>
+                    {colorOptions.map((colorObj) => (
+                      <View key={colorObj.color} style={styles.colorWithName}>
+                        <TouchableOpacity
+                          style={[
+                            styles.colorOption,
+                            { backgroundColor: colorObj.color },
+                            editingCategory.color === colorObj.color && styles.selectedColor
+                          ]}
+                          onPress={() => setEditingCategory({ ...editingCategory, color: colorObj.color })}
+                        />
+                        <Text style={styles.colorName} numberOfLines={1}>
+                          {colorObj.name}
+                        </Text>
+                      </View>
+                    ))}
+                  </View>
+                </ScrollView>
+
+                <View style={styles.modalButtons}>
+                  <TouchableOpacity 
+                    style={[styles.modalButton, styles.cancelButton]}
+                    onPress={() => {
+                      setShowEditModal(false);
+                      setEditingCategory(null);
+                    }}
+                  >
+                    <Text style={styles.cancelButtonText}>Cancel</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity 
+                    style={[styles.modalButton, styles.modalAddButton]}
+                    onPress={handleSaveEdit}
+                  >
+                    <Text style={styles.modalAddButtonText}>Save</Text>
+                  </TouchableOpacity>
+                </View>
+              </>
+            )}
           </View>
         </View>
       </Modal>
@@ -312,22 +734,48 @@ const styles = StyleSheet.create({
   categoryItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 10,
+    paddingVertical: 12,
     borderBottomWidth: 1,
     borderBottomColor: '#E0E0E0',
   },
   colorIndicator: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-    marginRight: 15,
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    marginRight: 12,
     borderWidth: 1,
     borderColor: '#CCCCCC',
   },
-  categoryName: {
+  categoryInfo: {
     flex: 1,
+    flexDirection: 'column',
+  },
+  categoryName: {
     fontSize: 16,
     color: '#333333',
+    fontWeight: '600',
+    marginBottom: 2,
+  },
+  categoryColorName: {
+    fontSize: 12,
+    color: '#666666',
+    fontStyle: 'italic',
+  },
+  categoryActions: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  editButton: {
+    padding: 8,
+    backgroundColor: '#E6F3FF',
+    borderRadius: 6,
+    minWidth: 36,
+    minHeight: 36,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  editButtonText: {
+    fontSize: 18,
   },
   deleteButton: {
     padding: 8,
@@ -352,6 +800,89 @@ const styles = StyleSheet.create({
   settingLabel: {
     fontSize: 16,
     color: '#333333',
+  },
+  themeButtons: {
+    flexDirection: 'row',
+    gap: 10,
+  },
+  themeButton: {
+    paddingHorizontal: 20,
+    paddingVertical: 8,
+    borderRadius: 20,
+    backgroundColor: '#F0F0F0',
+    borderWidth: 2,
+    borderColor: '#E0E0E0',
+  },
+  themeButtonActive: {
+    backgroundColor: '#FFD700',
+    borderColor: '#B22222',
+  },
+  themeButtonText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#666666',
+  },
+  themeButtonTextActive: {
+    color: '#B22222',
+    fontWeight: 'bold',
+  },
+  textSizeContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 15,
+  },
+  textSizeButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#FFD700',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 2,
+    borderColor: '#B22222',
+  },
+  textSizeButtonText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#B22222',
+  },
+  textSizeValue: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#333333',
+    minWidth: 40,
+    textAlign: 'center',
+  },
+  imageUploadContainer: {
+    flexDirection: 'row',
+    gap: 10,
+    alignItems: 'center',
+  },
+  uploadButton: {
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 8,
+    backgroundColor: '#4CAF50',
+    borderWidth: 2,
+    borderColor: '#45a049',
+  },
+  uploadButtonText: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  clearButton: {
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+    borderRadius: 8,
+    backgroundColor: '#f44336',
+    borderWidth: 2,
+    borderColor: '#da190b',
+  },
+  clearButtonText: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontWeight: '600',
   },
   historyItem: {
     paddingVertical: 10,
@@ -408,23 +939,60 @@ const styles = StyleSheet.create({
     color: '#333333',
     marginBottom: 10,
   },
+  recentColorsSection: {
+    marginBottom: 15,
+    paddingBottom: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: '#EEEEEE',
+  },
+  recentColorsLabel: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#B22222',
+    marginBottom: 8,
+  },
+  recentColorsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  allColorsLabel: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#333333',
+    marginBottom: 8,
+  },
+  colorScrollView: {
+    maxHeight: 200,
+    marginBottom: 20,
+  },
   colorGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    marginBottom: 20,
-    justifyContent: 'space-between',
+    gap: 8,
+  },
+  colorWithName: {
+    alignItems: 'center',
+    width: 60,
+    marginBottom: 8,
   },
   colorOption: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    margin: 3,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     borderWidth: 2,
     borderColor: 'transparent',
+    marginBottom: 4,
   },
   selectedColor: {
     borderColor: '#B22222',
     borderWidth: 3,
+  },
+  colorName: {
+    fontSize: 10,
+    color: '#666666',
+    textAlign: 'center',
+    width: '100%',
   },
   modalButtons: {
     flexDirection: 'row',
@@ -450,6 +1018,24 @@ const styles = StyleSheet.create({
   modalAddButtonText: {
     color: '#FFFFFF',
     fontWeight: 'bold',
+  },
+  passwordInput: {
+    flex: 1,
+    marginLeft: 10,
+    padding: 10,
+    borderWidth: 1,
+    borderColor: '#DDD',
+    borderRadius: 8,
+    fontSize: 16,
+    backgroundColor: '#F9F9F9',
+  },
+  passwordHint: {
+    fontSize: 12,
+    color: '#666',
+    fontStyle: 'italic',
+    marginTop: -10,
+    marginBottom: 10,
+    paddingHorizontal: 15,
   },
 });
 
