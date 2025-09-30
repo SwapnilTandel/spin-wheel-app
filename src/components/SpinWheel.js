@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, StyleSheet, Dimensions, TouchableOpacity, Image } from 'react-native';
 import { useSelector } from 'react-redux';
-import Svg, { Circle, Path, Text as SvgText, Defs, LinearGradient, Stop } from 'react-native-svg';
+import Svg, { Circle, Path, Text as SvgText, Defs, LinearGradient, Stop, G, Rect, Ellipse } from 'react-native-svg';
 
 const { width, height } = Dimensions.get('window');
 const WHEEL_SIZE = Math.min(width * 0.95, height * 0.70);
@@ -119,8 +119,137 @@ const SpinWheel = ({ categories, isSpinning, winner, onReset }) => {
   };
 
   const getTextColor = (backgroundColor) => {
-    // Always use dark text for high contrast
-    return '#B22222'; // Dark red for all backgrounds
+    // Use vibrant, highly visible colors based on background
+    const bgColor = backgroundColor.toLowerCase();
+    
+    // For light/gold backgrounds, use bright vibrant red
+    if (bgColor.includes('fff') || bgColor.includes('ffd700') || bgColor.includes('ffe') || bgColor.includes('ffa')) {
+      return '#FF0000'; // Bright vivid red for light backgrounds
+    }
+    
+    // For red backgrounds, use bright white with yellow tint
+    if (bgColor.includes('b22') || bgColor.includes('red')) {
+      return '#FFFF00'; // Bright yellow for red backgrounds
+    }
+    
+    // Default to bright vivid red
+    return '#FF0000';
+  };
+
+  const renderDiwaliDecorations = () => {
+    const centerX = WHEEL_SIZE / 2;
+    const centerY = WHEEL_SIZE / 2;
+    const outerRadius = (WHEEL_SIZE - 6) / 2 + 20;
+    
+    // Create diyas (oil lamps) around the wheel
+    const diyaPositions = [];
+    for (let i = 0; i < 8; i++) {
+      const angle = (i * 45) * Math.PI / 180;
+      const x = centerX + outerRadius * Math.cos(angle);
+      const y = centerY + outerRadius * Math.sin(angle);
+      diyaPositions.push({ x, y, angle });
+    }
+    
+    return (
+      <G>
+        {/* Diyas around the wheel */}
+        {diyaPositions.map((pos, index) => (
+          <G key={index}>
+            {/* Diya base */}
+            <Ellipse
+              cx={pos.x}
+              cy={pos.y + 5}
+              rx="8"
+              ry="4"
+              fill="#8B4513"
+            />
+            {/* Diya flame */}
+            <Path
+              d={`M ${pos.x-3} ${pos.y-8} Q ${pos.x} ${pos.y-15} ${pos.x+3} ${pos.y-8} Q ${pos.x} ${pos.y-5} ${pos.x-3} ${pos.y-8}`}
+              fill="url(#fireGradient)"
+            />
+            {/* Diya glow */}
+            <Circle
+              cx={pos.x}
+              cy={pos.y-5}
+              r="12"
+              fill="rgba(255,215,0,0.2)"
+            />
+          </G>
+        ))}
+        
+        {/* Fireworks around the wheel */}
+        {[0, 60, 120, 180, 240, 300].map((angle, index) => {
+          const x = centerX + (outerRadius + 30) * Math.cos(angle * Math.PI / 180);
+          const y = centerY + (outerRadius + 30) * Math.sin(angle * Math.PI / 180);
+          return (
+            <G key={`firework-${index}`}>
+              {/* Firework burst */}
+              <Circle cx={x} cy={y} r="3" fill="#FFD700" />
+              <Circle cx={x-8} cy={y-8} r="2" fill="#FF6B35" />
+              <Circle cx={x+8} cy={y-8} r="2" fill="#FF6B35" />
+              <Circle cx={x-8} cy={y+8} r="2" fill="#FF6B35" />
+              <Circle cx={x+8} cy={y+8} r="2" fill="#FF6B35" />
+            </G>
+          );
+        })}
+      </G>
+    );
+  };
+
+  const renderDiwaliMandala = () => {
+    const centerX = WHEEL_SIZE / 2;
+    const centerY = WHEEL_SIZE / 2;
+    const radius = CENTER_LOGO_SIZE / 2 - 10;
+    
+    return (
+      <G>
+        {/* Outer mandala ring */}
+        <Circle
+          cx={centerX}
+          cy={centerY}
+          r={radius}
+          fill="none"
+          stroke="#FFD700"
+          strokeWidth="2"
+        />
+        
+        {/* Inner mandala pattern */}
+        <Circle
+          cx={centerX}
+          cy={centerY}
+          r={radius * 0.7}
+          fill="none"
+          stroke="#FF6B35"
+          strokeWidth="1"
+        />
+        
+        {/* Mandala center dot */}
+        <Circle
+          cx={centerX}
+          cy={centerY}
+          r="8"
+          fill="#FFD700"
+        />
+        
+        {/* Decorative petals */}
+        {[0, 45, 90, 135, 180, 225, 270, 315].map((angle, index) => {
+          const x = centerX + (radius * 0.5) * Math.cos(angle * Math.PI / 180);
+          const y = centerY + (radius * 0.5) * Math.sin(angle * Math.PI / 180);
+          return (
+            <Ellipse
+              key={index}
+              cx={x}
+              cy={y}
+              rx="6"
+              ry="3"
+              fill="#FFD700"
+              transform={`rotate(${angle} ${x} ${y})`}
+            />
+          );
+        })}
+      </G>
+    );
   };
 
   const renderWheelSegments = () => {
@@ -155,22 +284,58 @@ const SpinWheel = ({ categories, isSpinning, winner, onReset }) => {
             />
           )}
           
-          {/* Text label - premium typography with gold shadow */}
+          {/* Text label - vibrant and catchy typography */}
+          {/* Outer glow/shadow layer */}
           <SvgText
             x={textPos.x}
             y={textPos.y}
             fontSize={`${settings.labelTextSize || 14}`}
-            fontWeight="800"
+            fontWeight="900"
+            fontFamily="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
+            fill="rgba(0,0,0,0.5)"
+            textAnchor="middle"
+            dominantBaseline="middle"
+            letterSpacing="1.2px"
+            stroke="rgba(0,0,0,0.8)"
+            strokeWidth="4"
+          >
+            {category.name}
+          </SvgText>
+          
+          {/* Golden outline layer */}
+          <SvgText
+            x={textPos.x}
+            y={textPos.y}
+            fontSize={`${settings.labelTextSize || 14}`}
+            fontWeight="900"
+            fontFamily="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
+            fill="none"
+            textAnchor="middle"
+            dominantBaseline="middle"
+            letterSpacing="1.2px"
+            stroke="#FFD700"
+            strokeWidth="3"
+            style={{
+              filter: 'drop-shadow(0 0 8px rgba(255,215,0,1))'
+            }}
+          >
+            {category.name}
+          </SvgText>
+          
+          {/* Main text layer - vibrant color */}
+          <SvgText
+            x={textPos.x}
+            y={textPos.y}
+            fontSize={`${settings.labelTextSize || 14}`}
+            fontWeight="900"
             fontFamily="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
             fill={textColor}
             textAnchor="middle"
             dominantBaseline="middle"
-            letterSpacing="0.8px"
+            letterSpacing="1.2px"
             style={{
-              textShadow: '3px 3px 8px rgba(255,215,0,0.8), 2px 2px 4px rgba(0,0,0,0.6), 1px 1px 2px rgba(255,255,255,0.4)',
-              filter: 'drop-shadow(3px 3px 8px rgba(255,215,0,0.8)) drop-shadow(2px 2px 4px rgba(0,0,0,0.6)) drop-shadow(1px 1px 2px rgba(255,255,255,0.4))',
-              stroke: 'rgba(255,215,0,0.3)',
-              strokeWidth: '1px'
+              filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.8)) drop-shadow(0 0 10px rgba(255,255,255,0.6))',
+              textShadow: '0 2px 4px rgba(0,0,0,0.8), 0 0 10px rgba(255,255,255,0.6)'
             }}
           >
             {category.name}
@@ -192,37 +357,60 @@ const SpinWheel = ({ categories, isSpinning, winner, onReset }) => {
               height={WHEEL_SIZE}
               viewBox={`0 0 ${WHEEL_SIZE} ${WHEEL_SIZE}`}
             >
-              {/* Shimmer gradient definition */}
+              {/* Diwali-themed gradients and patterns */}
               <Defs>
                 <LinearGradient id="shimmerGradient" x1="0%" y1="0%" x2="100%" y2="100%">
                   <Stop offset="0%" stopColor="#FFD700" stopOpacity="0.8" />
                   <Stop offset="50%" stopColor="#FFA500" stopOpacity="0.6" />
                   <Stop offset="100%" stopColor="#FFD700" stopOpacity="0.8" />
                 </LinearGradient>
+                
+                {/* Diwali fire gradient */}
+                <LinearGradient id="fireGradient" x1="0%" y1="100%" x2="0%" y2="0%">
+                  <Stop offset="0%" stopColor="#FF6B35" />
+                  <Stop offset="30%" stopColor="#FFD700" />
+                  <Stop offset="60%" stopColor="#FFA500" />
+                  <Stop offset="100%" stopColor="#FFD700" />
+                </LinearGradient>
+                
+                {/* Rangoli pattern gradient */}
+                <LinearGradient id="rangoliGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <Stop offset="0%" stopColor="#FF69B4" />
+                  <Stop offset="25%" stopColor="#FFD700" />
+                  <Stop offset="50%" stopColor="#FF1493" />
+                  <Stop offset="75%" stopColor="#FFD700" />
+                  <Stop offset="100%" stopColor="#FF69B4" />
+                </LinearGradient>
               </Defs>
               
-              {/* Outer circle border - Gold rim */}
-                <Circle
-                  cx={WHEEL_SIZE / 2}
-                  cy={WHEEL_SIZE / 2}
-                  r={(WHEEL_SIZE - Math.max(WHEEL_SIZE * 0.01, 6)) / 2}
-                  fill="transparent"
-                  stroke="#FFD700"
-                  strokeWidth={Math.max(WHEEL_SIZE * 0.012, 5)}
-                />
+              {/* Diwali decorations around the wheel */}
+              {renderDiwaliDecorations()}
+              
+              {/* Outer circle border - Gold rim with Diwali pattern */}
+              <Circle
+                cx={WHEEL_SIZE / 2}
+                cy={WHEEL_SIZE / 2}
+                r={(WHEEL_SIZE - Math.max(WHEEL_SIZE * 0.01, 6)) / 2}
+                fill="transparent"
+                stroke="url(#fireGradient)"
+                strokeWidth={Math.max(WHEEL_SIZE * 0.012, 5)}
+              />
             
             {/* Pie slices */}
             {renderWheelSegments()}
             
-            {/* Inner circle (center area) - Ivory background with red border */}
+            {/* Inner circle (center area) - Diwali mandala design */}
             <Circle
               cx={WHEEL_SIZE / 2}
               cy={WHEEL_SIZE / 2}
               r={CENTER_LOGO_SIZE / 2}
-              fill="#FFF8E6"
-              stroke="#B22222"
+              fill="url(#rangoliGradient)"
+              stroke="#FFD700"
               strokeWidth={Math.max(CENTER_LOGO_SIZE * 0.03, 4)}
             />
+            
+            {/* Diwali mandala pattern in center */}
+            {renderDiwaliMandala()}
           </Svg>
         </View>
         
@@ -273,9 +461,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 4,
-    borderColor: '#B22222',
+    borderColor: '#FFD700',
     elevation: 15,
-    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.4)',
+    boxShadow: '0 4px 6px rgba(255, 215, 0, 0.6), 0 8px 12px rgba(0, 0, 0, 0.4)',
     zIndex: 200,
     padding: 4,
   },
