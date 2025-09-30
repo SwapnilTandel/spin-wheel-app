@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Alert, Modal, Animated, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Alert, Modal, Animated, Dimensions, Keyboard } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import SpinWheel from './SpinWheel';
 import { setSpinning, setLastResult, addToHistory } from '../store/slices/wheelSlice';
@@ -13,6 +13,7 @@ const SpinWheelScreen = ({ value, onReset }) => {
   const [resetKey, setResetKey] = useState(0);
   const [showCelebrationModal, setShowCelebrationModal] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
+  const [isKeyboardSpinning, setIsKeyboardSpinning] = useState(false);
   
   // Simple confetti effect using CSS
   const [showConfetti, setShowConfetti] = useState(false);
@@ -43,9 +44,34 @@ const SpinWheelScreen = ({ value, onReset }) => {
     }
   }, [onReset]);
 
+  // Handle keyboard events
+  useEffect(() => {
+    const handleKeyPress = (event) => {
+      if (event.key === 'Enter') {
+        if (isSpinning) {
+          // If spinning, stop the wheel
+          handleStopSpin();
+        } else {
+          // If not spinning, start the wheel
+          handleStartSpin();
+        }
+      }
+    };
+
+    // Add event listener
+    document.addEventListener('keydown', handleKeyPress);
+
+    // Cleanup
+    return () => {
+      document.removeEventListener('keydown', handleKeyPress);
+    };
+  }, [isSpinning]);
+
   // Handle celebration modal animation
   useEffect(() => {
+    console.log('Winner useEffect triggered, winner:', winner);
     if (winner) {
+      console.log('Setting celebration modal to true');
       setShowCelebrationModal(true);
       
       // Animate modal entrance
@@ -104,16 +130,14 @@ const SpinWheelScreen = ({ value, onReset }) => {
   };
 
   const handleSpinComplete = (selectedCategory) => {
-  
+    console.log('handleSpinComplete called with:', selectedCategory);
+    
+    // Stop spinning first
     dispatch(setSpinning(false));
-    setWinner(selectedCategory);
+    setIsKeyboardSpinning(false);
     
     // Play win sound
     playSound('win');
-    
-    // Show confetti
-    // setShowConfetti(true);
-    // setTimeout(() => setShowConfetti(false), 3000);
     
     // Add to history
     dispatch(addToHistory({
@@ -121,15 +145,57 @@ const SpinWheelScreen = ({ value, onReset }) => {
       category: selectedCategory,
     }));
     
-    // dispatch(setLastResult(selectedCategory));
+    // Set winner and trigger celebration modal
+    setWinner(selectedCategory);
     
-    // Show result alert for 5 seconds
-    // setShowAlert(true);
+    // Show confetti
+    setShowConfetti(true);
+    setTimeout(() => setShowConfetti(false), 3000);
     
-    // // Auto-dismiss alert after 5 seconds
-    // setTimeout(() => {
-    //   setShowAlert(false);
-    // }, 5000);
+    console.log('Winner set, modal should appear');
+  };
+
+  const [spinStartTime, setSpinStartTime] = useState(0);
+
+  const handleStartSpin = () => {
+    if (isSpinning) return;
+    
+    const wheelCategories = categories[value];
+    if (wheelCategories.length < 2) {
+      Alert.alert('Error', 'Please add at least 2 categories to spin the wheel!');
+      return;
+    }
+    
+    dispatch(setSpinning(true));
+    setIsKeyboardSpinning(true);
+    setSpinStartTime(Date.now());
+    setWinner(null);
+    setShowConfetti(false);
+    setShowCelebrationModal(false);
+    setShowAlert(false);
+    
+    // Play ticking sound
+    playSound('tick');
+  };
+
+  const handleStopSpin = () => {
+    if (!isSpinning) return;
+    
+    // Set minimum spin time of 2 seconds
+    const minSpinTime = 2000;
+    const currentTime = Date.now();
+    
+    if (currentTime - spinStartTime < minSpinTime) {
+      // If less than 2 seconds, wait for minimum time
+      setTimeout(() => {
+        dispatch(setSpinning(false));
+        setIsKeyboardSpinning(false);
+      }, minSpinTime - (currentTime - spinStartTime));
+    } else {
+      // Can stop immediately
+      dispatch(setSpinning(false));
+      setIsKeyboardSpinning(false);
+    }
   };
 
   const handleSpin = () => {
@@ -197,6 +263,7 @@ const SpinWheelScreen = ({ value, onReset }) => {
           key={resetKey}
           categories={categories[value]} 
           isSpinning={isSpinning}
+          isKeyboardSpinning={isKeyboardSpinning}
           winner={winner}
           onReset={onReset}
           onSpinComplete={handleSpinComplete}
@@ -215,19 +282,13 @@ const SpinWheelScreen = ({ value, onReset }) => {
       )}
       
       {/* Spin Button positioned at bottom, outside wheel container */}
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity 
-          style={[
-            styles.spinButton, 
-            isSpinning && styles.spinButtonDisabled
-          ]}
-          onPress={handleSpin}
-          disabled={isSpinning}
-        >
-          <Text style={styles.spinButtonText}>
-            {isSpinning ? 'SPINNING...' : 'SPIN'}
-          </Text>
-        </TouchableOpacity>
+      <View style={styles.keyboardContainer}>
+        <Text style={styles.keyboardInstruction}>
+          {isSpinning ? 'Press ENTER to stop spinning' : 'Press ENTER to start spinning'}
+        </Text>
+        <Text style={styles.keyboardHint}>
+          ⚡ Wheel spins fast at start, then slows down when stopped
+        </Text>
       </View>
       
       
@@ -240,6 +301,7 @@ const SpinWheelScreen = ({ value, onReset }) => {
       )}
 
       {/* Celebration Modal */}
+      {console.log('Modal render - showCelebrationModal:', showCelebrationModal, 'winner:', winner)}
       <Modal
         visible={showCelebrationModal}
         transparent={true}
@@ -292,7 +354,7 @@ const styles = StyleSheet.create({
     zIndex: 10,
     maxHeight: '75%',
   },
-  buttonContainer: {
+  keyboardContainer: {
     width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
@@ -300,25 +362,29 @@ const styles = StyleSheet.create({
     paddingBottom: 30,
     zIndex: 5,
   },
-  spinButton: {
-    backgroundColor: '#FFD700',
-    paddingHorizontal: 80,
-    paddingVertical: 22,
-    borderRadius: 35,
-    elevation: 10,
-    boxShadow: '0 6px 12px rgba(0, 0, 0, 0.4)',
-    borderWidth: 4,
-    borderColor: '#B22222',
-  },
-  spinButtonDisabled: {
-    backgroundColor: '#CCCCCC',
-  },
-  spinButtonText: {
+  keyboardInstruction: {
     color: '#B22222',
-    fontSize: 28,
-    fontWeight: '900',
+    fontSize: 24,
+    fontWeight: 'bold',
     textAlign: 'center',
-    letterSpacing: 2,
+    marginBottom: 10,
+    backgroundColor: '#FFD700',
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    borderRadius: 25,
+    borderWidth: 3,
+    borderColor: '#B22222',
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+  },
+  keyboardHint: {
+    color: '#666666',
+    fontSize: 16,
+    textAlign: 'center',
+    fontStyle: 'italic',
   },
   resultContainer: {
     position: 'absolute',

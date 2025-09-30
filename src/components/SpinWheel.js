@@ -7,7 +7,7 @@ const { width, height } = Dimensions.get('window');
 const WHEEL_SIZE = Math.min(width * 0.95, height * 0.70);
 const CENTER_LOGO_SIZE = Math.min(WHEEL_SIZE * 0.25, 150);
 
-const SpinWheel = ({ categories, isSpinning, winner, onReset, onSpinComplete, resetRef }) => {
+const SpinWheel = ({ categories, isSpinning, winner, isKeyboardSpinning, onReset, onSpinComplete, resetRef }) => {
   const wheelRef = useRef(null);
   const currentRotationRef = useRef(0);
   const { settings } = useSelector(state => state.wheel);
@@ -55,8 +55,18 @@ const SpinWheel = ({ categories, isSpinning, winner, onReset, onSpinComplete, re
     return categories[winnerIndex];
   };
 
+  const [spinAnimationId, setSpinAnimationId] = useState(null);
+  const [isStopping, setIsStopping] = useState(false);
+  const [targetRotation, setTargetRotation] = useState(0);
+
   useEffect(() => {
-    if (isSpinning && wheelRef.current) {
+    console.log('SpinWheel useEffect triggered - isSpinning:', isSpinning, 'isKeyboardSpinning:', isKeyboardSpinning, 'spinAnimationId:', spinAnimationId);
+    if (isSpinning && wheelRef.current && isKeyboardSpinning) {
+      console.log('Starting fast spin');
+      // Start fast spinning
+      setIsStopping(false);
+      setTargetRotation(0);
+      
       // Reset transition first
       wheelRef.current.style.transition = 'none';
       wheelRef.current.style.transform = `rotate(${currentRotationRef.current}deg)`;
@@ -64,46 +74,65 @@ const SpinWheel = ({ categories, isSpinning, winner, onReset, onSpinComplete, re
       // Force a reflow to ensure the reset is applied
       wheelRef.current.offsetHeight;
 
-      // Calculate random final position for variety
-      // Add many more full rotations for dramatic visual effect
-      const fullRotations = Math.floor(Math.random() * 8) + 8; // 8-15 full rotations
-      const randomFinalAngle = Math.random() * 360; // Random final angle (0-360 degrees)
-      const targetRotation = fullRotations * 360 + randomFinalAngle;
-      currentRotationRef.current = targetRotation;
-
-      // Random spin duration between 4.1-10.0 seconds
-      const spinDuration = Math.random() * (10.0 - 4.1) + 4.1;
-      const spinDurationMs = Math.round(spinDuration * 1000);
-
-      // Create smooth animation with subtle speed variations
-      const smoothEasingOptions = [
-        'cubic-bezier(0.25, 0.46, 0.45, 0.94)', // Smooth ease-out
-        'cubic-bezier(0.4, 0, 0.2, 1)', // Smooth ease-in-out
-        'cubic-bezier(0.55, 0.085, 0.68, 0.53)', // Gentle ease-in
-        'cubic-bezier(0.25, 0.46, 0.45, 0.94)', // Standard ease-out
-        'cubic-bezier(0.4, 0, 0.2, 1)', // Material design ease
-        'cubic-bezier(0.25, 0.46, 0.45, 0.94)' // Smooth deceleration
-      ];
-      const randomEasing = smoothEasingOptions[Math.floor(Math.random() * smoothEasingOptions.length)];
-
-      // Apply smooth transition with subtle randomization
-      wheelRef.current.style.transition = `transform ${spinDuration}s ${randomEasing}`;
-      wheelRef.current.style.transform = `rotate(${targetRotation}deg)`;
-      
-      // Calculate and return the winner after animation completes
-      setTimeout(() => {
-        // Calculate the final rotation after the animation completes
-        const finalRotation = currentRotationRef.current;
-        const winner = calculateWinner(finalRotation);
-        if (onSpinComplete) {
-          onSpinComplete(winner);
+      // Start fast spinning animation
+      const startFastSpin = () => {
+        if (wheelRef.current && isSpinning && !isStopping) {
+          currentRotationRef.current += 360; // Add one full rotation
+          wheelRef.current.style.transition = 'transform 0.1s linear';
+          wheelRef.current.style.transform = `rotate(${currentRotationRef.current}deg)`;
+          
+          const animationId = setTimeout(startFastSpin, 100);
+          setSpinAnimationId(animationId);
         }
-      }, spinDurationMs); // Match the CSS transition duration
+      };
+      
+      startFastSpin();
+    } else if (!isSpinning && spinAnimationId) {
+      console.log('Stopping spin animation');
+      // Stop spinning - clear fast spin animation
+      clearTimeout(spinAnimationId);
+      setSpinAnimationId(null);
+      
+      if (wheelRef.current) {
+        // Calculate final position
+        const randomFinalAngle = Math.random() * 360;
+        const finalRotation = currentRotationRef.current + randomFinalAngle;
+        currentRotationRef.current = finalRotation;
+        
+        // Apply slow deceleration
+        wheelRef.current.style.transition = 'transform 2s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+        wheelRef.current.style.transform = `rotate(${finalRotation}deg)`;
+        
+        // Calculate winner after deceleration
+        setTimeout(() => {
+          const winner = calculateWinner(finalRotation);
+          console.log('SpinWheel: Winner calculated:', winner);
+          if (onSpinComplete) {
+            console.log('SpinWheel: Calling onSpinComplete with winner');
+            onSpinComplete(winner);
+          } else {
+            console.log('SpinWheel: onSpinComplete is not available');
+          }
+        }, 2000);
+      }
     }
-  }, [isSpinning, categories, onSpinComplete]);
+  }, [isSpinning, isKeyboardSpinning, onSpinComplete]);
+
+  // Handle stopping the wheel
+  useEffect(() => {
+    if (!isSpinning && isKeyboardSpinning) {
+      setIsStopping(true);
+    }
+  }, [isSpinning, isKeyboardSpinning]);
 
   const resetWheel = () => {
     if (wheelRef.current) {
+      // Clear any ongoing animations
+      if (spinAnimationId) {
+        clearTimeout(spinAnimationId);
+        setSpinAnimationId(null);
+      }
+      
       // Reset to initial position
       currentRotationRef.current = 0;
       wheelRef.current.style.transition = 'transform 0.5s ease-out';
@@ -111,6 +140,8 @@ const SpinWheel = ({ categories, isSpinning, winner, onReset, onSpinComplete, re
     }
     // Reset wheel labels to initial orientation
     // This will be handled by the parent component via key prop
+    setIsStopping(false);
+    setTargetRotation(0);
   };
 
   // Expose resetWheel function to parent component
