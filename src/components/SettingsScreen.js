@@ -21,12 +21,17 @@ const SettingsScreen = () => {
   const [activeTab, setActiveTab] = useState(50);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
-  const [newCategory, setNewCategory] = useState({ name: '', color: '#B22222' });
+  const [newCategory, setNewCategory] = useState({ name: '', color: '#B22222', number: 50 });
   const [editingCategory, setEditingCategory] = useState(null);
 
   const handleAddCategory = () => {
     if (!newCategory.name.trim()) {
       alert('Error: Please enter a category name!');
+      return;
+    }
+
+    if (!newCategory.number || newCategory.number < 1 || newCategory.number > 100) {
+      alert('Error: Please enter a valid number between 1 and 100!');
       return;
     }
 
@@ -38,7 +43,7 @@ const SettingsScreen = () => {
     // Add color to recent colors
     addToRecentColors(newCategory.color);
 
-      setNewCategory({ name: '', color: '#B22222' });
+      setNewCategory({ name: '', color: '#B22222', number: 50 });
     setShowAddModal(false);
     alert('Success: Category added successfully!');
   };
@@ -66,12 +71,18 @@ const SettingsScreen = () => {
       return;
     }
 
+    if (!editingCategory.number || editingCategory.number < 1 || editingCategory.number > 100) {
+      alert('Error: Please enter a valid number between 1 and 100!');
+      return;
+    }
+
     dispatch(updateCategory({
       wheelValue: activeTab,
       categoryId: editingCategory.id,
       updates: {
         name: editingCategory.name,
-        color: editingCategory.color
+        color: editingCategory.color,
+        number: editingCategory.number
       }
     }));
     
@@ -568,6 +579,18 @@ const SettingsScreen = () => {
               onChangeText={(text) => setNewCategory({ ...newCategory, name: text })}
             />
 
+            <Text style={styles.colorLabel}>Rarity Number (1-100):</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter number (1 = rarest, 100 = most common)"
+              value={newCategory.number.toString()}
+              onChangeText={(text) => {
+                const num = parseInt(text) || 0;
+                setNewCategory({ ...newCategory, number: num });
+              }}
+              keyboardType="numeric"
+            />
+
             <Text style={styles.colorLabel}>Choose Color:</Text>
             
             {/* Recently Used Colors */}
@@ -655,6 +678,18 @@ const SettingsScreen = () => {
                   placeholder="Category name"
                   value={editingCategory.name}
                   onChangeText={(text) => setEditingCategory({ ...editingCategory, name: text })}
+                />
+
+                <Text style={styles.colorLabel}>Rarity Number (1-100):</Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Enter number (1 = rarest, 100 = most common)"
+                  value={editingCategory.number ? editingCategory.number.toString() : '50'}
+                  onChangeText={(text) => {
+                    const num = parseInt(text) || 0;
+                    setEditingCategory({ ...editingCategory, number: num });
+                  }}
+                  keyboardType="numeric"
                 />
 
                 <Text style={styles.colorLabel}>Choose Color:</Text>
