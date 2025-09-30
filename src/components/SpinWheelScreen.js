@@ -51,7 +51,10 @@ const SpinWheelScreen = ({ value, onReset }) => {
   useEffect(() => {
     const handleKeyPress = (event) => {
       if (event.key === 'Enter') {
-        if (isSpinning) {
+        if (showCelebrationModal) {
+          // If modal is showing, close it
+          closeCelebrationModal();
+        } else if (isSpinning) {
           // If spinning, only allow stop if 3 seconds have passed
           if (canStopSpin) {
             handleStopSpin();
@@ -70,7 +73,7 @@ const SpinWheelScreen = ({ value, onReset }) => {
     return () => {
       document.removeEventListener('keydown', handleKeyPress);
     };
-  }, [isSpinning, canStopSpin]);
+  }, [isSpinning, canStopSpin, showCelebrationModal]);
 
   // Handle celebration modal animation
   useEffect(() => {
@@ -92,13 +95,6 @@ const SpinWheelScreen = ({ value, onReset }) => {
           useNativeDriver: false,
         }),
       ]).start();
-
-      // Auto-close modal after 5 seconds
-      const timer = setTimeout(() => {
-        closeCelebrationModal();
-      }, 5000);
-
-      return () => clearTimeout(timer);
     }
   }, [winner]);
 
