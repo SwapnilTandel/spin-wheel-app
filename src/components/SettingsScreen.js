@@ -354,6 +354,33 @@ const SettingsScreen = () => {
         </View>
 
         <View style={styles.settingItem}>
+          <Text style={styles.settingLabel}>Label Font</Text>
+          <View style={styles.fontContainer}>
+            <select
+              value={settings.labelFontFamily || 'system-ui'}
+              onChange={(e) => handleSettingChange('labelFontFamily', e.target.value)}
+              style={styles.fontSelect}
+            >
+              <option value="system-ui">System UI</option>
+              <option value="Arial">Arial</option>
+              <option value="Helvetica">Helvetica</option>
+              <option value="Times New Roman">Times New Roman</option>
+              <option value="Georgia">Georgia</option>
+              <option value="Verdana">Verdana</option>
+              <option value="Courier New">Courier New</option>
+              <option value="Trebuchet MS">Trebuchet MS</option>
+              <option value="Impact">Impact</option>
+              <option value="Comic Sans MS">Comic Sans MS</option>
+              <option value="serif">Serif</option>
+              <option value="sans-serif">Sans Serif</option>
+              <option value="monospace">Monospace</option>
+              <option value="cursive">Cursive</option>
+              <option value="fantasy">Fantasy</option>
+            </select>
+          </View>
+        </View>
+
+        <View style={styles.settingItem}>
           <Text style={styles.settingLabel}>Background Theme</Text>
           <View style={styles.themeButtons}>
             <TouchableOpacity
@@ -1036,6 +1063,21 @@ const styles = StyleSheet.create({
     marginTop: -10,
     marginBottom: 10,
     paddingHorizontal: 15,
+  },
+  fontContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+  },
+  fontSelect: {
+    padding: 8,
+    borderRadius: 5,
+    borderWidth: 1,
+    borderColor: '#CCCCCC',
+    backgroundColor: '#FFFFFF',
+    fontSize: 14,
+    minWidth: 150,
+    fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, sans-serif',
   },
 });
 

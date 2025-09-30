@@ -34,6 +34,7 @@ const initialState = {
         animationsEnabled: true,
         hapticFeedback: true,
         labelTextSize: 18, // Default text size for wheel labels
+        labelFontFamily: 'system-ui', // Default font family for wheel labels
         backgroundTheme: 'white', // Options: 'white', 'custom'
         backgroundImage: null, // URL or base64 image for custom background
         backgroundVideo: null, // URL or base64 video for custom background
