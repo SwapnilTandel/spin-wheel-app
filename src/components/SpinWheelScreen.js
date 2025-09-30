@@ -16,6 +16,7 @@ const SpinWheelScreen = ({ value, onReset }) => {
   const [isKeyboardSpinning, setIsKeyboardSpinning] = useState(false);
   const [canStopSpin, setCanStopSpin] = useState(false);
   const [userRequestedStop, setUserRequestedStop] = useState(false);
+  const [stopButtonPressed, setStopButtonPressed] = useState(false);
   
   
   // Animation for celebration modal
@@ -32,6 +33,7 @@ const SpinWheelScreen = ({ value, onReset }) => {
     setShowAlert(false);
     setCanStopSpin(false);
     setUserRequestedStop(false);
+    setStopButtonPressed(false);
     // Reset any spinning state
     dispatch(setSpinning(false));
     // Force component re-render to reset label orientation
@@ -118,8 +120,9 @@ const SpinWheelScreen = ({ value, onReset }) => {
       if (wheelResetRef.current) {
         wheelResetRef.current();
       }
-      // Also reset the winner state
+      // Also reset the winner state and enable start button
       setWinner(null);
+      setStopButtonPressed(false);
     });
   };
   
@@ -187,6 +190,7 @@ const SpinWheelScreen = ({ value, onReset }) => {
     
     // Set user requested stop first, then stop spinning
     setUserRequestedStop(true);
+    setStopButtonPressed(true);
     dispatch(setSpinning(false));
     setIsKeyboardSpinning(false);
     setCanStopSpin(false);
@@ -280,7 +284,7 @@ const SpinWheelScreen = ({ value, onReset }) => {
       <View style={styles.keyboardContainer}>
         <Text style={[
           styles.keyboardInstruction,
-          isSpinning && !canStopSpin && styles.keyboardInstructionDisabled
+          (isSpinning && !canStopSpin) || stopButtonPressed ? styles.keyboardInstructionDisabled : null
         ]}>
           {isSpinning 
             ? 'Press ENTER to stop spinning'
