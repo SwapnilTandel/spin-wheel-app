@@ -361,21 +361,21 @@ const SettingsScreen = () => {
               onChange={(e) => handleSettingChange('labelFontFamily', e.target.value)}
               style={styles.fontSelect}
             >
-              <option value="system-ui">System UI</option>
-              <option value="Arial">Arial</option>
-              <option value="Helvetica">Helvetica</option>
-              <option value="Times New Roman">Times New Roman</option>
-              <option value="Georgia">Georgia</option>
-              <option value="Verdana">Verdana</option>
-              <option value="Courier New">Courier New</option>
-              <option value="Trebuchet MS">Trebuchet MS</option>
-              <option value="Impact">Impact</option>
-              <option value="Comic Sans MS">Comic Sans MS</option>
-              <option value="serif">Serif</option>
-              <option value="sans-serif">Sans Serif</option>
-              <option value="monospace">Monospace</option>
-              <option value="cursive">Cursive</option>
-              <option value="fantasy">Fantasy</option>
+              <option value="system-ui" style={{ fontFamily: 'system-ui' }}>System UI</option>
+              <option value="Arial" style={{ fontFamily: 'Arial' }}>Arial</option>
+              <option value="Helvetica" style={{ fontFamily: 'Helvetica' }}>Helvetica</option>
+              <option value="Times New Roman" style={{ fontFamily: 'Times New Roman' }}>Times New Roman</option>
+              <option value="Georgia" style={{ fontFamily: 'Georgia' }}>Georgia</option>
+              <option value="Verdana" style={{ fontFamily: 'Verdana' }}>Verdana</option>
+              <option value="Courier New" style={{ fontFamily: 'Courier New' }}>Courier New</option>
+              <option value="Trebuchet MS" style={{ fontFamily: 'Trebuchet MS' }}>Trebuchet MS</option>
+              <option value="Impact" style={{ fontFamily: 'Impact' }}>Impact</option>
+              <option value="Comic Sans MS" style={{ fontFamily: 'Comic Sans MS' }}>Comic Sans MS</option>
+              <option value="serif" style={{ fontFamily: 'serif' }}>Serif</option>
+              <option value="sans-serif" style={{ fontFamily: 'sans-serif' }}>Sans Serif</option>
+              <option value="monospace" style={{ fontFamily: 'monospace' }}>Monospace</option>
+              <option value="cursive" style={{ fontFamily: 'cursive' }}>Cursive</option>
+              <option value="fantasy" style={{ fontFamily: 'fantasy' }}>Fantasy</option>
             </select>
           </View>
         </View>
