@@ -23,7 +23,7 @@ const initialState = {
         soundEnabled: true,
         animationsEnabled: true,
         hapticFeedback: true,
-        labelTextSize: 14, // Default text size for wheel labels
+        labelTextSize: 18, // Default text size for wheel labels
       },
   history: [],
   isSpinning: false,

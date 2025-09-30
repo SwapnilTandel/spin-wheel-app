@@ -55,10 +55,10 @@ const SpinWheelScreen = ({ value, onReset }) => {
         }),
       ]).start();
 
-      // Auto-close modal after 5 seconds
+      // Auto-close modal after 30 seconds
       const timer = setTimeout(() => {
         closeCelebrationModal();
-      }, 5000);
+      }, 30000);
 
       return () => clearTimeout(timer);
     }
@@ -179,13 +179,6 @@ const SpinWheelScreen = ({ value, onReset }) => {
         </TouchableOpacity>
       </View>
       
-      {winner && (
-        <View style={styles.resultContainer}>
-          <Text style={styles.resultText}>
-            🎉 Winner: {winner.name}
-          </Text>
-        </View>
-      )}
       
       {showConfetti && (
         <View style={styles.confettiContainer}>
@@ -212,15 +205,6 @@ const SpinWheelScreen = ({ value, onReset }) => {
               }
             ]}
           >
-            {/* Burst Confetti Background */}
-            <View style={styles.burstConfetti}>
-              <Text style={styles.burstConfettiText}>🎉</Text>
-              <Text style={[styles.burstConfettiText, styles.burstConfettiText2]}>🎊</Text>
-              <Text style={[styles.burstConfettiText, styles.burstConfettiText3]}>✨</Text>
-              <Text style={[styles.burstConfettiText, styles.burstConfettiText4]}>⭐</Text>
-              <Text style={[styles.burstConfettiText, styles.burstConfettiText5]}>🎉</Text>
-              <Text style={[styles.burstConfettiText, styles.burstConfettiText6]}>🎊</Text>
-            </View>
             
             {/* Prize Display */}
             <Text style={styles.celebrationTitle}>🎉 CONGRATULATIONS! 🎉</Text>
@@ -400,44 +384,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.5,
     shadowRadius: 20,
     position: 'relative',
-  },
-  burstConfetti: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    zIndex: 1,
-  },
-  burstConfettiText: {
-    position: 'absolute',
-    fontSize: 30,
-    color: '#FFD700',
-  },
-  burstConfettiText2: {
-    top: '10%',
-    right: '10%',
-    fontSize: 25,
-  },
-  burstConfettiText3: {
-    top: '20%',
-    left: '15%',
-    fontSize: 35,
-  },
-  burstConfettiText4: {
-    bottom: '20%',
-    right: '20%',
-    fontSize: 28,
-  },
-  burstConfettiText5: {
-    bottom: '30%',
-    left: '10%',
-    fontSize: 32,
-  },
-  burstConfettiText6: {
-    top: '60%',
-    right: '5%',
-    fontSize: 26,
   },
   celebrationTitle: {
     fontSize: 24,

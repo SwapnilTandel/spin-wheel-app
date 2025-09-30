@@ -172,42 +172,6 @@ const SettingsScreen = () => {
           />
         </View>
 
-        <View style={styles.settingItem}>
-          <Text style={styles.settingLabel}>Label Text Size</Text>
-          <View style={styles.textSizeContainer}>
-            <Pressable 
-              style={({ pressed }) => [
-                styles.textSizeButton, 
-                { backgroundColor: pressed ? '#FFA500' : '#FFD700' }
-              ]}
-              onPress={() => {
-                console.log('Increase button pressed - current size:', settings.labelTextSize);
-                alert('Increase button clicked!');
-                const currentSize = settings.labelTextSize || 14;
-                const newSize = Math.min(20, currentSize + 1);
-                console.log('Setting new size to:', newSize);
-                dispatch(updateSettings({ labelTextSize: newSize }));
-              }}
-            >
-              <Text style={[styles.textSizeButtonText, { color: '#B22222' }]}>+</Text>
-            </Pressable>
-            <Text style={styles.textSizeValue}>{settings.labelTextSize || 14}px</Text>
-            <TouchableOpacity 
-              style={styles.textSizeButton}
-              onPress={() => {
-                console.log('Decrease button pressed - current size:', settings.labelTextSize);
-                alert('Decrease button clicked!');
-                const currentSize = settings.labelTextSize || 14;
-                const newSize = Math.max(10, currentSize - 1);
-                console.log('Setting new size to:', newSize);
-                dispatch(updateSettings({ labelTextSize: newSize }));
-              }}
-              activeOpacity={0.7}
-            >
-              <Text style={styles.textSizeButtonText}>-</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
       </View>
 
       <View style={styles.section}>
@@ -486,40 +450,6 @@ const styles = StyleSheet.create({
   modalAddButtonText: {
     color: '#FFFFFF',
     fontWeight: 'bold',
-  },
-  textSizeContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    width: 160,
-  },
-  textSizeButton: {
-    backgroundColor: '#B22222',
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    alignItems: 'center',
-    justifyContent: 'center',
-    elevation: 5,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.4,
-    shadowRadius: 3,
-    zIndex: 100,
-    borderWidth: 2,
-    borderColor: '#FFD700',
-  },
-  textSizeButtonText: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  textSizeValue: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#B22222',
-    minWidth: 40,
-    textAlign: 'center',
   },
 });
 
