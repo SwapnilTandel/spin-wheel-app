@@ -12,6 +12,7 @@ const SpinWheelScreen = ({ value, onReset }) => {
   const [winner, setWinner] = useState(null);
   const [resetKey, setResetKey] = useState(0);
   const [showCelebrationModal, setShowCelebrationModal] = useState(false);
+  const [showAlert, setShowAlert] = useState(false);
   
   // Simple confetti effect using CSS
   const [showConfetti, setShowConfetti] = useState(false);
@@ -28,6 +29,7 @@ const SpinWheelScreen = ({ value, onReset }) => {
     setWinner(null);
     setShowConfetti(false);
     setShowCelebrationModal(false);
+    setShowAlert(false);
     // Reset any spinning state
     dispatch(setSpinning(false));
     // Force component re-render to reset label orientation
@@ -102,7 +104,7 @@ const SpinWheelScreen = ({ value, onReset }) => {
   };
 
   const handleSpinComplete = (selectedCategory) => {
-    
+  
     dispatch(setSpinning(false));
     setWinner(selectedCategory);
     
@@ -110,8 +112,8 @@ const SpinWheelScreen = ({ value, onReset }) => {
     playSound('win');
     
     // Show confetti
-    setShowConfetti(true);
-    setTimeout(() => setShowConfetti(false), 3000);
+    // setShowConfetti(true);
+    // setTimeout(() => setShowConfetti(false), 3000);
     
     // Add to history
     dispatch(addToHistory({
@@ -119,14 +121,15 @@ const SpinWheelScreen = ({ value, onReset }) => {
       category: selectedCategory,
     }));
     
-    dispatch(setLastResult(selectedCategory));
+    // dispatch(setLastResult(selectedCategory));
     
-    // Show result alert
-    Alert.alert(
-      '🎉 Congratulations!',
-      `You won: ${selectedCategory.name}`,
-      [{ text: 'Awesome!', style: 'default' }]
-    );
+    // Show result alert for 5 seconds
+    // setShowAlert(true);
+    
+    // // Auto-dismiss alert after 5 seconds
+    // setTimeout(() => {
+    //   setShowAlert(false);
+    // }, 5000);
   };
 
   const handleSpin = () => {
@@ -200,6 +203,16 @@ const SpinWheelScreen = ({ value, onReset }) => {
           resetRef={wheelResetRef}
         />
       </View>
+      
+      {/* Custom Alert Modal - Shows for 5 seconds */}
+      {showAlert && winner && (
+        <View style={styles.alertOverlay}>
+          <View style={styles.alertContainer}>
+            <Text style={styles.alertTitle}>🎉 Congratulations!</Text>
+            <Text style={styles.alertMessage}>You won: {winner.name}</Text>
+          </View>
+        </View>
+      )}
       
       {/* Spin Button positioned at bottom, outside wheel container */}
       <View style={styles.buttonContainer}>
@@ -464,6 +477,42 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 18,
     fontWeight: 'bold',
+  },
+  alertOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 1000,
+  },
+  alertContainer: {
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 30,
+    paddingVertical: 25,
+    borderRadius: 15,
+    borderWidth: 3,
+    borderColor: '#B22222',
+    elevation: 10,
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.3)',
+    minWidth: 250,
+    alignItems: 'center',
+  },
+  alertTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#B22222',
+    textAlign: 'center',
+    marginBottom: 10,
+  },
+  alertMessage: {
+    fontSize: 18,
+    color: '#333333',
+    textAlign: 'center',
+    fontWeight: '600',
   },
 });
 
