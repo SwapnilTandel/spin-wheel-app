@@ -77,6 +77,27 @@ const wheelSlice = createSlice({
         };
       }
     },
+    moveCategory: (state, action) => {
+      const { wheelValue, categoryId, direction } = action.payload;
+      const categories = state.categories[wheelValue];
+      const currentIndex = categories.findIndex(cat => cat.id === categoryId);
+      
+      if (currentIndex === -1) return;
+      
+      let newIndex;
+      if (direction === 'up') {
+        newIndex = currentIndex - 1;
+        if (newIndex < 0) return; // Already at top
+      } else if (direction === 'down') {
+        newIndex = currentIndex + 1;
+        if (newIndex >= categories.length) return; // Already at bottom
+      }
+      
+      // Swap the categories
+      const newCategories = [...categories];
+      [newCategories[currentIndex], newCategories[newIndex]] = [newCategories[newIndex], newCategories[currentIndex]];
+      state.categories[wheelValue] = newCategories;
+    },
     updateSettings: (state, action) => {
       state.settings = { ...state.settings, ...action.payload };
     },
@@ -103,6 +124,7 @@ export const {
   addCategory,
   removeCategory,
   updateCategory,
+  moveCategory,
   updateSettings,
   addToHistory,
   setSpinning,

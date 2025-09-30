@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 // Removed react-native-vector-icons import due to web compatibility issues
-import { addCategory, removeCategory, updateCategory, updateSettings } from '../store/slices/wheelSlice';
+import { addCategory, removeCategory, updateCategory, moveCategory, updateSettings } from '../store/slices/wheelSlice';
 
 const SettingsScreen = () => {
   const dispatch = useDispatch();
@@ -81,6 +81,14 @@ const SettingsScreen = () => {
     setShowEditModal(false);
     setEditingCategory(null);
     alert('Success: Category updated successfully!');
+  };
+
+  const handleMoveCategory = (categoryId, direction) => {
+    dispatch(moveCategory({
+      wheelValue: activeTab,
+      categoryId: categoryId,
+      direction: direction
+    }));
   };
 
   const handleSettingChange = (key, value) => {
@@ -172,7 +180,7 @@ const SettingsScreen = () => {
     { color: '#FFCCDD', name: 'Blush' },
     { color: '#CC0033', name: 'Crimson' },
     { color: '#FF0033', name: 'Red' },
-    { color: '#FF6699', name: 'Hot Pink' },
+    { color: '#FF69B4', name: 'Hot Pink' },
     // Purple tones
     { color: '#9966FF', name: 'Violet' },
     { color: '#CC99FF', name: 'Lavender' },
@@ -205,7 +213,7 @@ const SettingsScreen = () => {
     { color: '#FFFF33', name: 'Bright Yellow' },
     { color: '#FFFF66', name: 'Light Yellow' },
     { color: '#FFFF99', name: 'Pale Yellow' },
-    { color: '#FFCC00', name: 'Golden Yellow' },
+    { color: '#FFC107', name: 'Golden Yellow' },
     { color: '#FFDD33', name: 'Canary' },
     { color: '#FFEE66', name: 'Lemon' },
     { color: '#FFFFCC', name: 'Cream Yellow' },
@@ -274,7 +282,7 @@ const SettingsScreen = () => {
           </TouchableOpacity>
         </View>
 
-        {categories[activeTab].map((category) => (
+        {categories[activeTab].map((category, index) => (
           <View key={category.id} style={styles.categoryItem}>
             <View style={[styles.colorIndicator, { backgroundColor: category.color }]} />
             <View style={styles.categoryInfo}>
@@ -282,6 +290,38 @@ const SettingsScreen = () => {
               <Text style={styles.categoryColorName}>{getColorName(category.color)}</Text>
             </View>
             <View style={styles.categoryActions}>
+              {/* Move Up Button */}
+              <TouchableOpacity 
+                style={[
+                  styles.moveButton,
+                  index === 0 && styles.moveButtonDisabled
+                ]}
+                onPress={() => handleMoveCategory(category.id, 'up')}
+                activeOpacity={0.7}
+                disabled={index === 0}
+              >
+                <Text style={[
+                  styles.moveButtonText,
+                  index === 0 && styles.moveButtonTextDisabled
+                ]}>⬆️</Text>
+              </TouchableOpacity>
+              
+              {/* Move Down Button */}
+              <TouchableOpacity 
+                style={[
+                  styles.moveButton,
+                  index === categories[activeTab].length - 1 && styles.moveButtonDisabled
+                ]}
+                onPress={() => handleMoveCategory(category.id, 'down')}
+                activeOpacity={0.7}
+                disabled={index === categories[activeTab].length - 1}
+              >
+                <Text style={[
+                  styles.moveButtonText,
+                  index === categories[activeTab].length - 1 && styles.moveButtonTextDisabled
+                ]}>⬇️</Text>
+              </TouchableOpacity>
+              
               <TouchableOpacity 
                 style={styles.editButton}
                 onPress={() => handleEditCategory(category)}
@@ -815,6 +855,29 @@ const styles = StyleSheet.create({
   },
   deleteButtonText: {
     fontSize: 18,
+  },
+  moveButton: {
+    padding: 8,
+    backgroundColor: '#F0F8FF',
+    borderRadius: 6,
+    minWidth: 36,
+    minHeight: 36,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: '#B0C4DE',
+  },
+  moveButtonDisabled: {
+    backgroundColor: '#F5F5F5',
+    borderColor: '#CCCCCC',
+    opacity: 0.5,
+  },
+  moveButtonText: {
+    fontSize: 16,
+    color: '#4682B4',
+  },
+  moveButtonTextDisabled: {
+    color: '#999999',
   },
   settingItem: {
     flexDirection: 'row',
