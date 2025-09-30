@@ -7,7 +7,7 @@ const { width, height } = Dimensions.get('window');
 const WHEEL_SIZE = Math.min(width * 0.95, height * 0.70);
 const CENTER_LOGO_SIZE = Math.min(WHEEL_SIZE * 0.25, 150);
 
-const SpinWheel = ({ categories, isSpinning, winner, isKeyboardSpinning, onReset, onSpinComplete, resetRef }) => {
+const SpinWheel = ({ categories, isSpinning, winner, isKeyboardSpinning, canStopSpin, userRequestedStop, onReset, onSpinComplete, resetRef }) => {
   const wheelRef = useRef(null);
   const currentRotationRef = useRef(0);
   const { settings } = useSelector(state => state.wheel);
@@ -124,6 +124,47 @@ const SpinWheel = ({ categories, isSpinning, winner, isKeyboardSpinning, onReset
       setIsStopping(true);
     }
   }, [isSpinning, isKeyboardSpinning]);
+
+  // Handle user requesting to stop (when canStopSpin becomes true and user presses Enter)
+  useEffect(() => {
+    if (canStopSpin && isSpinning && isKeyboardSpinning && !userRequestedStop) {
+      // User can now stop, but hasn't requested yet
+      console.log('User can now stop the wheel');
+    }
+  }, [canStopSpin, isSpinning, isKeyboardSpinning, userRequestedStop]);
+
+  // Handle when user actually requests to stop
+  useEffect(() => {
+    if (!isSpinning && userRequestedStop && spinAnimationId) {
+      console.log('User requested stop - starting deceleration');
+      // Clear fast spin animation
+      clearTimeout(spinAnimationId);
+      setSpinAnimationId(null);
+      
+      if (wheelRef.current) {
+        // Calculate final position
+        const randomFinalAngle = Math.random() * 360;
+        const finalRotation = currentRotationRef.current + randomFinalAngle;
+        currentRotationRef.current = finalRotation;
+        
+        // Apply slow deceleration immediately
+        wheelRef.current.style.transition = 'transform 2s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+        wheelRef.current.style.transform = `rotate(${finalRotation}deg)`;
+        
+        // Calculate winner after deceleration
+        setTimeout(() => {
+          const winner = calculateWinner(finalRotation);
+          console.log('SpinWheel: Winner calculated:', winner);
+          if (onSpinComplete) {
+            console.log('SpinWheel: Calling onSpinComplete with winner');
+            onSpinComplete(winner);
+          } else {
+            console.log('SpinWheel: onSpinComplete is not available');
+          }
+        }, 2000);
+      }
+    }
+  }, [isSpinning, userRequestedStop, spinAnimationId, onSpinComplete]);
 
   const resetWheel = () => {
     if (wheelRef.current) {

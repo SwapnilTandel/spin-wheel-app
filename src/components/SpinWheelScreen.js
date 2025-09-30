@@ -14,6 +14,8 @@ const SpinWheelScreen = ({ value, onReset }) => {
   const [showCelebrationModal, setShowCelebrationModal] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
   const [isKeyboardSpinning, setIsKeyboardSpinning] = useState(false);
+  const [canStopSpin, setCanStopSpin] = useState(false);
+  const [userRequestedStop, setUserRequestedStop] = useState(false);
   
   // Simple confetti effect using CSS
   const [showConfetti, setShowConfetti] = useState(false);
@@ -31,6 +33,8 @@ const SpinWheelScreen = ({ value, onReset }) => {
     setShowConfetti(false);
     setShowCelebrationModal(false);
     setShowAlert(false);
+    setCanStopSpin(false);
+    setUserRequestedStop(false);
     // Reset any spinning state
     dispatch(setSpinning(false));
     // Force component re-render to reset label orientation
@@ -49,8 +53,10 @@ const SpinWheelScreen = ({ value, onReset }) => {
     const handleKeyPress = (event) => {
       if (event.key === 'Enter') {
         if (isSpinning) {
-          // If spinning, stop the wheel
-          handleStopSpin();
+          // If spinning, only allow stop if 3 seconds have passed
+          if (canStopSpin) {
+            handleStopSpin();
+          }
         } else {
           // If not spinning, start the wheel
           handleStartSpin();
@@ -65,7 +71,7 @@ const SpinWheelScreen = ({ value, onReset }) => {
     return () => {
       document.removeEventListener('keydown', handleKeyPress);
     };
-  }, [isSpinning]);
+  }, [isSpinning, canStopSpin]);
 
   // Handle celebration modal animation
   useEffect(() => {
@@ -168,34 +174,30 @@ const SpinWheelScreen = ({ value, onReset }) => {
     
     dispatch(setSpinning(true));
     setIsKeyboardSpinning(true);
+    setCanStopSpin(false); // Disable stop for 3 seconds
     setSpinStartTime(Date.now());
     setWinner(null);
     setShowConfetti(false);
     setShowCelebrationModal(false);
     setShowAlert(false);
     
+    // Enable stop after 3 seconds
+    setTimeout(() => {
+      setCanStopSpin(true);
+    }, 3000);
+    
     // Play ticking sound
     playSound('tick');
   };
 
   const handleStopSpin = () => {
-    if (!isSpinning) return;
+    if (!isSpinning || !canStopSpin) return;
     
-    // Set minimum spin time of 2 seconds
-    const minSpinTime = 2000;
-    const currentTime = Date.now();
-    
-    if (currentTime - spinStartTime < minSpinTime) {
-      // If less than 2 seconds, wait for minimum time
-      setTimeout(() => {
-        dispatch(setSpinning(false));
-        setIsKeyboardSpinning(false);
-      }, minSpinTime - (currentTime - spinStartTime));
-    } else {
-      // Can stop immediately
-      dispatch(setSpinning(false));
-      setIsKeyboardSpinning(false);
-    }
+    // Set user requested stop first, then stop spinning
+    setUserRequestedStop(true);
+    dispatch(setSpinning(false));
+    setIsKeyboardSpinning(false);
+    setCanStopSpin(false);
   };
 
   const handleSpin = () => {
@@ -264,6 +266,8 @@ const SpinWheelScreen = ({ value, onReset }) => {
           categories={categories[value]} 
           isSpinning={isSpinning}
           isKeyboardSpinning={isKeyboardSpinning}
+          canStopSpin={canStopSpin}
+          userRequestedStop={userRequestedStop}
           winner={winner}
           onReset={onReset}
           onSpinComplete={handleSpinComplete}
@@ -283,8 +287,14 @@ const SpinWheelScreen = ({ value, onReset }) => {
       
       {/* Spin Button positioned at bottom, outside wheel container */}
       <View style={styles.keyboardContainer}>
-        <Text style={styles.keyboardInstruction}>
-          {isSpinning ? 'Press ENTER to stop spinning' : 'Press ENTER to start spinning'}
+        <Text style={[
+          styles.keyboardInstruction,
+          isSpinning && !canStopSpin && styles.keyboardInstructionDisabled
+        ]}>
+          {isSpinning 
+            ? 'Press ENTER to stop spinning'
+            : 'Press ENTER to start spinning'
+          }
         </Text>
         <Text style={styles.keyboardHint}>
           ⚡ Wheel spins fast at start, then slows down when stopped
@@ -385,6 +395,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
     textAlign: 'center',
     fontStyle: 'italic',
+  },
+  keyboardInstructionDisabled: {
+    backgroundColor: '#CCCCCC',
+    color: '#888888',
+    borderColor: '#999999',
   },
   resultContainer: {
     position: 'absolute',
