@@ -446,8 +446,55 @@ const SpinWheel = ({ categories, isSpinning, winner, onReset, onSpinComplete, re
               />
             </View>
         
-        {/* Pointer */}
-        <View style={styles.pointer} />
+        {/* Polished SVG Pointer */}
+        <View style={styles.pointerContainer}>
+          <Svg width="60" height="40" viewBox="0 0 60 40" style={styles.pointerSvg}>
+            <Defs>
+              <LinearGradient id="pointerGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                <Stop offset="0%" stopColor="#B22222" />
+                <Stop offset="50%" stopColor="#DC143C" />
+                <Stop offset="100%" stopColor="#8B0000" />
+              </LinearGradient>
+              <LinearGradient id="pointerShadow" x1="0%" y1="0%" x2="100%" y2="100%">
+                <Stop offset="0%" stopColor="rgba(0,0,0,0.3)" />
+                <Stop offset="100%" stopColor="rgba(0,0,0,0.1)" />
+              </LinearGradient>
+            </Defs>
+            
+            {/* Shadow/Glow effect */}
+            <Path
+              d="M 5 20 L 50 5 L 50 15 L 55 20 L 50 25 L 50 35 L 5 20 Z"
+              fill="url(#pointerShadow)"
+              opacity="0.4"
+            />
+            
+            {/* Main pointer shape */}
+            <Path
+              d="M 5 20 L 50 5 L 50 15 L 55 20 L 50 25 L 50 35 L 5 20 Z"
+              fill="url(#pointerGradient)"
+              stroke="#8B0000"
+              strokeWidth="1"
+            />
+            
+            {/* Highlight line */}
+            <Path
+              d="M 5 20 L 50 5 L 50 15 L 55 20"
+              fill="none"
+              stroke="rgba(255,255,255,0.3)"
+              strokeWidth="1"
+            />
+            
+            {/* Center dot */}
+            <Circle
+              cx="52"
+              cy="20"
+              r="3"
+              fill="#FFFFFF"
+              stroke="#8B0000"
+              strokeWidth="1"
+            />
+          </Svg>
+        </View>
       </View>
     </View>
   );
@@ -509,20 +556,15 @@ const styles = StyleSheet.create({
     lineHeight: Math.max(CENTER_LOGO_SIZE * 0.09, 11),
     marginTop: 1,
   },
-  pointer: {
+  pointerContainer: {
     position: 'absolute',
-    right: -10,
+    right: -30,
     top: '50%',
-    width: 0,
-    height: 0,
-    borderTopWidth: 15,
-    borderBottomWidth: 15,
-    borderLeftWidth: 30,
-    borderTopColor: 'transparent',
-    borderBottomColor: 'transparent',
-    borderLeftColor: '#B22222',
     zIndex: 150,
-    transform: [{ translateY: -15 }, { rotate: '180deg' }],
+    transform: [{ translateY: -20 }],
+  },
+  pointerSvg: {
+    filter: 'drop-shadow(2px 2px 4px rgba(0,0,0,0.3))',
   },
 });
 
