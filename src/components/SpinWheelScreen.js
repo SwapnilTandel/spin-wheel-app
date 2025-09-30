@@ -17,8 +17,6 @@ const SpinWheelScreen = ({ value, onReset }) => {
   const [canStopSpin, setCanStopSpin] = useState(false);
   const [userRequestedStop, setUserRequestedStop] = useState(false);
   
-  // Simple confetti effect using CSS
-  const [showConfetti, setShowConfetti] = useState(false);
   
   // Animation for celebration modal
   const modalScale = useRef(new Animated.Value(0)).current;
@@ -30,7 +28,6 @@ const SpinWheelScreen = ({ value, onReset }) => {
   // Handle reset functionality
   const handleReset = () => {
     setWinner(null);
-    setShowConfetti(false);
     setShowCelebrationModal(false);
     setShowAlert(false);
     setCanStopSpin(false);
@@ -123,7 +120,6 @@ const SpinWheelScreen = ({ value, onReset }) => {
       }
       // Also reset the winner state
       setWinner(null);
-      setShowConfetti(false);
     });
   };
   
@@ -151,14 +147,11 @@ const SpinWheelScreen = ({ value, onReset }) => {
       category: selectedCategory,
     }));
     
-    // Set winner and trigger celebration modal
-    setWinner(selectedCategory);
-    
-    // Show confetti
-    setShowConfetti(true);
-    setTimeout(() => setShowConfetti(false), 3000);
-    
-    console.log('Winner set, modal should appear');
+    // Set winner and trigger celebration modal after 3 seconds
+    setTimeout(() => {
+      setWinner(selectedCategory);
+      console.log('Winner set, modal should appear');
+    }, 3000);
   };
 
   const [spinStartTime, setSpinStartTime] = useState(0);
@@ -177,7 +170,6 @@ const SpinWheelScreen = ({ value, onReset }) => {
     setCanStopSpin(false); // Disable stop for 3 seconds
     setSpinStartTime(Date.now());
     setWinner(null);
-    setShowConfetti(false);
     setShowCelebrationModal(false);
     setShowAlert(false);
     
@@ -211,7 +203,6 @@ const SpinWheelScreen = ({ value, onReset }) => {
 
     // Reset everything before spinning
     setWinner(null);
-    setShowConfetti(false);
     dispatch(setSpinning(true));
 
     // Play ticking sound
@@ -296,19 +287,8 @@ const SpinWheelScreen = ({ value, onReset }) => {
             : 'Press ENTER to start spinning'
           }
         </Text>
-        <Text style={styles.keyboardHint}>
-          ⚡ Wheel spins fast at start, then slows down when stopped
-        </Text>
       </View>
       
-      
-      {showConfetti && (
-        <View style={styles.confettiContainer}>
-          <Text style={styles.confettiText}>🎉🎊🎉🎊🎉</Text>
-          <Text style={styles.confettiText}>🎊🎉🎊🎉🎊</Text>
-          <Text style={styles.confettiText}>🎉🎊🎉🎊🎉</Text>
-        </View>
-      )}
 
       {/* Celebration Modal */}
       {console.log('Modal render - showCelebrationModal:', showCelebrationModal, 'winner:', winner)}
@@ -425,22 +405,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     textTransform: 'uppercase',
     letterSpacing: 2,
-  },
-  confettiContainer: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    justifyContent: 'center',
-    alignItems: 'center',
-    pointerEvents: 'none',
-  },
-  confettiText: {
-    fontSize: 24,
-    color: '#FFD700',
-    textAlign: 'center',
-    marginVertical: 5,
   },
   sparkleContainer: {
     position: 'absolute',
