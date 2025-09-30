@@ -1,8 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Alert, Modal, Animated } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Alert, Modal, Animated, Dimensions } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import SpinWheel from './SpinWheel';
 import { setSpinning, setLastResult, addToHistory } from '../store/slices/wheelSlice';
+
+const { width, height } = Dimensions.get('window');
 
 const SpinWheelScreen = ({ value, onReset }) => {
   const dispatch = useDispatch();
@@ -58,10 +60,10 @@ const SpinWheelScreen = ({ value, onReset }) => {
         }),
       ]).start();
 
-      // Auto-close modal after 30 seconds
+      // Auto-close modal after 5 seconds
       const timer = setTimeout(() => {
         closeCelebrationModal();
-      }, 30000);
+      }, 5000);
 
       return () => clearTimeout(timer);
     }
