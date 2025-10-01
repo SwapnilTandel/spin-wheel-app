@@ -31,8 +31,11 @@ const SpinWheel = ({ categories, isSpinning, winner, selectedCategory, isColorTo
     const anglePerSlice = 360 / totalCategories;
     const targetIndex = categories.findIndex(cat => cat.id === targetCategory.id);
     
-    // Calculate the angle that would put this category at the pointer (12 o'clock)
-    const targetAngle = targetIndex * anglePerSlice;
+    // Calculate a random position within the target category's slice
+    // This ensures the pointer lands within the category, not on edges
+    const sliceStartAngle = targetIndex * anglePerSlice;
+    const randomOffsetWithinSlice = Math.random() * anglePerSlice * 0.8; // Random position within 80% of slice
+    const targetAngle = sliceStartAngle + randomOffsetWithinSlice;
     
     // Add multiple full rotations to make it appear random
     const baseRotation = currentRotationRef.current;
@@ -81,12 +84,14 @@ const SpinWheel = ({ categories, isSpinning, winner, selectedCategory, isColorTo
     const normalizedRotation = ((finalRotation % 360) + 360) % 360;
     console.log('normalizedRotation', normalizedRotation);
     
-    // Find which segment the pointer is pointing to
-    // The pointer is at 0 degrees (12 o'clock position), so we need to find
-    // which segment contains the angle that's now at 0 degrees after rotation
-    const segmentAtPointer = Math.floor((360 - normalizedRotation) % 360 / anglePerSlice);
+    // Calculate the angle that's now at the pointer position (0 degrees)
+    const pointerAngle = (360 - normalizedRotation) % 360;
+    
+    // Find which segment contains this angle
+    const segmentAtPointer = Math.floor(pointerAngle / anglePerSlice);
     const winnerIndex = segmentAtPointer % totalCategories;
     
+    console.log('pointerAngle', pointerAngle);
     console.log('segmentAtPointer', segmentAtPointer);
     console.log('winnerIndex', winnerIndex);
     console.log('winner category:', categories[winnerIndex]?.name);
