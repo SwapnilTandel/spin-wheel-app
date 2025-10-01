@@ -292,8 +292,8 @@ const SpinWheelScreen = ({ value, onReset }) => {
           (isSpinning && !canStopSpin) || stopButtonPressed ? styles.keyboardInstructionDisabled : null
         ]}>
           {isSpinning 
-            ? 'Press ENTER to stop spinning'
-            : 'Press ENTER to start spinning'
+            ? 'STOP'
+            : 'SPIN'
           }
         </Text>
       </View>
