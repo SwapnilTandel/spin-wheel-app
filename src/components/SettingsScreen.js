@@ -299,6 +299,7 @@ const SettingsScreen = () => {
             <View style={styles.categoryInfo}>
               <Text style={styles.categoryName}>{category.name}</Text>
               <Text style={styles.categoryColorName}>{getColorName(category.color)}</Text>
+              <Text style={styles.categoryRarityNumber}>Rarity: {category.number}</Text>
             </View>
             <View style={styles.categoryActions}>
               {/* Move Up Button */}
@@ -862,6 +863,12 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#666666',
     fontStyle: 'italic',
+  },
+  categoryRarityNumber: {
+    fontSize: 12,
+    color: '#B22222',
+    fontWeight: '600',
+    marginTop: 2,
   },
   categoryActions: {
     flexDirection: 'row',

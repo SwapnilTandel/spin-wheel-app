@@ -40,6 +40,7 @@ const CategoryList = ({ activeTab, onEditCategory }) => {
           <View style={settingsStyles.categoryInfo}>
             <Text style={settingsStyles.categoryName}>{category.name}</Text>
             <Text style={settingsStyles.categoryColorName}>{getColorName(category.color)}</Text>
+            <Text style={settingsStyles.categoryRarityNumber}>Rarity: {category.number}</Text>
           </View>
           <View style={settingsStyles.categoryActions}>
             {/* Move Up Button */}

@@ -588,6 +588,12 @@ export const settingsStyles = StyleSheet.create({
     color: theme.colors.GRAY,
     fontStyle: 'italic',
   },
+  categoryRarityNumber: {
+    fontSize: theme.fontSize.sm,
+    color: theme.colors.PRIMARY,
+    fontWeight: theme.fontWeight.semibold,
+    marginTop: 2,
+  },
   categoryActions: {
     flexDirection: 'row',
     gap: theme.spacing.sm,

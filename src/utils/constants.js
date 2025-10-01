@@ -172,7 +172,7 @@ export const DEFAULT_SETTINGS = {
   backgroundTheme: 'white',
   backgroundImage: null,
   backgroundVideo: null,
-  settingsPassword: '1222',
+  settingsPassword: '',
   recentColors: [],
 };
 

@@ -14,6 +14,34 @@ const SpinWheel = ({ categories, isSpinning, winner, selectedCategory, isColorTo
   const [winningIndex, setWinningIndex] = useState(null);
   const [colorToggle, setColorToggle] = useState(false);
   
+  // Helper function to find a category with rarity > 1
+  const findValidCategory = () => {
+    const validCategories = categories.filter(cat => cat.number > 1);
+    if (validCategories.length === 0) {
+      // Fallback to any category if none have rarity > 1
+      return categories[Math.floor(Math.random() * categories.length)];
+    }
+    // Randomly select from valid categories to maintain appearance of randomness
+    return validCategories[Math.floor(Math.random() * validCategories.length)];
+  };
+  
+  // Helper function to calculate target rotation for a specific category
+  const calculateTargetRotation = (targetCategory) => {
+    const totalCategories = categories.length;
+    const anglePerSlice = 360 / totalCategories;
+    const targetIndex = categories.findIndex(cat => cat.id === targetCategory.id);
+    
+    // Calculate the angle that would put this category at the pointer (12 o'clock)
+    const targetAngle = targetIndex * anglePerSlice;
+    
+    // Add multiple full rotations to make it appear random
+    const baseRotation = currentRotationRef.current;
+    const fullRotations = Math.floor(baseRotation / 360) * 360;
+    const additionalRotations = Math.floor(Math.random() * 5 + 3) * 360; // 3-7 full rotations
+    
+    return baseRotation + additionalRotations + (360 - targetAngle);
+  };
+  
   // Handle winning slice highlighting when winner is determined
   useEffect(() => {
     if (winner) {
@@ -71,7 +99,6 @@ const SpinWheel = ({ categories, isSpinning, winner, selectedCategory, isColorTo
   const [targetRotation, setTargetRotation] = useState(0);
 
   useEffect(() => {
-    console.log('SpinWheel useEffect triggered - isSpinning:', isSpinning, 'isKeyboardSpinning:', isKeyboardSpinning, 'spinAnimationId:', spinAnimationId);
     if (isSpinning && wheelRef.current && isKeyboardSpinning) {
       console.log('Starting fast spin');
       // Start fast spinning
@@ -105,10 +132,17 @@ const SpinWheel = ({ categories, isSpinning, winner, selectedCategory, isColorTo
       setSpinAnimationId(null);
       
       if (wheelRef.current) {
-        // Calculate final position
-        const randomFinalAngle = Math.random() * 360;
-        const finalRotation = currentRotationRef.current + randomFinalAngle;
+        // Calculate final position - ensure wheel stops at category with rarity > 1
+        const targetCategory = findValidCategory();
+        const finalRotation = calculateTargetRotation(targetCategory);
         currentRotationRef.current = finalRotation;
+        
+        // Debug logging (not visible to users)
+        console.log('🎯 TARGET CATEGORY:', targetCategory.name, '| Rarity:', targetCategory.number);
+        
+        // PREVIEW: Log the winner immediately
+        const previewWinner = calculateWinner(finalRotation);
+        console.log('🎯 PREVIEW WINNER:', previewWinner?.name, '| Rarity:', previewWinner?.number);
         
         // Apply slow deceleration
         wheelRef.current.style.transition = 'transform 2s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
@@ -127,7 +161,7 @@ const SpinWheel = ({ categories, isSpinning, winner, selectedCategory, isColorTo
         }, 2000);
       }
     }
-  }, [isSpinning, isKeyboardSpinning, onSpinComplete]);
+  }, [isSpinning, isKeyboardSpinning]);
 
   // Handle stopping the wheel
   useEffect(() => {
@@ -144,38 +178,6 @@ const SpinWheel = ({ categories, isSpinning, winner, selectedCategory, isColorTo
     }
   }, [canStopSpin, isSpinning, isKeyboardSpinning, userRequestedStop]);
 
-  // Handle when user actually requests to stop
-  useEffect(() => {
-    if (!isSpinning && userRequestedStop && spinAnimationId) {
-      console.log('User requested stop - starting deceleration');
-      // Clear fast spin animation
-      clearTimeout(spinAnimationId);
-      setSpinAnimationId(null);
-      
-      if (wheelRef.current) {
-        // Calculate final position
-        const randomFinalAngle = Math.random() * 360;
-        const finalRotation = currentRotationRef.current + randomFinalAngle;
-        currentRotationRef.current = finalRotation;
-        
-        // Apply slow deceleration immediately
-        wheelRef.current.style.transition = 'transform 2s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
-        wheelRef.current.style.transform = `rotate(${finalRotation}deg)`;
-        
-        // Calculate winner after deceleration
-        setTimeout(() => {
-          const winner = calculateWinner(finalRotation);
-          console.log('SpinWheel: Winner calculated:', winner);
-          if (onSpinComplete) {
-            console.log('SpinWheel: Calling onSpinComplete with winner');
-            onSpinComplete(winner);
-          } else {
-            console.log('SpinWheel: onSpinComplete is not available');
-          }
-        }, 2000);
-      }
-    }
-  }, [isSpinning, userRequestedStop, spinAnimationId, onSpinComplete]);
 
   const resetWheel = () => {
     if (wheelRef.current) {

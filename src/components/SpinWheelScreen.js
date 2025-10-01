@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Alert, Modal, Animated, Dimensions, Keyboard } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import SpinWheel from './SpinWheel';
@@ -75,11 +75,10 @@ const SpinWheelScreen = ({ value, onReset }) => {
     return () => {
       document.removeEventListener('keydown', handleKeyPress);
     };
-  }, [isSpinning, canStopSpin, showCelebrationModal]);
+  }, [isSpinning, canStopSpin, showCelebrationModal, closeCelebrationModal, handleStartSpin, handleStopSpin]);
 
   // Handle celebration modal animation
   useEffect(() => {
-    console.log('Winner useEffect triggered, winner:', winner);
     if (winner) {
       console.log('Setting celebration modal to true');
       setShowCelebrationModal(true);
@@ -132,7 +131,7 @@ const SpinWheelScreen = ({ value, onReset }) => {
     }
   };
 
-  const handleSpinComplete = (selectedCategory) => {
+  const handleSpinComplete = useCallback((selectedCategory) => {
     console.log('handleSpinComplete called with:', selectedCategory);
     
     // Stop spinning first
@@ -159,7 +158,7 @@ const SpinWheelScreen = ({ value, onReset }) => {
       setWinner(selectedCategory);
       console.log('Winner set, modal should appear');
     }, 3000);
-  };
+  }, [dispatch, value, playSound]);
 
   const [spinStartTime, setSpinStartTime] = useState(0);
 
@@ -301,7 +300,6 @@ const SpinWheelScreen = ({ value, onReset }) => {
       
 
       {/* Celebration Modal */}
-      {console.log('Modal render - showCelebrationModal:', showCelebrationModal, 'winner:', winner)}
       <Modal
         visible={showCelebrationModal}
         transparent={true}

@@ -4,9 +4,9 @@ const initialState = {
       categories: {
         50: [
           { id: 1, name: '$200', color: '#B22222', image: null, number: 1 },
-          { id: 2, name: '$20', color: '#FFD700', image: null, number: 10 },
-          { id: 3, name: '$10', color: '#FFF8E6', image: null, number: 20 },
-          { id: 4, name: '$5', color: '#B22222', image: null, number: 30 },
+          { id: 2, name: '$20', color: '#FFD700', image: null, number: 1 },
+          { id: 3, name: '$10', color: '#FFF8E6', image: null, number: 1 },
+          { id: 4, name: '$5', color: '#B22222', image: null, number: 1 },
           { id: 5, name: 'Sugar 4LB', color: '#FFD700', image: null, number: 40 },
           { id: 6, name: 'Maggie Masala - 700 gm', color: '#FFF8E6', image: null, number: 50 },
           { id: 7, name: 'Parle - G 10pcs', color: '#B22222', image: null, number: 60 },
@@ -17,9 +17,9 @@ const initialState = {
         ],
         100: [
           { id: 1, name: '$300', color: '#B22222', image: null, number: 1 },
-          { id: 2, name: '$50', color: '#FFD700', image: null, number: 10 },
-          { id: 3, name: '$25', color: '#FFF8E6', image: null, number: 20 },
-          { id: 4, name: '$10', color: '#B22222', image: null, number: 30 },
+          { id: 2, name: '$50', color: '#FFD700', image: null, number: 1 },
+          { id: 3, name: '$25', color: '#FFF8E6', image: null, number: 1 },
+          { id: 4, name: '$10', color: '#B22222', image: null, number: 1 },
           { id: 5, name: 'Olivelila Oil', color: '#FFD700', image: null, number: 40 },
           { id: 6, name: 'Any Basmati Rice - 10 LB', color: '#FFF8E6', image: null, number: 50 },
           { id: 7, name: 'Rajbhog Dahi - 4 LB', color: '#B22222', image: null, number: 60 },
@@ -38,7 +38,7 @@ const initialState = {
         backgroundTheme: 'white', // Options: 'white', 'custom'
         backgroundImage: null, // URL or base64 image for custom background
         backgroundVideo: null, // URL or base64 video for custom background
-        settingsPassword: '1222', // Password to access settings (default: 1222)
+        settingsPassword: '', // Password to access settings (empty = no protection)
         recentColors: [], // Recently used colors
       },
   history: [],

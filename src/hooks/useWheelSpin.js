@@ -27,25 +27,6 @@ export const useWheelSpin = (wheelValue, onSpinComplete) => {
   const isStopping = useRef(false);
   const targetRotation = useRef(0);
 
-  // Handle keyboard events
-  useEffect(() => {
-    const handleKeyPress = (event) => {
-      if (event.key === 'Enter') {
-        if (isSpinning) {
-          // If spinning, only allow stop if 3 seconds have passed
-          if (canStopSpin) {
-            handleStopSpin();
-          }
-        } else {
-          // If not spinning, start the wheel
-          handleStartSpin();
-        }
-      }
-    };
-
-    document.addEventListener('keydown', handleKeyPress);
-    return () => document.removeEventListener('keydown', handleKeyPress);
-  }, [isSpinning, canStopSpin]);
 
   const handleStartSpin = useCallback(() => {
     if (isSpinning) return;
@@ -109,7 +90,6 @@ export const useWheelSpin = (wheelValue, onSpinComplete) => {
       setIsColorToggling(false);
       setSelectedCategory(null); // Revert background color
       setWinner(selectedCategory);
-      console.log('Winner set, modal should appear');
     }, APP_CONFIG.ANIMATION.COLOR_TOGGLE_DURATION);
   }, [dispatch, wheelValue, settings]);
 
