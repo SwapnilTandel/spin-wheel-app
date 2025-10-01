@@ -73,6 +73,54 @@ export const COLOR_OPTIONS = [
   { color: '#FFD700', name: 'Gold' },
   { color: '#FFF8E6', name: 'Cream' },
   { color: '#FFFFFF', name: 'White' },
+  
+  // Diwali Festival Colors - Traditional and Vibrant
+  { color: '#FF6B35', name: 'Diwali Orange' },
+  { color: '#FF8C00', name: 'Deep Orange' },
+  { color: '#FFA500', name: 'Saffron' },
+  { color: '#FFD700', name: 'Gold' },
+  { color: '#FFE135', name: 'Bright Gold' },
+  { color: '#FF1493', name: 'Deep Pink' },
+  { color: '#FF69B4', name: 'Hot Pink' },
+  { color: '#FFB6C1', name: 'Light Pink' },
+  { color: '#DC143C', name: 'Crimson' },
+  { color: '#B22222', name: 'Fire Brick' },
+  { color: '#8B0000', name: 'Dark Red' },
+  { color: '#FF4500', name: 'Orange Red' },
+  
+  // Desi Community Colors - Rich and Cultural
+  { color: '#4B0082', name: 'Indigo' },
+  { color: '#6A0DAD', name: 'Purple' },
+  { color: '#8A2BE2', name: 'Blue Violet' },
+  { color: '#9370DB', name: 'Medium Purple' },
+  { color: '#BA55D3', name: 'Medium Orchid' },
+  { color: '#DDA0DD', name: 'Plum' },
+  { color: '#EE82EE', name: 'Violet' },
+  { color: '#FF00FF', name: 'Magenta' },
+  
+  // Traditional Indian Colors
+  { color: '#228B22', name: 'Forest Green' },
+  { color: '#32CD32', name: 'Lime Green' },
+  { color: '#00FF7F', name: 'Spring Green' },
+  { color: '#00CED1', name: 'Dark Turquoise' },
+  { color: '#20B2AA', name: 'Light Sea Green' },
+  { color: '#00BFFF', name: 'Deep Sky Blue' },
+  { color: '#1E90FF', name: 'Dodger Blue' },
+  { color: '#4169E1', name: 'Royal Blue' },
+  { color: '#0000CD', name: 'Medium Blue' },
+  { color: '#000080', name: 'Navy' },
+  
+  // Rangoli Colors - Bright and Festive
+  { color: '#FF6347', name: 'Tomato' },
+  { color: '#FF7F50', name: 'Coral' },
+  { color: '#FFA07A', name: 'Light Salmon' },
+  { color: '#FFDAB9', name: 'Peach Puff' },
+  { color: '#F0E68C', name: 'Khaki' },
+  { color: '#FFFFE0', name: 'Light Yellow' },
+  { color: '#98FB98', name: 'Pale Green' },
+  { color: '#90EE90', name: 'Light Green' },
+  { color: '#87CEEB', name: 'Sky Blue' },
+  { color: '#B0C4DE', name: 'Light Steel Blue' },
   // Vibrant colors
   { color: '#FF6B6B', name: 'Coral Red' },
   { color: '#4ECDC4', name: 'Turquoise' },
@@ -178,30 +226,30 @@ export const DEFAULT_SETTINGS = {
 
 export const DEFAULT_CATEGORIES = {
   50: [
-    { id: 1, name: '$200', color: '#B22222', image: null, number: 1 },
-    { id: 2, name: '$20', color: '#FFD700', image: null, number: 10 },
-    { id: 3, name: '$10', color: '#FFF8E6', image: null, number: 20 },
-    { id: 4, name: '$5', color: '#B22222', image: null, number: 30 },
-    { id: 5, name: 'Sugar 4LB', color: '#FFD700', image: null, number: 40 },
-    { id: 6, name: 'Maggie Masala - 700 gm', color: '#FFF8E6', image: null, number: 50 },
-    { id: 7, name: 'Parle - G 10pcs', color: '#B22222', image: null, number: 60 },
-    { id: 8, name: 'Yogurt 2LB', color: '#FFD700', image: null, number: 70 },
-    { id: 9, name: 'Bakery Product - $5', color: '#FFF8E6', image: null, number: 80 },
-    { id: 10, name: 'Deep Naan (1pk-5 pcs)', color: '#B22222', image: null, number: 90 },
-    { id: 11, name: 'Better Luck Next Time', color: '#FFD700', image: null, number: 100 },
+    { id: 1, name: '$200', color: '#FF6B35', image: null, number: 1 }, // Diwali Orange
+    { id: 2, name: '$20', color: '#FFD700', image: null, number: 10 }, // Gold
+    { id: 3, name: '$10', color: '#4B0082', image: null, number: 20 }, // Indigo
+    { id: 4, name: '$5', color: '#FF1493', image: null, number: 30 }, // Deep Pink
+    { id: 5, name: 'Sugar 4LB', color: '#32CD32', image: null, number: 40 }, // Lime Green
+    { id: 6, name: 'Maggie Masala - 700 gm', color: '#FF8C00', image: null, number: 50 }, // Deep Orange
+    { id: 7, name: 'Parle - G 10pcs', color: '#00BFFF', image: null, number: 60 }, // Deep Sky Blue
+    { id: 8, name: 'Yogurt 2LB', color: '#FFA500', image: null, number: 70 }, // Saffron
+    { id: 9, name: 'Bakery Product - $5', color: '#8A2BE2', image: null, number: 80 }, // Blue Violet
+    { id: 10, name: 'Deep Naan (1pk-5 pcs)', color: '#FF6347', image: null, number: 90 }, // Tomato
+    { id: 11, name: 'Better Luck Next Time', color: '#228B22', image: null, number: 100 }, // Forest Green
   ],
   100: [
-    { id: 1, name: '$300', color: '#B22222', image: null, number: 1 },
-    { id: 2, name: '$50', color: '#FFD700', image: null, number: 10 },
-    { id: 3, name: '$25', color: '#FFF8E6', image: null, number: 20 },
-    { id: 4, name: '$10', color: '#B22222', image: null, number: 30 },
-    { id: 5, name: 'Olivelila Oil', color: '#FFD700', image: null, number: 40 },
-    { id: 6, name: 'Any Basmati Rice - 10 LB', color: '#FFF8E6', image: null, number: 50 },
-    { id: 7, name: 'Rajbhog Dahi - 4 LB', color: '#B22222', image: null, number: 60 },
-    { id: 8, name: 'Maharaja Brand Almond - 3 LB', color: '#FFD700', image: null, number: 70 },
-    { id: 9, name: 'Any Bakery Product - $10', color: '#FFF8E6', image: null, number: 80 },
-    { id: 10, name: 'Deep Tandoori Naan - Family PK', color: '#B22222', image: null, number: 90 },
-    { id: 11, name: 'Better Luck Next Time', color: '#FFD700', image: null, number: 100 },
+    { id: 1, name: '$300', color: '#FF6B35', image: null, number: 1 }, // Diwali Orange
+    { id: 2, name: '$50', color: '#FFD700', image: null, number: 10 }, // Gold
+    { id: 3, name: '$25', color: '#4B0082', image: null, number: 20 }, // Indigo
+    { id: 4, name: '$10', color: '#FF1493', image: null, number: 30 }, // Deep Pink
+    { id: 5, name: 'Olivelila Oil', color: '#32CD32', image: null, number: 40 }, // Lime Green
+    { id: 6, name: 'Any Basmati Rice - 10 LB', color: '#FF8C00', image: null, number: 50 }, // Deep Orange
+    { id: 7, name: 'Rajbhog Dahi - 4 LB', color: '#00BFFF', image: null, number: 60 }, // Deep Sky Blue
+    { id: 8, name: 'Maharaja Brand Almond - 3 LB', color: '#FFA500', image: null, number: 70 }, // Saffron
+    { id: 9, name: 'Any Bakery Product - $10', color: '#8A2BE2', image: null, number: 80 }, // Blue Violet
+    { id: 10, name: 'Deep Tandoori Naan - Family PK', color: '#FF6347', image: null, number: 90 }, // Tomato
+    { id: 11, name: 'Better Luck Next Time', color: '#228B22', image: null, number: 100 }, // Forest Green
   ]
 };
 

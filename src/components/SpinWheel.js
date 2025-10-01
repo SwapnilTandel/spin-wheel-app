@@ -274,9 +274,34 @@ const SpinWheel = ({ categories, isSpinning, winner, selectedCategory, isColorTo
       return '#8B0000'; // Deep maroon for light/cream backgrounds
     }
     
-    // For red/dark backgrounds, use light colors
-    if (bgColor.includes('b22') || bgColor.includes('red') || bgColor.includes('dark')) {
-      return '#FFFFFF'; // White for red/dark backgrounds
+    // For orange/red backgrounds, use white text
+    if (bgColor.includes('ff6b35') || bgColor.includes('ff8c00') || bgColor.includes('ffa500') || 
+        bgColor.includes('ff6347') || bgColor.includes('b22') || bgColor.includes('red') || 
+        bgColor.includes('dark') || bgColor.includes('ff4500')) {
+      return '#FFFFFF'; // White for orange/red backgrounds
+    }
+    
+    // For pink/magenta backgrounds, use white text
+    if (bgColor.includes('ff1493') || bgColor.includes('ff69b4') || bgColor.includes('ff00ff') || 
+        bgColor.includes('ff33cc') || bgColor.includes('ff66dd')) {
+      return '#FFFFFF'; // White for pink/magenta backgrounds
+    }
+    
+    // For blue backgrounds, use white text
+    if (bgColor.includes('00bfff') || bgColor.includes('1e90ff') || bgColor.includes('4169e1') || 
+        bgColor.includes('0000cd') || bgColor.includes('000080') || bgColor.includes('blue')) {
+      return '#FFFFFF'; // White for blue backgrounds
+    }
+    
+    // For purple/violet backgrounds, use white text
+    if (bgColor.includes('4b0082') || bgColor.includes('6a0dad') || bgColor.includes('8a2be2') || 
+        bgColor.includes('9370db') || bgColor.includes('ba55d3') || bgColor.includes('purple')) {
+      return '#FFFFFF'; // White for purple backgrounds
+    }
+    
+    // For green backgrounds, use white text for dark greens, dark text for light greens
+    if (bgColor.includes('228b22') || bgColor.includes('32cd32') || bgColor.includes('green')) {
+      return '#FFFFFF'; // White for green backgrounds
     }
     
     // For other colors, use contrasting text
