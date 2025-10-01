@@ -3,29 +3,29 @@ import { createSlice } from '@reduxjs/toolkit';
 const initialState = {
       categories: {
         50: [
-          { id: 1, name: '$200', color: '#FF6B35', image: null, number: 1 }, // Diwali Orange
-          { id: 2, name: '$20', color: '#FFD700', image: null, number: 10 }, // Gold
-          { id: 3, name: '$10', color: '#4B0082', image: null, number: 20 }, // Indigo
-          { id: 4, name: '$5', color: '#FF1493', image: null, number: 30 }, // Deep Pink
-          { id: 5, name: 'Sugar 4LB', color: '#32CD32', image: null, number: 40 }, // Lime Green
-          { id: 6, name: 'Maggie Masala - 700 gm', color: '#FF8C00', image: null, number: 50 }, // Deep Orange
-          { id: 7, name: 'Parle - G 10pcs', color: '#00BFFF', image: null, number: 60 }, // Deep Sky Blue
-          { id: 8, name: 'Yogurt 2LB', color: '#FFA500', image: null, number: 70 }, // Saffron
-          { id: 9, name: 'Bakery Product - $5', color: '#8A2BE2', image: null, number: 80 }, // Blue Violet
-          { id: 10, name: 'Deep Naan (1pk-5 pcs)', color: '#FF6347', image: null, number: 90 }, // Tomato
+          { id: 1, name: 'Maggie Masala - 700 gm', color: '#FF8C00', image: null, number: 50 }, // Deep Orange
+          { id: 2, name: '$200', color: '#FF6B35', image: null, number: 1 }, // Diwali Orange
+          { id: 3, name: 'Sugar 4LB', color: '#32CD32', image: null, number: 40 }, // Lime Green
+          { id: 4, name: '$20', color: '#FFD700', image: null, number: 10 }, // Gold
+          { id: 5, name: 'Parle - G 10pcs', color: '#00BFFF', image: null, number: 60 }, // Deep Sky Blue
+          { id: 6, name: '$10', color: '#4B0082', image: null, number: 20 }, // Indigo
+          { id: 7, name: 'Yogurt 2LB', color: '#FFA500', image: null, number: 70 }, // Saffron
+          { id: 8, name: '$5', color: '#FF1493', image: null, number: 30 }, // Deep Pink
+          { id: 9, name: 'Deep Naan (1pk-5 pcs)', color: '#FF6347', image: null, number: 90 }, // Tomato
+          { id: 10, name: 'Bakery Product - $5', color: '#8A2BE2', image: null, number: 80 }, // Blue Violet
           { id: 11, name: 'Better Luck Next Time', color: '#228B22', image: null, number: 100 }, // Forest Green
         ],
         100: [
-          { id: 1, name: '$300', color: '#FF6B35', image: null, number: 1 }, // Diwali Orange
-          { id: 2, name: '$50', color: '#FFD700', image: null, number: 10 }, // Gold
-          { id: 3, name: '$25', color: '#4B0082', image: null, number: 20 }, // Indigo
-          { id: 4, name: '$10', color: '#FF1493', image: null, number: 30 }, // Deep Pink
-          { id: 5, name: 'Olivelila Oil', color: '#32CD32', image: null, number: 40 }, // Lime Green
-          { id: 6, name: 'Any Basmati Rice - 10 LB', color: '#FF8C00', image: null, number: 50 }, // Deep Orange
-          { id: 7, name: 'Rajbhog Dahi - 4 LB', color: '#00BFFF', image: null, number: 60 }, // Deep Sky Blue
-          { id: 8, name: 'Maharaja Brand Almond - 3 LB', color: '#FFA500', image: null, number: 70 }, // Saffron
-          { id: 9, name: 'Any Bakery Product - $10', color: '#8A2BE2', image: null, number: 80 }, // Blue Violet
-          { id: 10, name: 'Deep Tandoori Naan - Family PK', color: '#FF6347', image: null, number: 90 }, // Tomato
+          { id: 1, name: 'Any Basmati Rice - 10 LB', color: '#FF8C00', image: null, number: 50 }, // Deep Orange
+          { id: 2, name: '$300', color: '#FF6B35', image: null, number: 1 }, // Diwali Orange
+          { id: 3, name: 'Olive Oil', color: '#32CD32', image: null, number: 40 }, // Lime Green
+          { id: 4, name: '$50', color: '#FFD700', image: null, number: 10 }, // Gold
+          { id: 5, name: 'Rajbhog Dahi - 4 LB', color: '#00BFFF', image: null, number: 60 }, // Deep Sky Blue
+          { id: 6, name: '$25', color: '#4B0082', image: null, number: 20 }, // Indigo
+          { id: 7, name: 'Maharaja Brand Almond - 3 LB', color: '#FFA500', image: null, number: 70 }, // Saffron
+          { id: 8, name: '$10', color: '#FF1493', image: null, number: 30 }, // Deep Pink
+          { id: 9, name: 'Deep Tandoori Naan - Family PK', color: '#FF6347', image: null, number: 90 }, // Tomato
+          { id: 10, name: 'Any Bakery Product - $10', color: '#8A2BE2', image: null, number: 80 }, // Blue Violet
           { id: 11, name: 'Better Luck Next Time', color: '#228B22', image: null, number: 100 }, // Forest Green
         ]
       },

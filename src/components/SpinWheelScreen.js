@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Alert, Modal, Animated, Dimensions, Keyboard } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import SpinWheel from './SpinWheel';
+import PolishedButton from './common/PolishedButton';
 import { setSpinning, setLastResult, addToHistory } from '../store/slices/wheelSlice';
 
 const { width, height } = Dimensions.get('window');
@@ -285,15 +286,20 @@ const SpinWheelScreen = ({ value, onReset }) => {
         </View>
       )}
       
-      {/* Spin Button positioned at bottom, outside wheel container */}
-      <View style={styles.keyboardContainer}>
-        <Text style={[
-          styles.keyboardInstruction,
-          (isSpinning && !canStopSpin) || stopButtonPressed ? styles.keyboardInstructionDisabled : null
-        ]}>
+      {/* Polished Spin/Stop Button positioned at bottom, outside wheel container */}
+      <View style={styles.buttonContainer}>
+        <PolishedButton
+          title={isSpinning ? 'STOP' : 'SPIN'}
+          onPress={isSpinning ? handleStopSpin : handleStartSpin}
+          disabled={(isSpinning && !canStopSpin) || stopButtonPressed}
+          variant={isSpinning ? 'danger' : 'primary'}
+          size="large"
+          style={styles.polishedButton}
+        />
+        <Text style={styles.buttonHint}>
           {isSpinning 
-            ? 'STOP'
-            : 'SPIN'
+            ? (canStopSpin ? 'Press button or ENTER to stop' : '...')
+            : 'Press button or ENTER to start spinning'
           }
         </Text>
       </View>
@@ -352,7 +358,7 @@ const styles = StyleSheet.create({
     zIndex: 10,
     maxHeight: '75%',
   },
-  keyboardContainer: {
+  buttonContainer: {
     width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
@@ -360,34 +366,24 @@ const styles = StyleSheet.create({
     paddingBottom: 30,
     zIndex: 5,
   },
-  keyboardInstruction: {
-    color: '#B22222',
-    fontSize: 24,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginBottom: 10,
-    backgroundColor: '#FFD700',
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-    borderRadius: 25,
-    borderWidth: 3,
-    borderColor: '#B22222',
-    elevation: 5,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
+  polishedButton: {
+    marginBottom: 12,
   },
-  keyboardHint: {
+  buttonHint: {
     color: '#666666',
-    fontSize: 16,
+    fontSize: 14,
     textAlign: 'center',
     fontStyle: 'italic',
+    opacity: 0.8,
+    marginTop: 8,
   },
-  keyboardInstructionDisabled: {
-    backgroundColor: '#CCCCCC',
+  keyboardHint: {
     color: '#888888',
-    borderColor: '#999999',
+    fontSize: 12,
+    textAlign: 'center',
+    fontStyle: 'italic',
+    opacity: 0.6,
+    marginTop: 4,
   },
   resultContainer: {
     position: 'absolute',
