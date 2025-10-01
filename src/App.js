@@ -71,8 +71,8 @@ const AppContent = () => {
       <SafeAreaView style={styles.container}>
         <StatusBar barStyle="light-content" backgroundColor="#2E7D32" />
         
-        {/* Catchphrase */}
-        <View style={styles.catchphraseContainer}>
+        {/* Top Section - Catchphrase Area */}
+        <View style={styles.topSection}>
           <Text style={styles.catchphrase}>Spin to Win at Maharaja!</Text>
         </View>
 
@@ -83,8 +83,8 @@ const AppContent = () => {
           </View>
         )}
 
-        {/* Content */}
-        <View style={styles.content}>
+        {/* Wheel Section - Main Content Area */}
+        <View style={styles.wheelSection}>
           {renderTabContent()}
         </View>
 
@@ -160,13 +160,17 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#FFFFFF',
   },
-  catchphraseContainer: {
+  topSection: {
     backgroundColor: '#B22222',
-    paddingVertical: 20,
+    paddingVertical: 25,
     paddingHorizontal: 20,
-    borderBottomWidth: 3,
+    borderBottomWidth: 4,
     borderBottomColor: '#FFD700',
-    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.3)',
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.3)',
+    minHeight: 80,
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 10,
   },
   catchphrase: {
     color: '#FFD700',
@@ -192,8 +196,10 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
   },
-  content: {
+  wheelSection: {
     flex: 1,
+    backgroundColor: '#FFFFFF',
+    position: 'relative',
   },
   fabContainer: {
     position: 'absolute',
