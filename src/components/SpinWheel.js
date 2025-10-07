@@ -489,7 +489,7 @@ const SpinWheel = ({ categories, isSpinning, winner, selectedCategory, isColorTo
           <SvgText
             x={textPos.x}
             y={textPos.y}
-            fontSize={`${Math.max(settings.labelTextSize || 14, WHEEL_SIZE * 0.08)}`}
+            fontSize={`${settings.labelTextSize || 14}`}
             fontWeight="700"
             fontFamily={settings.labelFontFamily || 'system-ui'}
             fill={textColor}
