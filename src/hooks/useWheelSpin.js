@@ -11,7 +11,6 @@ import { APP_CONFIG } from '../utils/constants';
 export const useWheelSpin = (wheelValue, onSpinComplete) => {
   const dispatch = useDispatch();
   const { categories } = useSelector(state => state.categories);
-  const { settings } = useSelector(state => state.settings);
   const { isSpinning } = useSelector(state => state.wheel);
   
   const [winner, setWinner] = useState(null);
@@ -51,8 +50,8 @@ export const useWheelSpin = (wheelValue, onSpinComplete) => {
     }, 3000);
     
     // Play ticking sound
-    playSound('tick', settings);
-  }, [isSpinning, categories, wheelValue, dispatch, settings]);
+    playSound('tick');
+  }, [isSpinning, categories, wheelValue, dispatch]);
 
   const handleStopSpin = useCallback(() => {
     if (!isSpinning || !canStopSpin) return;
@@ -77,7 +76,7 @@ export const useWheelSpin = (wheelValue, onSpinComplete) => {
     setIsColorToggling(true);
     
     // Play win sound
-    playSound('win', settings);
+    playSound('win');
     
     // Add to history
     dispatch(addToHistory({
@@ -91,7 +90,7 @@ export const useWheelSpin = (wheelValue, onSpinComplete) => {
       setSelectedCategory(null); // Revert background color
       setWinner(selectedCategory);
     }, APP_CONFIG.ANIMATION.COLOR_TOGGLE_DURATION);
-  }, [dispatch, wheelValue, settings]);
+  }, [dispatch, wheelValue]);
 
   const resetWheel = useCallback(() => {
     setWinner(null);

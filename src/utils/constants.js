@@ -211,18 +211,6 @@ export const COLOR_OPTIONS = [
   { color: '#F5FFFA', name: 'Mint Cream' }
 ];
 
-export const DEFAULT_SETTINGS = {
-  soundEnabled: true,
-  animationsEnabled: true,
-  hapticFeedback: true,
-  labelTextSize: 18,
-  labelFontFamily: 'system-ui',
-  backgroundTheme: 'white',
-  backgroundImage: null,
-  backgroundVideo: null,
-  settingsPassword: '',
-  recentColors: [],
-};
 
 export const DEFAULT_CATEGORIES = {
   50: [

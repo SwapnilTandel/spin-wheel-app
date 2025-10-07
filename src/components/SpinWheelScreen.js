@@ -9,7 +9,7 @@ const { width, height } = Dimensions.get('window');
 
 const SpinWheelScreen = ({ value, onReset }) => {
   const dispatch = useDispatch();
-  const { categories, settings, isSpinning } = useSelector(state => state.wheel);
+  const { categories, isSpinning } = useSelector(state => state.wheel);
   const [winner, setWinner] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [isColorToggling, setIsColorToggling] = useState(false);
@@ -126,10 +126,8 @@ const SpinWheelScreen = ({ value, onReset }) => {
   
   // Sound setup - placeholder for web compatibility
   const playSound = (type) => {
-    if (settings.soundEnabled) {
-      console.log(`Playing ${type} sound`);
-      // Web audio implementation would go here
-    }
+    console.log(`Playing ${type} sound`);
+    // Web audio implementation would go here
   };
 
   const handleSpinComplete = useCallback((selectedCategory) => {
@@ -218,46 +216,7 @@ const SpinWheelScreen = ({ value, onReset }) => {
   };
 
   return (
-    <View style={[
-      styles.container,
-      settings.backgroundTheme === 'custom' && styles.containerCustom
-    ]}>
-      {/* Custom Background Video */}
-      {settings.backgroundTheme === 'custom' && settings.backgroundVideo && (
-        <video 
-          src={settings.backgroundVideo}
-          autoPlay
-          loop
-          muted
-          playsInline
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: '100%',
-            objectFit: 'cover',
-            zIndex: 0,
-          }}
-        />
-      )}
-
-      {/* Custom Background Image */}
-      {settings.backgroundTheme === 'custom' && settings.backgroundImage && !settings.backgroundVideo && (
-        <img 
-          src={settings.backgroundImage} 
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: '100%',
-            objectFit: 'cover',
-            zIndex: 0,
-          }}
-          alt="Custom Background"
-        />
-      )}
+    <View style={styles.container}>
 
       <View style={styles.wheelContainer}>
         <SpinWheel 
@@ -346,9 +305,6 @@ const styles = StyleSheet.create({
     position: 'relative',
     overflow: 'hidden',
   },
-  containerCustom: {
-    backgroundColor: '#FFFFFF',
-  },
   wheelContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -356,26 +312,27 @@ const styles = StyleSheet.create({
     width: '100%',
     position: 'relative',
     zIndex: 10,
-    maxHeight: '75%',
+    maxHeight: '85%',
+    minHeight: '60%',
   },
   buttonContainer: {
     width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 20,
-    paddingBottom: 30,
+    paddingVertical: 'clamp(10px, 2vh, 20px)',
+    paddingBottom: 'clamp(15px, 3vh, 30px)',
     zIndex: 5,
   },
   polishedButton: {
-    marginBottom: 12,
+    marginBottom: 'clamp(8px, 1.5vh, 12px)',
   },
   buttonHint: {
     color: '#666666',
-    fontSize: 14,
+    fontSize: 'clamp(12px, 1.8vw, 16px)',
     textAlign: 'center',
     fontStyle: 'italic',
     opacity: 0.8,
-    marginTop: 8,
+    marginTop: 'clamp(4px, 1vh, 8px)',
   },
   keyboardHint: {
     color: '#888888',

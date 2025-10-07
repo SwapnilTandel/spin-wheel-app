@@ -38,7 +38,6 @@ const initialState = {
         backgroundTheme: 'white', // Options: 'white', 'custom'
         backgroundImage: null, // URL or base64 image for custom background
         backgroundVideo: null, // URL or base64 video for custom background
-        settingsPassword: '', // Password to access settings (empty = no protection)
         recentColors: [], // Recently used colors
       },
   history: [],
@@ -99,9 +98,6 @@ const wheelSlice = createSlice({
       [newCategories[currentIndex], newCategories[newIndex]] = [newCategories[newIndex], newCategories[currentIndex]];
       state.categories[wheelValue] = newCategories;
     },
-    updateSettings: (state, action) => {
-      state.settings = { ...state.settings, ...action.payload };
-    },
     addToHistory: (state, action) => {
       state.history.unshift({
         ...action.payload,
@@ -126,7 +122,6 @@ export const {
   removeCategory,
   updateCategory,
   moveCategory,
-  updateSettings,
   addToHistory,
   setSpinning,
   setLastResult,

@@ -69,22 +69,22 @@ const PolishedButton = ({
 
     const sizeStyles = {
       small: {
-        paddingHorizontal: 16,
-        paddingVertical: 8,
-        borderRadius: 16,
-        minWidth: 100,
+        paddingHorizontal: 'clamp(12px, 2vw, 16px)',
+        paddingVertical: 'clamp(6px, 1vh, 8px)',
+        borderRadius: 'clamp(12px, 2vw, 16px)',
+        minWidth: 'clamp(80px, 15vw, 100px)',
       },
       medium: {
-        paddingHorizontal: 24,
-        paddingVertical: 12,
-        borderRadius: 20,
-        minWidth: 140,
+        paddingHorizontal: 'clamp(18px, 3vw, 24px)',
+        paddingVertical: 'clamp(8px, 1.5vh, 12px)',
+        borderRadius: 'clamp(16px, 2.5vw, 20px)',
+        minWidth: 'clamp(120px, 20vw, 140px)',
       },
       large: {
-        paddingHorizontal: 32,
-        paddingVertical: 16,
-        borderRadius: 25,
-        minWidth: 180,
+        paddingHorizontal: 'clamp(24px, 4vw, 32px)',
+        paddingVertical: 'clamp(12px, 2vh, 16px)',
+        borderRadius: 'clamp(20px, 3vw, 25px)',
+        minWidth: 'clamp(150px, 25vw, 180px)',
       },
     };
 
@@ -123,9 +123,9 @@ const PolishedButton = ({
     };
 
     const sizeTextStyles = {
-      small: { fontSize: 14 },
-      medium: { fontSize: 16 },
-      large: { fontSize: 20 },
+      small: { fontSize: 'clamp(12px, 2vw, 14px)' },
+      medium: { fontSize: 'clamp(14px, 2.5vw, 16px)' },
+      large: { fontSize: 'clamp(16px, 3vw, 20px)' },
     };
 
     return {

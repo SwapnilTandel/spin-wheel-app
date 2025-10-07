@@ -26,7 +26,6 @@ const OptimizedSpinWheel = memo(({
   onSpinComplete, 
   resetRef 
 }) => {
-  const { settings } = useSelector(state => state.settings);
   
   // Memoize expensive calculations
   const wheelConfig = useMemo(() => ({
@@ -40,13 +39,12 @@ const OptimizedSpinWheel = memo(({
   const wheelSegments = useMemo(() => (
     <WheelSegments 
       categories={categories}
-      settings={settings}
       winningIndex={winner ? categories.findIndex(cat => cat.id === winner.id) : null}
       selectedCategory={selectedCategory}
       isColorToggling={isColorToggling}
       colorToggle={false} // This will be handled by the component internally
     />
-  ), [categories, settings, winner, selectedCategory, isColorToggling]);
+  ), [categories, winner, selectedCategory, isColorToggling]);
 
   // Memoize decorations
   const decorations = useMemo(() => <WheelDecorations />, []);

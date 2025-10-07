@@ -4,7 +4,8 @@ import { useSelector } from 'react-redux';
 import Svg, { Circle, Path, Text as SvgText, Defs, LinearGradient, Stop, G, Rect, Ellipse } from 'react-native-svg';
 
 const { width, height } = Dimensions.get('window');
-const WHEEL_SIZE = Math.min(width * 0.95, height * 0.70);
+// Make wheel responsive to available space in the 90vh section
+const WHEEL_SIZE = Math.min(width * 0.8, height * 0.6);
 const CENTER_LOGO_SIZE = Math.min(WHEEL_SIZE * 0.25, 150);
 
 const SpinWheel = ({ categories, isSpinning, winner, selectedCategory, isColorToggling, isKeyboardSpinning, canStopSpin, userRequestedStop, onReset, onSpinComplete, resetRef }) => {
@@ -488,7 +489,7 @@ const SpinWheel = ({ categories, isSpinning, winner, selectedCategory, isColorTo
           <SvgText
             x={textPos.x}
             y={textPos.y}
-            fontSize={`${settings.labelTextSize || 14}`}
+            fontSize={`${Math.max(settings.labelTextSize || 14, WHEEL_SIZE * 0.08)}`}
             fontWeight="700"
             fontFamily={settings.labelFontFamily || 'system-ui'}
             fill={textColor}
@@ -665,18 +666,18 @@ const styles = StyleSheet.create({
     height: CENTER_LOGO_SIZE * 0.7,
   },
   brandText1: {
-    fontSize: Math.max(CENTER_LOGO_SIZE * 0.06, 8),
+    fontSize: `clamp(8px, ${CENTER_LOGO_SIZE * 0.06}px, 16px)`,
     fontWeight: 'bold',
     color: '#B22222',
     textAlign: 'center',
-    lineHeight: Math.max(CENTER_LOGO_SIZE * 0.07, 9),
+    lineHeight: `clamp(9px, ${CENTER_LOGO_SIZE * 0.07}px, 18px)`,
   },
   brandText2: {
-    fontSize: Math.max(CENTER_LOGO_SIZE * 0.08, 10),
+    fontSize: `clamp(10px, ${CENTER_LOGO_SIZE * 0.08}px, 18px)`,
     fontWeight: 'bold',
     color: '#B22222',
     textAlign: 'center',
-    lineHeight: Math.max(CENTER_LOGO_SIZE * 0.09, 11),
+    lineHeight: `clamp(11px, ${CENTER_LOGO_SIZE * 0.09}px, 20px)`,
     marginTop: 1,
   },
   pointerContainer: {

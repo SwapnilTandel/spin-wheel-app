@@ -120,37 +120,6 @@ export const validatePassword = (password) => {
   return { isValid: true };
 };
 
-export const validateSettings = (settings) => {
-  const errors = [];
-  
-  // Validate text size
-  if (settings.labelTextSize && (settings.labelTextSize < 10 || settings.labelTextSize > 50)) {
-    errors.push('Text size must be between 10 and 50');
-  }
-  
-  // Validate font family
-  const validFonts = ['system-ui', 'Arial', 'Helvetica', 'Times New Roman', 'Georgia', 'Verdana', 'Courier New', 'Trebuchet MS', 'Impact', 'Comic Sans MS', 'serif', 'sans-serif', 'monospace', 'cursive', 'fantasy'];
-  if (settings.labelFontFamily && !validFonts.includes(settings.labelFontFamily)) {
-    errors.push('Invalid font family');
-  }
-  
-  // Validate background theme
-  const validThemes = ['white', 'custom'];
-  if (settings.backgroundTheme && !validThemes.includes(settings.backgroundTheme)) {
-    errors.push('Invalid background theme');
-  }
-  
-  // Validate password
-  const passwordValidation = validatePassword(settings.settingsPassword);
-  if (!passwordValidation.isValid) {
-    errors.push(passwordValidation.error);
-  }
-  
-  return {
-    isValid: errors.length === 0,
-    errors
-  };
-};
 
 export const validateWheelCategories = (categories) => {
   if (!categories || !Array.isArray(categories)) {

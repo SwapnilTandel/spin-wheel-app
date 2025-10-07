@@ -8,7 +8,6 @@ import { WHEEL_SIZE } from '../../styles/theme';
  */
 const WheelSegments = ({ 
   categories, 
-  settings, 
   winningIndex, 
   selectedCategory, 
   isColorToggling, 
@@ -46,9 +45,9 @@ const WheelSegments = ({
         <SvgText
           x={textPos.x}
           y={textPos.y}
-          fontSize={`${settings.labelTextSize || 14}`}
+          fontSize="18"
           fontWeight="700"
-          fontFamily={settings.labelFontFamily || 'system-ui'}
+          fontFamily="system-ui"
           fill={textColor}
           textAnchor="middle"
           dominantBaseline="middle"

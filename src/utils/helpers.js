@@ -99,12 +99,11 @@ export const createAnimation = (value, toValue, duration, useNativeDriver = fals
 };
 
 // Sound utilities
-export const playSound = (type, settings) => {
-  if (settings?.soundEnabled) {
-    console.log(`Playing ${type} sound`);
-    // Web audio implementation would go here
-    // This is a placeholder for future audio implementation
-  }
+export const playSound = (type) => {
+  // Always play sound for now
+  console.log(`Playing ${type} sound`);
+  // Web audio implementation would go here
+  // This is a placeholder for future audio implementation
 };
 
 // History utilities

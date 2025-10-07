@@ -1,57 +1,15 @@
 import React, { useState, useRef } from 'react';
-import { View, StyleSheet, StatusBar, SafeAreaView, Text, TouchableOpacity, Animated, Alert } from 'react-native';
+import { View, StyleSheet, StatusBar, Text, TouchableOpacity, Alert } from 'react-native';
 import SpinWheelScreen from './components/SpinWheelScreen';
-import SettingsScreen from './components/SettingsScreen';
 import { Provider, useSelector } from 'react-redux';
 import { store } from './store/store';
 
 const AppContent = () => {
   const [activeTab, setActiveTab] = useState('spin50');
-  const [isFabExpanded, setIsFabExpanded] = useState(false);
   const resetWheelRef = useRef(null);
-  const fabAnimation = useRef(new Animated.Value(0)).current;
-  const settings = useSelector(state => state.wheel.settings);
-
-  const handleResetWheel = () => {
-    if (resetWheelRef.current) {
-      resetWheelRef.current();
-    }
-  };
-
-  const toggleFab = () => {
-    const toValue = isFabExpanded ? 0 : 1;
-    setIsFabExpanded(!isFabExpanded);
-    
-        Animated.timing(fabAnimation, {
-          toValue,
-          duration: 200,
-          useNativeDriver: false,
-        }).start();
-  };
 
   const handleTabChange = (tab) => {
-    // Check if settings requires password
-    if (tab === 'settings' && settings.settingsPassword) {
-      const password = prompt('Enter settings password:');
-      if (password !== settings.settingsPassword) {
-        alert('Incorrect password!');
-        setIsFabExpanded(false);
-        Animated.timing(fabAnimation, {
-          toValue: 0,
-          duration: 200,
-          useNativeDriver: false,
-        }).start();
-        return;
-      }
-    }
-    
     setActiveTab(tab);
-    setIsFabExpanded(false);
-        Animated.timing(fabAnimation, {
-          toValue: 0,
-          duration: 200,
-          useNativeDriver: false,
-        }).start();
   };
 
   const renderTabContent = () => {
@@ -60,121 +18,74 @@ const AppContent = () => {
         return <SpinWheelScreen value={50} onReset={resetWheelRef} />;
       case 'spin100':
         return <SpinWheelScreen value={100} onReset={resetWheelRef} />;
-      case 'settings':
-        return <SettingsScreen />;
       default:
         return <SpinWheelScreen value={50} onReset={resetWheelRef} />;
     }
   };
 
   return (
-      <SafeAreaView style={styles.container}>
+      <View style={styles.container}>
         <StatusBar barStyle="light-content" backgroundColor="#2E7D32" />
         
-        {/* Top Section - Catchphrase Area */}
+        {/* Top Section - Catchphrase Area (5%) */}
         <View style={styles.topSection}>
           <Text style={styles.catchphrase}>Spin to Win at Maharaja!</Text>
         </View>
 
-        {/* Header - Hidden for spin wheels to maximize space */}
-        {activeTab === 'settings' && (
-          <View style={styles.header}>
-            <Text style={styles.headerTitle}>⚙️ Settings</Text>
-          </View>
-        )}
 
-        {/* Wheel Section - Main Content Area */}
+        {/* Wheel Section - Main Content Area (90%) */}
         <View style={styles.wheelSection}>
           {renderTabContent()}
         </View>
 
-        {/* Floating Action Button Group */}
-        <View style={styles.fabContainer}>
-          {/* Expanded Menu Buttons */}
-          <Animated.View 
-            style={[
-              styles.expandedMenu,
-              {
-                opacity: fabAnimation,
-                transform: [{
-                  scale: fabAnimation.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [0, 1],
-                  })
-                }]
-              }
-            ]}
-          >
-            {/* Reset Button */}
-            <TouchableOpacity
-              style={styles.fabSubButton}
-              onPress={handleResetWheel}
-              activeOpacity={0.7}
-            >
-              <Text style={styles.fabSubButtonText}>🔄</Text>
-            </TouchableOpacity>
-
-            {/* Settings Button */}
-            <TouchableOpacity
-              style={[styles.fabSubButton, activeTab === 'settings' && styles.activeFabButton]}
-              onPress={() => handleTabChange('settings')}
-              activeOpacity={0.7}
-            >
-              <Text style={styles.fabSubButtonText}>⚙️</Text>
-            </TouchableOpacity>
-
-            {/* $100 Button */}
-            <TouchableOpacity
-              style={[styles.fabSubButton, activeTab === 'spin100' && styles.activeFabButton]}
-              onPress={() => handleTabChange('spin100')}
-              activeOpacity={0.7}
-            >
-              <Text style={styles.fabSubButtonText}>⭐</Text>
-            </TouchableOpacity>
-
-            {/* $50 Button */}
-            <TouchableOpacity
-              style={[styles.fabSubButton, activeTab === 'spin50' && styles.activeFabButton]}
-              onPress={() => handleTabChange('spin50')}
-              activeOpacity={0.7}
-            >
-              <Text style={styles.fabSubButtonText}>🎰</Text>
-            </TouchableOpacity>
-          </Animated.View>
-
-          {/* Main FAB Button */}
+        {/* Bottom Button Group (5%) */}
+        <View style={styles.bottomButtonContainer}>
+          {/* $50 Wheel Button */}
           <TouchableOpacity
-            style={styles.mainFab}
-            onPress={toggleFab}
+            style={[styles.bottomButton, activeTab === 'spin50' && styles.activeBottomButton]}
+            onPress={() => handleTabChange('spin50')}
             activeOpacity={0.7}
           >
-            <Text style={[styles.mainFabText, isFabExpanded && styles.mainFabTextRotated]}>+</Text>
+            <Text style={styles.bottomButtonText}>$50 Wheel</Text>
           </TouchableOpacity>
+
+          {/* $100 Wheel Button */}
+          <TouchableOpacity
+            style={[styles.bottomButton, activeTab === 'spin100' && styles.activeBottomButton]}
+            onPress={() => handleTabChange('spin100')}
+            activeOpacity={0.7}
+          >
+            <Text style={styles.bottomButtonText}>$100 Wheel</Text>
+          </TouchableOpacity>
+
         </View>
-      </SafeAreaView>
+      </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    height: '100vh',
+    width: '100vw',
     backgroundColor: '#FFFFFF',
+    overflow: 'hidden',
+    display: 'flex',
+    flexDirection: 'column',
   },
   topSection: {
+    height: '5vh',
     backgroundColor: '#B22222',
-    paddingVertical: 25,
-    paddingHorizontal: 20,
     borderBottomWidth: 4,
     borderBottomColor: '#FFD700',
     boxShadow: '0 4px 8px rgba(0, 0, 0, 0.3)',
-    minHeight: 80,
     justifyContent: 'center',
     alignItems: 'center',
     zIndex: 10,
+    overflow: 'hidden',
   },
   catchphrase: {
     color: '#FFD700',
-    fontSize: 32,
+    fontSize: 'clamp(16px, 2.5vw, 32px)',
     fontWeight: '900',
     textAlign: 'center',
     textTransform: 'uppercase',
@@ -183,76 +94,45 @@ const styles = StyleSheet.create({
     textShadowOffset: { width: 2, height: 2 },
     textShadowRadius: 4,
   },
-  header: {
-    backgroundColor: '#B22222',
-    paddingVertical: 15,
-    paddingHorizontal: 20,
-    borderBottomWidth: 2,
-    borderBottomColor: '#FFD700',
-  },
-  headerTitle: {
-    color: '#FFFFFF',
-    fontSize: 20,
-    fontWeight: 'bold',
-    textAlign: 'center',
-  },
   wheelSection: {
-    flex: 1,
+    height: '90vh',
     backgroundColor: '#FFFFFF',
     position: 'relative',
+    overflow: 'hidden',
   },
-  fabContainer: {
-    position: 'absolute',
-    bottom: 20,
-    right: 20,
+  bottomButtonContainer: {
+    height: '5vh',
+    backgroundColor: '#FFFFFF',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    justifyContent: 'flex-end',
-    height: 250,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
     zIndex: 10,
+    borderTopWidth: 2,
+    borderTopColor: '#FFD700',
   },
-  expandedMenu: {
-    position: 'absolute',
-    bottom: 60,
-    right: 0,
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-  fabSubButton: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
+  bottomButton: {
+    flex: 1,
     backgroundColor: '#B22222',
+    paddingVertical: 8,
+    paddingHorizontal: 5,
+    marginHorizontal: 3,
+    borderRadius: 15,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 10,
     elevation: 6,
     boxShadow: '0 3px 5px rgba(0, 0, 0, 0.3)',
+    minHeight: 35,
   },
-  activeFabButton: {
+  activeBottomButton: {
     backgroundColor: '#FFD700',
   },
-  fabSubButtonText: {
-    fontSize: 20,
+  bottomButtonText: {
+    fontSize: 'clamp(10px, 1.2vw, 14px)',
     color: '#FFFFFF',
-  },
-  mainFab: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    backgroundColor: '#FFD700',
-    alignItems: 'center',
-    justifyContent: 'center',
-    elevation: 8,
-    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.4)',
-    zIndex: 1000,
-  },
-  mainFabText: {
-    fontSize: 32,
-    color: '#B22222',
     fontWeight: 'bold',
-  },
-  mainFabTextRotated: {
-    transform: [{ rotate: '45deg' }],
+    textAlign: 'center',
   },
 });
 
