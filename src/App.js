@@ -1,15 +1,21 @@
 import React, { useState, useRef } from 'react';
-import { View, StyleSheet, StatusBar, Text, TouchableOpacity, Alert } from 'react-native';
+import { View, StyleSheet, StatusBar, Text, TouchableOpacity, Alert, Modal } from 'react-native';
 import SpinWheelScreen from './components/SpinWheelScreen';
 import { Provider, useSelector } from 'react-redux';
 import { store } from './store/store';
 
 const AppContent = () => {
   const [activeTab, setActiveTab] = useState('spin50');
+  const [showMenu, setShowMenu] = useState(false);
   const resetWheelRef = useRef(null);
 
   const handleTabChange = (tab) => {
     setActiveTab(tab);
+    setShowMenu(false); // Close menu after selection
+  };
+
+  const toggleMenu = () => {
+    setShowMenu(!showMenu);
   };
 
   const renderTabContent = () => {
@@ -29,36 +35,55 @@ const AppContent = () => {
         
         {/* Top Section - Catchphrase Area (5%) */}
         <View style={styles.topSection}>
+          <TouchableOpacity 
+            style={styles.burgerMenu}
+            onPress={toggleMenu}
+            activeOpacity={0.7}
+          >
+            <View style={styles.burgerLine} />
+            <View style={styles.burgerLine} />
+            <View style={styles.burgerLine} />
+          </TouchableOpacity>
           <Text style={styles.catchphrase}>Spin to Win at Maharaja!</Text>
         </View>
 
 
-        {/* Wheel Section - Main Content Area (90%) */}
+        {/* Wheel Section - Main Content Area (95%) */}
         <View style={styles.wheelSection}>
           {renderTabContent()}
         </View>
 
-        {/* Bottom Button Group (5%) */}
-        <View style={styles.bottomButtonContainer}>
-          {/* $50 Wheel Button */}
-          <TouchableOpacity
-            style={[styles.bottomButton, activeTab === 'spin50' && styles.activeBottomButton]}
-            onPress={() => handleTabChange('spin50')}
-            activeOpacity={0.7}
+        {/* Burger Menu Modal */}
+        <Modal
+          visible={showMenu}
+          transparent={true}
+          animationType="fade"
+          onRequestClose={() => setShowMenu(false)}
+        >
+          <TouchableOpacity 
+            style={styles.menuOverlay}
+            activeOpacity={1}
+            onPress={() => setShowMenu(false)}
           >
-            <Text style={styles.bottomButtonText}>$50 Wheel</Text>
-          </TouchableOpacity>
+            <View style={styles.menuContainer}>
+              <TouchableOpacity
+                style={[styles.menuButton, activeTab === 'spin50' && styles.activeMenuButton]}
+                onPress={() => handleTabChange('spin50')}
+                activeOpacity={0.7}
+              >
+                <Text style={styles.menuButtonText}>$50 Wheel</Text>
+              </TouchableOpacity>
 
-          {/* $100 Wheel Button */}
-          <TouchableOpacity
-            style={[styles.bottomButton, activeTab === 'spin100' && styles.activeBottomButton]}
-            onPress={() => handleTabChange('spin100')}
-            activeOpacity={0.7}
-          >
-            <Text style={styles.bottomButtonText}>$100 Wheel</Text>
+              <TouchableOpacity
+                style={[styles.menuButton, activeTab === 'spin100' && styles.activeMenuButton]}
+                onPress={() => handleTabChange('spin100')}
+                activeOpacity={0.7}
+              >
+                <Text style={styles.menuButtonText}>$100 Wheel</Text>
+              </TouchableOpacity>
+            </View>
           </TouchableOpacity>
-
-        </View>
+        </Modal>
       </View>
   );
 };
@@ -93,41 +118,60 @@ const styles = StyleSheet.create({
     textShadow: '2px 2px 4px rgba(0, 0, 0, 0.5)',
   },
   wheelSection: {
-    height: '90vh',
+    height: '95vh',
     backgroundColor: '#FFFFFF',
     position: 'relative',
     overflow: 'hidden',
   },
-  bottomButtonContainer: {
-    height: '5vh',
-    backgroundColor: '#FFFFFF',
-    flexDirection: 'row',
+  burgerMenu: {
+    position: 'absolute',
+    left: 15,
+    top: '50%',
+    transform: [{ translateY: -12 }],
+    width: 24,
+    height: 24,
     justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    zIndex: 10,
-    borderTopWidth: 2,
-    borderTopColor: '#FFD700',
+    zIndex: 20,
   },
-  bottomButton: {
+  burgerLine: {
+    width: '100%',
+    height: 3,
+    backgroundColor: '#FFD700',
+    borderRadius: 2,
+  },
+  menuOverlay: {
     flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start',
+    paddingTop: 60,
+    paddingLeft: 15,
+  },
+  menuContainer: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 10,
+    padding: 10,
+    elevation: 10,
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.3)',
+    borderWidth: 2,
+    borderColor: '#FFD700',
+    minWidth: 150,
+  },
+  menuButton: {
     backgroundColor: '#B22222',
-    paddingVertical: 8,
-    paddingHorizontal: 5,
-    marginHorizontal: 3,
-    borderRadius: 15,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+    marginVertical: 4,
     alignItems: 'center',
     justifyContent: 'center',
-    elevation: 6,
-    boxShadow: '0 3px 5px rgba(0, 0, 0, 0.3)',
-    minHeight: 35,
+    minWidth: 130,
   },
-  activeBottomButton: {
+  activeMenuButton: {
     backgroundColor: '#FFD700',
   },
-  bottomButtonText: {
-    fontSize: 'clamp(10px, 1.2vw, 14px)',
+  menuButtonText: {
+    fontSize: 14,
     color: '#FFFFFF',
     fontWeight: 'bold',
     textAlign: 'center',
