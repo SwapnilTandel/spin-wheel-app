@@ -3,7 +3,7 @@ import { THEME_COLORS, APP_CONFIG } from '../utils/constants';
 
 const { width, height } = Dimensions.get('window');
 
-export const WHEEL_SIZE = Math.min(width * 0.95, height * 0.70);
+export const WHEEL_SIZE = Math.min(width * 0.8, height * 0.70);
 export const CENTER_LOGO_SIZE = Math.min(WHEEL_SIZE * 0.25, 150);
 
 export const theme = {
@@ -44,31 +44,19 @@ export const theme = {
   },
   shadows: {
     sm: {
-      shadowColor: '#000',
-      shadowOffset: { width: 0, height: 1 },
-      shadowOpacity: 0.1,
-      shadowRadius: 2,
+      boxShadow: '0 1px 2px rgba(0, 0, 0, 0.1)',
       elevation: 2,
     },
     md: {
-      shadowColor: '#000',
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.15,
-      shadowRadius: 4,
+      boxShadow: '0 2px 4px rgba(0, 0, 0, 0.15)',
       elevation: 4,
     },
     lg: {
-      shadowColor: '#000',
-      shadowOffset: { width: 0, height: 4 },
-      shadowOpacity: 0.2,
-      shadowRadius: 8,
+      boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
       elevation: 8,
     },
     xl: {
-      shadowColor: '#000',
-      shadowOffset: { width: 0, height: 8 },
-      shadowOpacity: 0.3,
-      shadowRadius: 16,
+      boxShadow: '0 8px 16px rgba(0, 0, 0, 0.3)',
       elevation: 16,
     },
   },
@@ -425,9 +413,7 @@ export const appStyles = StyleSheet.create({
     textAlign: 'center',
     textTransform: 'uppercase',
     letterSpacing: 3,
-    textShadowColor: 'rgba(0, 0, 0, 0.5)',
-    textShadowOffset: { width: 2, height: 2 },
-    textShadowRadius: 4,
+    textShadow: '2px 2px 4px rgba(0, 0, 0, 0.5)',
   },
   header: {
     backgroundColor: theme.colors.PRIMARY,
@@ -568,7 +554,7 @@ export const spinWheelScreenStyles = StyleSheet.create({
     color: theme.colors.PRIMARY,
     textAlign: 'center',
     marginBottom: theme.spacing.sm,
-    textShadowColor: 'rgba(255,215,0,0.8)',
+    textShadow: '2px 2px 4px rgba(255,215,0,0.8)',
     zIndex: 10,
   },
   celebrationPrize: {
@@ -577,7 +563,7 @@ export const spinWheelScreenStyles = StyleSheet.create({
     color: theme.colors.SECONDARY,
     textAlign: 'center',
     marginBottom: theme.spacing.sm,
-    textShadowColor: 'rgba(178,34,34,0.8)',
+    textShadow: '3px 3px 6px rgba(178,34,34,0.8)',
     zIndex: 10,
     textTransform: 'uppercase',
     letterSpacing: 2,

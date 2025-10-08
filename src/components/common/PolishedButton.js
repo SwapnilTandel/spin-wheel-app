@@ -25,12 +25,12 @@ const PolishedButton = ({
       Animated.timing(scaleAnim, {
         toValue: 0.95,
         duration: 100,
-        useNativeDriver: true,
+        useNativeDriver: false, // Changed to false for web compatibility
       }),
       Animated.timing(opacityAnim, {
         toValue: 0.8,
         duration: 100,
-        useNativeDriver: true,
+        useNativeDriver: false, // Changed to false for web compatibility
       }),
       Animated.timing(shadowAnim, {
         toValue: 2,
@@ -46,12 +46,12 @@ const PolishedButton = ({
       Animated.timing(scaleAnim, {
         toValue: 1,
         duration: 150,
-        useNativeDriver: true,
+        useNativeDriver: false, // Changed to false for web compatibility
       }),
       Animated.timing(opacityAnim, {
         toValue: 1,
         duration: 150,
-        useNativeDriver: true,
+        useNativeDriver: false, // Changed to false for web compatibility
       }),
       Animated.timing(shadowAnim, {
         toValue: 6,
@@ -92,17 +92,17 @@ const PolishedButton = ({
       primary: {
         backgroundColor: disabled ? '#CCCCCC' : '#FF6B35',
         borderColor: disabled ? '#999999' : '#E55A2B',
-        shadowColor: '#FF6B35',
+        boxShadow: disabled ? 'none' : '0 4px 8px rgba(255, 107, 53, 0.3)',
       },
       secondary: {
         backgroundColor: disabled ? '#CCCCCC' : '#4ECDC4',
         borderColor: disabled ? '#999999' : '#3BB5AE',
-        shadowColor: '#4ECDC4',
+        boxShadow: disabled ? 'none' : '0 4px 8px rgba(78, 205, 196, 0.3)',
       },
       danger: {
         backgroundColor: disabled ? '#CCCCCC' : '#FF4757',
         borderColor: disabled ? '#999999' : '#FF3742',
-        shadowColor: '#FF4757',
+        boxShadow: disabled ? 'none' : '0 4px 8px rgba(255, 71, 87, 0.3)',
       },
     };
 
@@ -137,9 +137,7 @@ const PolishedButton = ({
   const getShadowStyles = () => {
     return {
       elevation: shadowAnim,
-      shadowOffset: { width: 0, height: shadowAnim },
-      shadowOpacity: 0.3,
-      shadowRadius: 8,
+      boxShadow: `0 ${shadowAnim}px 8px rgba(0, 0, 0, 0.3)`,
     };
   };
 

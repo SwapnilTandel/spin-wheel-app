@@ -433,10 +433,7 @@ const styles = StyleSheet.create({
     borderWidth: 4,
     borderColor: '#FFD700',
     elevation: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.5,
-    shadowRadius: 20,
+    boxShadow: '0 10px 20px rgba(0, 0, 0, 0.5)',
     position: 'relative',
   },
   celebrationTitle: {
@@ -473,10 +470,7 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderRadius: 25,
     elevation: 5,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.3,
-    shadowRadius: 5,
+    boxShadow: '0 3px 5px rgba(0, 0, 0, 0.3)',
     zIndex: 10,
   },
   closeButtonText: {

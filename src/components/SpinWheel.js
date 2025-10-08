@@ -2,11 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, StyleSheet, Dimensions, TouchableOpacity, Image } from 'react-native';
 import { useSelector } from 'react-redux';
 import Svg, { Circle, Path, Text as SvgText, Defs, LinearGradient, Stop, G, Rect, Ellipse } from 'react-native-svg';
-
-const { width, height } = Dimensions.get('window');
-// Make wheel responsive to available space in the 90vh section
-const WHEEL_SIZE = Math.min(width * 0.8, height * 0.6);
-const CENTER_LOGO_SIZE = Math.min(WHEEL_SIZE * 0.25, 150);
+import { WHEEL_SIZE, CENTER_LOGO_SIZE } from '../styles/theme';
 
 const SpinWheel = ({ categories, isSpinning, winner, selectedCategory, isColorToggling, isKeyboardSpinning, canStopSpin, userRequestedStop, onReset, onSpinComplete, resetRef }) => {
   const wheelRef = useRef(null);

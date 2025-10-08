@@ -90,9 +90,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     textTransform: 'uppercase',
     letterSpacing: 3,
-    textShadowColor: 'rgba(0, 0, 0, 0.5)',
-    textShadowOffset: { width: 2, height: 2 },
-    textShadowRadius: 4,
+    textShadow: '2px 2px 4px rgba(0, 0, 0, 0.5)',
   },
   wheelSection: {
     height: '90vh',
