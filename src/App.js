@@ -48,9 +48,16 @@ const AppContent = () => {
         </View>
 
 
-        {/* Wheel Section - Main Content Area (95%) */}
+        {/* Wheel Section - Main Content Area (90%) */}
         <View style={styles.wheelSection}>
           {renderTabContent()}
+        </View>
+
+        {/* Status Label - Bottom (5%) */}
+        <View style={styles.statusContainer}>
+          <Text style={styles.statusLabel}>
+            Currently Using: {activeTab === 'spin50' ? '$50 Wheel' : '$100 Wheel'}
+          </Text>
         </View>
 
         {/* Burger Menu Modal */}
@@ -118,10 +125,28 @@ const styles = StyleSheet.create({
     textShadow: '2px 2px 4px rgba(0, 0, 0, 0.5)',
   },
   wheelSection: {
-    height: '95vh',
+    height: '90vh',
     backgroundColor: '#FFFFFF',
     position: 'relative',
     overflow: 'hidden',
+  },
+  statusContainer: {
+    height: '5vh',
+    backgroundColor: '#F5F5F5',
+    borderTopWidth: 2,
+    borderTopColor: '#FFD700',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 8,
+    zIndex: 10,
+  },
+  statusLabel: {
+    fontSize: 'clamp(12px, 1.5vw, 16px)',
+    color: '#B22222',
+    fontWeight: 'bold',
+    textAlign: 'center',
+    textTransform: 'uppercase',
+    letterSpacing: 1,
   },
   burgerMenu: {
     position: 'absolute',
