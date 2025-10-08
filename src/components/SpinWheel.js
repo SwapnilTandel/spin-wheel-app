@@ -647,7 +647,7 @@ const styles = StyleSheet.create({
     width: CENTER_LOGO_SIZE,
     height: CENTER_LOGO_SIZE,
     borderRadius: CENTER_LOGO_SIZE / 2,
-    backgroundColor: '#FF88E6',
+    backgroundColor: '#FFFFFF',
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 4,

@@ -20,6 +20,7 @@ const SpinWheelScreen = ({ value, onReset }) => {
   const [canStopSpin, setCanStopSpin] = useState(false);
   const [userRequestedStop, setUserRequestedStop] = useState(false);
   const [stopButtonPressed, setStopButtonPressed] = useState(false);
+  const [isResetting, setIsResetting] = useState(false);
   
   
   // Animation for celebration modal
@@ -31,6 +32,7 @@ const SpinWheelScreen = ({ value, onReset }) => {
 
   // Handle reset functionality
   const handleReset = () => {
+    setIsResetting(true); // Disable spin button during reset
     setWinner(null);
     setShowCelebrationModal(false);
     setShowAlert(false);
@@ -41,6 +43,11 @@ const SpinWheelScreen = ({ value, onReset }) => {
     dispatch(setSpinning(false));
     // Force component re-render to reset label orientation
     setResetKey(prev => prev + 1);
+    
+    // Clear resetting state after reset animation completes
+    setTimeout(() => {
+      setIsResetting(false);
+    }, 500); // Match the reset animation duration
   };
 
   // Expose reset function to parent component
@@ -57,6 +64,9 @@ const SpinWheelScreen = ({ value, onReset }) => {
         if (showCelebrationModal) {
           // If modal is showing, close it
           closeCelebrationModal();
+        } else if (isResetting) {
+          // If resetting, do nothing
+          return;
         } else if (isSpinning) {
           // If spinning, only allow stop if 3 seconds have passed
           if (canStopSpin) {
@@ -76,7 +86,7 @@ const SpinWheelScreen = ({ value, onReset }) => {
     return () => {
       document.removeEventListener('keydown', handleKeyPress);
     };
-  }, [isSpinning, canStopSpin, showCelebrationModal, closeCelebrationModal, handleStartSpin, handleStopSpin]);
+  }, [isSpinning, canStopSpin, isResetting, showCelebrationModal, closeCelebrationModal, handleStartSpin, handleStopSpin]);
 
   // Handle celebration modal animation
   useEffect(() => {
@@ -250,15 +260,17 @@ const SpinWheelScreen = ({ value, onReset }) => {
         <PolishedButton
           title={isSpinning ? 'STOP' : 'SPIN'}
           onPress={isSpinning ? handleStopSpin : handleStartSpin}
-          disabled={(isSpinning && !canStopSpin) || stopButtonPressed}
+          disabled={(isSpinning && !canStopSpin) || stopButtonPressed || isResetting}
           variant={isSpinning ? 'danger' : 'primary'}
           size="large"
           style={styles.polishedButton}
         />
         <Text style={styles.buttonHint}>
-          {isSpinning 
-            ? (canStopSpin ? 'Press button or ENTER to stop' : '...')
-            : 'Press button or ENTER to start spinning'
+          {isResetting 
+            ? 'Resetting wheel...'
+            : isSpinning 
+              ? (canStopSpin ? 'Press button or ENTER to stop' : '...')
+              : 'Press button or ENTER to start spinning'
           }
         </Text>
       </View>
