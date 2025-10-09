@@ -3,7 +3,7 @@ import { THEME_COLORS, APP_CONFIG } from '../utils/constants';
 
 const { width, height } = Dimensions.get('window');
 
-export const WHEEL_SIZE = Math.min(width * 0.8, height * 0.70);
+export const WHEEL_SIZE = Math.min(width * 0.9, height * 0.75);
 export const CENTER_LOGO_SIZE = Math.min(WHEEL_SIZE * 0.25, 150);
 
 export const theme = {
