@@ -269,8 +269,8 @@ const SpinWheelScreen = ({ value, onReset }) => {
           {isResetting 
             ? 'Resetting wheel...'
             : isSpinning 
-              ? (canStopSpin ? 'Press button or ENTER to stop' : '...')
-              : 'Press button or ENTER to start spinning'
+              ? (canStopSpin ? 'Press button to stop' : '...')
+              : 'Press button to start spinning'
           }
         </Text>
       </View>
