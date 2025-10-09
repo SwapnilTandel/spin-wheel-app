@@ -90,19 +90,19 @@ const PolishedButton = ({
 
     const variantStyles = {
       primary: {
-        backgroundColor: disabled ? '#CCCCCC' : '#FF6B35',
-        borderColor: disabled ? '#999999' : '#E55A2B',
-        boxShadow: disabled ? 'none' : '0 4px 8px rgba(255, 107, 53, 0.3)',
+        backgroundColor: disabled ? '#CCCCCC' : '#B22222',
+        borderColor: disabled ? '#999999' : '#FFD700',
+        boxShadow: disabled ? 'none' : '0 4px 8px rgba(178, 34, 34, 0.4)',
       },
       secondary: {
-        backgroundColor: disabled ? '#CCCCCC' : '#4ECDC4',
-        borderColor: disabled ? '#999999' : '#3BB5AE',
-        boxShadow: disabled ? 'none' : '0 4px 8px rgba(78, 205, 196, 0.3)',
+        backgroundColor: disabled ? '#CCCCCC' : '#B22222',
+        borderColor: disabled ? '#999999' : '#FFD700',
+        boxShadow: disabled ? 'none' : '0 4px 8px rgba(178, 34, 34, 0.4)',
       },
       danger: {
-        backgroundColor: disabled ? '#CCCCCC' : '#FF4757',
-        borderColor: disabled ? '#999999' : '#FF3742',
-        boxShadow: disabled ? 'none' : '0 4px 8px rgba(255, 71, 87, 0.3)',
+        backgroundColor: disabled ? '#CCCCCC' : '#B22222',
+        borderColor: disabled ? '#999999' : '#FFD700',
+        boxShadow: disabled ? 'none' : '0 4px 8px rgba(178, 34, 34, 0.4)',
       },
     };
 
@@ -115,17 +115,18 @@ const PolishedButton = ({
 
   const getTextStyles = () => {
     const baseTextStyles = {
-      color: disabled ? '#888888' : '#FFFFFF',
-      fontWeight: '700',
+      color: disabled ? '#888888' : '#FFD700',
+      fontWeight: '900',
       textAlign: 'center',
-      letterSpacing: 1.2,
+      letterSpacing: 3,
       textTransform: 'uppercase',
+      textShadow: disabled ? 'none' : '2px 2px 4px rgba(0, 0, 0, 0.5)',
     };
 
     const sizeTextStyles = {
       small: { fontSize: 'clamp(12px, 2vw, 14px)' },
-      medium: { fontSize: 'clamp(14px, 2.5vw, 16px)' },
-      large: { fontSize: 'clamp(16px, 3vw, 20px)' },
+      medium: { fontSize: 'clamp(16px, 2.5vw, 20px)' },
+      large: { fontSize: 'clamp(16px, 2.5vw, 32px)' },
     };
 
     return {
