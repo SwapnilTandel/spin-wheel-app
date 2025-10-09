@@ -81,10 +81,10 @@ const PolishedButton = ({
         minWidth: 'clamp(120px, 20vw, 140px)',
       },
       large: {
-        paddingHorizontal: 'clamp(24px, 4vw, 32px)',
-        paddingVertical: 'clamp(12px, 2vh, 16px)',
-        borderRadius: 'clamp(20px, 3vw, 25px)',
-        minWidth: 'clamp(150px, 25vw, 180px)',
+        paddingHorizontal: 'clamp(32px, 5vw, 40px)',
+        paddingVertical: 'clamp(16px, 2.5vh, 20px)',
+        borderRadius: 'clamp(25px, 3.5vw, 30px)',
+        minWidth: 'clamp(180px, 30vw, 220px)',
       },
     };
 
@@ -126,7 +126,7 @@ const PolishedButton = ({
     const sizeTextStyles = {
       small: { fontSize: 'clamp(12px, 2vw, 14px)' },
       medium: { fontSize: 'clamp(16px, 2.5vw, 20px)' },
-      large: { fontSize: 'clamp(16px, 2.5vw, 32px)' },
+      large: { fontSize: 'clamp(20px, 3vw, 36px)' },
     };
 
     return {
