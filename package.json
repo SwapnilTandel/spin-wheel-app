@@ -1,6 +1,6 @@
 {
   "name": "spin-wheel-app",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A beautiful and interactive single-page spin wheel web application built with React Native",
   "main": "index.web.js",
   "scripts": {
