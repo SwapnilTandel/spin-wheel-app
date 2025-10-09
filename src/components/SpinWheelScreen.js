@@ -340,8 +340,10 @@ const styles = StyleSheet.create({
     width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 'clamp(10px, 2vh, 20px)',
+    paddingVertical: 'clamp(20px, 4vh, 40px)',
+    paddingTop: 'clamp(30px, 5vh, 50px)',
     paddingBottom: 'clamp(15px, 3vh, 30px)',
+    paddingHorizontal: 20,
     zIndex: 5,
   },
   polishedButton: {
@@ -354,6 +356,8 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
     opacity: 0.8,
     marginTop: 'clamp(4px, 1vh, 8px)',
+    alignSelf: 'center',
+    maxWidth: '100%',
   },
   keyboardHint: {
     color: '#888888',

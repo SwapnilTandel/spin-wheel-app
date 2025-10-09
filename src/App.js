@@ -3,6 +3,7 @@ import { View, StyleSheet, StatusBar, Text, TouchableOpacity, Alert, Modal } fro
 import SpinWheelScreen from './components/SpinWheelScreen';
 import { Provider, useSelector } from 'react-redux';
 import { store } from './store/store';
+import packageJson from '../package.json';
 
 const AppContent = () => {
   const [activeTab, setActiveTab] = useState('spin50');
@@ -56,9 +57,14 @@ const AppContent = () => {
         {/* Status Label - Bottom (5%) */}
 
         <View style={styles.bottomSection}>
-          <Text style={styles.bottomSelectedWheel}>
-            Currently Using: {activeTab === 'spin50' ? '$50 Wheel' : '$100 Wheel'}
-          </Text>
+          <View style={styles.statusContent}>
+            <Text style={styles.bottomSelectedWheel}>
+              Currently Using: {activeTab === 'spin50' ? '$50 Wheel' : '$100 Wheel'}
+            </Text>
+          </View>
+          <View style={styles.versionContainer}>
+            <Text style={styles.versionText}>v{packageJson.version}</Text>
+          </View>
         </View>
 
         {/* <View style={styles.statusContainer}>
@@ -149,6 +155,30 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     letterSpacing: 3,
     textShadow: '2px 2px 4px rgba(0, 0, 0, 0.5)',
+  },
+  statusContent: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  versionContainer: {
+    position: 'absolute',
+    bottom: 8,
+    right: 15,
+    backgroundColor: 'rgba(178, 34, 34, 0.8)',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#FFD700',
+  },
+  versionText: {
+    color: '#FFD700',
+    fontSize: 'clamp(10px, 1.2vw, 14px)',
+    fontWeight: '600',
+    textAlign: 'center',
+    letterSpacing: 0.5,
+    textShadow: '1px 1px 2px rgba(0, 0, 0, 0.5)',
   },
   wheelSection: {
     height: '90vh',
