@@ -118,7 +118,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
   },
   topSection: {
-    height: '5vh',
+    height: '7vh',
     backgroundColor: '#B22222',
     borderBottomWidth: 4,
     borderBottomColor: '#FFD700',
@@ -127,6 +127,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     zIndex: 10,
     overflow: 'hidden',
+    paddingVertical: 'clamp(8px, 1vh, 12px)',
   },
   bottomSection: {
     height: '5vh',
@@ -141,7 +142,7 @@ const styles = StyleSheet.create({
   },
   catchphrase: {
     color: '#FFD700',
-    fontSize: 'clamp(24px, 4vw, 48px)',
+    fontSize: 'clamp(30px, 5vw, 60px)',
     fontWeight: '900',
     textAlign: 'center',
     textTransform: 'uppercase',
@@ -181,7 +182,7 @@ const styles = StyleSheet.create({
     textShadow: '1px 1px 2px rgba(0, 0, 0, 0.5)',
   },
   wheelSection: {
-    height: '90vh',
+    height: '88vh',
     backgroundColor: '#FFFFFF',
     position: 'relative',
     overflow: 'hidden',
