@@ -141,12 +141,12 @@ const styles = StyleSheet.create({
   },
   catchphrase: {
     color: '#FFD700',
-    fontSize: 'clamp(16px, 2.5vw, 32px)',
+    fontSize: 'clamp(24px, 4vw, 48px)',
     fontWeight: '900',
     textAlign: 'center',
     textTransform: 'uppercase',
-    letterSpacing: 3,
-    textShadow: '2px 2px 4px rgba(0, 0, 0, 0.5)',
+    letterSpacing: 4,
+    textShadow: '3px 3px 6px rgba(0, 0, 0, 0.6)',
   },
   bottomSelectedWheel: {
     color: '#FFD700',
