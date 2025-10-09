@@ -100,9 +100,9 @@ const PolishedButton = ({
         boxShadow: disabled ? 'none' : '0 4px 8px rgba(178, 34, 34, 0.4)',
       },
       danger: {
-        backgroundColor: disabled ? '#CCCCCC' : '#B22222',
+        backgroundColor: disabled ? '#CCCCCC' : '#8B0000',
         borderColor: disabled ? '#999999' : '#FFD700',
-        boxShadow: disabled ? 'none' : '0 4px 8px rgba(178, 34, 34, 0.4)',
+        boxShadow: disabled ? 'none' : '0 4px 8px rgba(139, 0, 0, 0.4)',
       },
     };
 

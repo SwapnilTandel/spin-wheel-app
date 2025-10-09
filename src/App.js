@@ -56,7 +56,7 @@ const AppContent = () => {
         {/* Status Label - Bottom (5%) */}
 
         <View style={styles.bottomSection}>
-          <Text style={styles.catchphrase}>
+          <Text style={styles.bottomSelectedWheel}>
             Currently Using: {activeTab === 'spin50' ? '$50 Wheel' : '$100 Wheel'}
           </Text>
         </View>
@@ -139,6 +139,14 @@ const styles = StyleSheet.create({
     fontWeight: '900',
     textAlign: 'center',
     textTransform: 'uppercase',
+    letterSpacing: 3,
+    textShadow: '2px 2px 4px rgba(0, 0, 0, 0.5)',
+  },
+  bottomSelectedWheel: {
+    color: '#FFD700',
+    fontSize: 'clamp(16px, 2.5vw, 32px)',
+    fontWeight: '900',
+    textAlign: 'center',
     letterSpacing: 3,
     textShadow: '2px 2px 4px rgba(0, 0, 0, 0.5)',
   },
