@@ -55,7 +55,7 @@ const AppContent = () => {
 
         {/* Status Label - Bottom (5%) */}
 
-        <View style={styles.topSection}>
+        <View style={styles.bottomSection}>
           <Text style={styles.catchphrase}>
             Currently Using: {activeTab === 'spin50' ? '$50 Wheel' : '$100 Wheel'}
           </Text>
@@ -116,6 +116,17 @@ const styles = StyleSheet.create({
     backgroundColor: '#B22222',
     borderBottomWidth: 4,
     borderBottomColor: '#FFD700',
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.3)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 10,
+    overflow: 'hidden',
+  },
+  bottomSection: {
+    height: '5vh',
+    backgroundColor: '#B22222',
+    borderTopWidth: 4,
+    borderTopColor: '#FFD700',
     boxShadow: '0 4px 8px rgba(0, 0, 0, 0.3)',
     justifyContent: 'center',
     alignItems: 'center',
