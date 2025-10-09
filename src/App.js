@@ -54,11 +54,18 @@ const AppContent = () => {
         </View>
 
         {/* Status Label - Bottom (5%) */}
-        <View style={styles.statusContainer}>
-          <Text style={styles.statusLabel}>
+
+        <View style={styles.topSection}>
+          <Text style={styles.catchphrase}>
             Currently Using: {activeTab === 'spin50' ? '$50 Wheel' : '$100 Wheel'}
           </Text>
         </View>
+
+        {/* <View style={styles.statusContainer}>
+          <Text style={styles.statusLabel}>
+            Currently Using: {activeTab === 'spin50' ? '$50 Wheel' : '$100 Wheel'}
+          </Text>
+        </View> */}
 
         {/* Burger Menu Modal */}
         <Modal
@@ -131,22 +138,21 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   statusContainer: {
-    height: '5vh',
-    backgroundColor: '#F5F5F5',
-    borderTopWidth: 2,
-    borderTopColor: '#FFD700',
+    height: '6vh',
+    backgroundColor: 'transparent',
     justifyContent: 'center',
     alignItems: 'center',
-    paddingVertical: 8,
+    paddingVertical: 12,
     zIndex: 10,
   },
   statusLabel: {
-    fontSize: 'clamp(12px, 1.5vw, 16px)',
-    color: '#B22222',
-    fontWeight: 'bold',
+    color: '#FFD700',
+    fontSize: 'clamp(16px, 2.5vw, 32px)',
+    fontWeight: '900',
     textAlign: 'center',
     textTransform: 'uppercase',
-    letterSpacing: 1,
+    letterSpacing: 3,
+    textShadow: '2px 2px 4px rgba(0, 0, 0, 0.5)',
   },
   burgerMenu: {
     position: 'absolute',
