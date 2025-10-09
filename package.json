@@ -8,6 +8,7 @@
     "web": "npx react-native-web start",
     "build": "npx react-native-web build",
     "build:web": "npm install --legacy-peer-deps --include=dev && ./node_modules/.bin/webpack --config webpack.config.js --mode production",
+    "build:gh-pages": "npm run build:web",
     "render-postbuild": "npm run build:web",
     "render-start": "npx serve -s build -l $PORT",
     "test": "jest",
