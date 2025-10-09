@@ -185,6 +185,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     position: 'relative',
     overflow: 'hidden',
+    display: 'flex',
+    flexDirection: 'column',
   },
   statusContainer: {
     height: '6vh',
