@@ -299,6 +299,15 @@ const SpinWheelScreen = ({ value, onReset }) => {
             <Text style={styles.celebrationPrize}>{winner?.name}</Text>
             <Text style={styles.celebrationSubtext}>You've won an amazing prize!</Text>
             
+            {/* Close Button */}
+            <TouchableOpacity 
+              style={styles.closeButton}
+              onPress={closeCelebrationModal}
+              activeOpacity={0.8}
+            >
+              <Text style={styles.closeButtonText}>Close</Text>
+            </TouchableOpacity>
+            
           </Animated.View>
         </View>
       </Modal>
