@@ -112,11 +112,7 @@ const styles = StyleSheet.create({
   container: {
     height: '100vh',
     width: '100vw',
-    backgroundColor: '#FFD700', // Golden fallback
-    backgroundImage: 'url("https://i.ibb.co/nNVPnWJg/back1.jpg")', // External image URL
-    backgroundSize: 'cover', // Full coverage
-    backgroundPosition: 'center', // Centered
-    backgroundRepeat: 'no-repeat', // Single image
+    backgroundColor: '#FFFFFF',
     overflow: 'hidden',
     display: 'flex',
     flexDirection: 'column',
@@ -187,8 +183,7 @@ const styles = StyleSheet.create({
   },
   wheelSection: {
     height: '88vh',
-    backgroundColor: 'rgba(255, 255, 255, 0.1)', // Semi-transparent white
-    backdropFilter: 'blur(10px)', // Glass effect
+    backgroundColor: '#FFFFFF',
     position: 'relative',
     overflow: 'hidden',
     display: 'flex',
