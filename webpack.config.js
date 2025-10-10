@@ -7,7 +7,7 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, 'build'),
     filename: 'bundle.js',
-    publicPath: '/'
+    publicPath: '/spin-wheel-app/'
   },
   plugins: [
     new HtmlWebpackPlugin({
