@@ -2,12 +2,20 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const webpack = require('webpack');
 
+// Get branch name from environment variable (set by GitHub Actions)
+const branch = process.env.GITHUB_REF_NAME || process.env.BRANCH_NAME || 'main';
+const isMainBranch = branch === 'main';
+
+// Set publicPath based on branch
+// Main branch deploys to root, dev branch deploys to /dev/ subdirectory
+const publicPath = isMainBranch ? '/spin-wheel-app/' : `/spin-wheel-app/${branch}/`;
+
 module.exports = {
   entry: './index.web.js',
   output: {
     path: path.resolve(__dirname, 'build'),
     filename: 'bundle.js',
-    publicPath: '/spin-wheel-app/'
+    publicPath: publicPath
   },
   plugins: [
     new HtmlWebpackPlugin({
