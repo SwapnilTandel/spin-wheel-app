@@ -228,16 +228,16 @@ export const DEFAULT_CATEGORIES = {
   ],
   100: [
     { id: 1, name: 'Laxmi Moong Dal 4LB', color: '#FF6B35', image: null, number: 80 }, // Diwali Orange
-    { id: 2, name: '$10', color: '#FFD700', image: null, number: 10 }, // Gold
-    { id: 3, name: 'Maharaja Almonds 3LB', color: '#4B0082', image: null, number: 20 }, // Indigo
-    { id: 4, name: '$25', color: '#FF1493', image: null, number: 30 }, // Deep Pink
-    { id: 5, name: 'Olio villa Oil', color: '#32CD32', image: null, number: 40 }, // Lime Green
-    { id: 6, name: '$50', color: '#FF8C00', image: null, number: 50 }, // Deep Orange
-    { id: 7, name: 'Laxmi Basmati Rice 4LB', color: '#00BFFF', image: null, number: 60 }, // Deep Sky Blue
-    { id: 8, name: 'Wagh Bakri Tea 2LB', color: '#FFA500', image: null, number: 70 }, // Saffron
-    { id: 9, name: '$300', color: '#8A2BE2', image: null, number: 80 }, // Blue Violet
-    { id: 10, name: 'Wesson Oil 1Gallon', color: '#FF6347', image: null, number: 90 }, // Tomato
-    { id: 11, name: 'Shezan Mango Drink 1Case', color: '#228B22', image: null, number: 100 }, // Forest Green
+    { id: 2, name: '$10', color: '#FFD700', image: null, number: 20 }, // Gold
+    { id: 3, name: 'Maharaja Almonds 3LB', color: '#4B0082', image: null, number: 70 }, // Indigo
+    { id: 4, name: '$25', color: '#FF1493', image: null, number: 10 }, // Deep Pink
+    { id: 5, name: 'Olio villa Oil', color: '#32CD32', image: null, number: 80 }, // Lime Green
+    { id: 6, name: '$50', color: '#FF8C00', image: null, number: 5 }, // Deep Orange
+    { id: 7, name: 'Laxmi Basmati Rice 4LB', color: '#00BFFF', image: null, number: 80 }, // Deep Sky Blue
+    { id: 8, name: 'Wagh Bakri Tea 2LB', color: '#FFA500', image: null, number: 80 }, // Saffron
+    { id: 9, name: '$300', color: '#8A2BE2', image: null, number: 1 }, // Blue Violet
+    { id: 10, name: 'Wesson Oil 1Gallon', color: '#FF6347', image: null, number: 80 }, // Tomato
+    { id: 11, name: 'Shezan Mango Drink 1Case', color: '#228B22', image: null, number: 85 }, // Forest Green
   ]
 };
 
