@@ -51,6 +51,7 @@
     "@babel/preset-env": "^7.20.0",
     "@babel/preset-react": "^7.18.0",
     "babel-loader": "^9.1.0",
+    "copy-webpack-plugin": "^13.0.1",
     "eslint": "^8.0.0",
     "file-loader": "^6.2.0",
     "html-webpack-plugin": "^5.5.0",

@@ -1,5 +1,6 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 const webpack = require('webpack');
 
 module.exports = {
@@ -13,6 +14,18 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: './public/index.html',
       filename: 'index.html'
+    }),
+    new CopyWebpackPlugin({
+      patterns: [
+        {
+          from: 'public/tick.mp3',
+          to: 'tick.mp3'
+        },
+        {
+          from: 'public/win.mp3',
+          to: 'win.mp3'
+        }
+      ]
     }),
     new webpack.DefinePlugin({
       'process.env': JSON.stringify(process.env),
