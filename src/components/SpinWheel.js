@@ -104,7 +104,7 @@ const SpinWheel = ({ categories, isSpinning, winner, selectedCategory, isColorTo
   // Initialize audio for tick sound
   useEffect(() => {
     // Use correct path for GitHub Pages deployment
-    const audioPath = process.env.NODE_ENV === 'production' ? '/spin-wheel-app/tick.mp3' : '/tick.mp3';
+    const audioPath = process.env.NODE_ENV === 'production' ? '/spin-wheel-app/tick.mp3' : '/spin-wheel-app/tick.mp3';
     tickAudioRef.current = new Audio(audioPath);
     tickAudioRef.current.preload = 'auto';
     tickAudioRef.current.volume = 0.3; // Set volume to 30%
