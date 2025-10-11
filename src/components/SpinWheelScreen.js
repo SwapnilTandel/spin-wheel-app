@@ -305,7 +305,7 @@ const SpinWheelScreen = ({ value, onReset }) => {
               <Text style={styles.celebrationTitle}>🎉 CONGRATULATIONS! 🎉</Text>
               
               {/* Prize Display with winner's color */}
-              <View style={[styles.prizeContainer, { backgroundColor: winner?.color || '#FFD700' }]}>
+              <View style={[styles.prizeContainer, { backgroundColor: '#faf8f7' }]}>
                 <Text style={styles.celebrationPrize}>{winner?.name}</Text>
               </View>
               
