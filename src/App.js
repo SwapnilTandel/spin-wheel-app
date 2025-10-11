@@ -59,7 +59,7 @@ const AppContent = () => {
         <View style={styles.bottomSection}>
           <View style={styles.statusContent}>
             <Text style={styles.bottomSelectedWheel}>
-              Currently Using: {activeTab === 'spin50' ? '$50 Wheel' : '$100 Wheel'}
+              Currently Using: {activeTab === 'spin50' ? '$50+ Wheel' : '$100+ Wheel'}
             </Text>
           </View>
           <View style={styles.versionContainer}>
@@ -99,7 +99,7 @@ const AppContent = () => {
                 onPress={() => handleTabChange('spin100')}
                 activeOpacity={0.7}
               >
-                <Text style={styles.menuButtonText}>$100 Wheel</Text>
+                <Text style={styles.menuButtonText}>$100+ Wheel</Text>
               </TouchableOpacity>
             </View>
           </TouchableOpacity>
