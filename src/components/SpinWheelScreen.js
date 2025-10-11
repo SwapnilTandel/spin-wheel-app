@@ -276,40 +276,58 @@ const SpinWheelScreen = ({ value, onReset }) => {
       </View>
       
 
-      {/* Celebration Modal */}
+      {/* Full-Screen Celebration Modal */}
       <Modal
         visible={showCelebrationModal}
         transparent={true}
         animationType="none"
         onRequestClose={closeCelebrationModal}
       >
-        <View style={styles.modalOverlay}>
-          <Animated.View 
-            style={[
-              styles.celebrationModal,
-              {
-                transform: [{ scale: modalScale }],
-                opacity: modalOpacity,
-              }
-            ]}
-          >
+        <Animated.View 
+          style={[
+            styles.fullScreenCelebrationModal,
+            {
+              transform: [{ scale: modalScale }],
+              opacity: modalOpacity,
+            }
+          ]}
+        >
+          {/* Full-screen background with theme colors */}
+          <View style={styles.celebrationBackground}>
             
-            {/* Prize Display */}
-            <Text style={styles.celebrationTitle}>🎉 CONGRATULATIONS! 🎉</Text>
-            <Text style={styles.celebrationPrize}>{winner?.name}</Text>
-            <Text style={styles.celebrationSubtext}>You've won an amazing prize!</Text>
+            {/* Top decorative border */}
+            <View style={styles.celebrationTopBorder} />
             
-            {/* Close Button */}
-            <TouchableOpacity 
-              style={styles.closeButton}
-              onPress={closeCelebrationModal}
-              activeOpacity={0.8}
-            >
-              <Text style={styles.closeButtonText}>Close</Text>
-            </TouchableOpacity>
+            {/* Main content area */}
+            <View style={styles.celebrationContent}>
+              
+              {/* Congratulations Title */}
+              <Text style={styles.celebrationTitle}>🎉 CONGRATULATIONS! 🎉</Text>
+              
+              {/* Prize Display with winner's color */}
+              <View style={[styles.prizeContainer, { backgroundColor: winner?.color || '#FFD700' }]}>
+                <Text style={styles.celebrationPrize}>{winner?.name}</Text>
+              </View>
+              
+              {/* Subtitle */}
+              <Text style={styles.celebrationSubtext}>You've won an amazing prize!</Text>
+              
+              {/* Close Button */}
+              <TouchableOpacity 
+                style={styles.celebrationCloseButton}
+                onPress={closeCelebrationModal}
+                activeOpacity={0.8}
+              >
+                <Text style={styles.celebrationCloseButtonText}>Continue Playing</Text>
+              </TouchableOpacity>
+              
+            </View>
             
-          </Animated.View>
-        </View>
+            {/* Bottom decorative border */}
+            <View style={styles.celebrationBottomBorder} />
+            
+          </View>
+        </Animated.View>
       </Modal>
     </View>
   );
@@ -442,68 +460,110 @@ const styles = StyleSheet.create({
     right: '10%',
     fontSize: 14,
   },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.8)',
-    justifyContent: 'center',
-    alignItems: 'center',
+  // Full-screen celebration modal styles
+  fullScreenCelebrationModal: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
     zIndex: 1000,
   },
-  celebrationModal: {
-    backgroundColor: '#FFF8E6',
-    borderRadius: 20,
-    padding: 30,
-    alignItems: 'center',
+  celebrationBackground: {
+    flex: 1,
+    backgroundColor: '#B22222', // Same as top/bottom sections
     justifyContent: 'center',
-    width: '80%',
-    maxWidth: 400,
-    borderWidth: 4,
-    borderColor: '#FFD700',
-    elevation: 20,
-    boxShadow: '0 10px 20px rgba(0, 0, 0, 0.5)',
+    alignItems: 'center',
     position: 'relative',
   },
+  celebrationTopBorder: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 8,
+    backgroundColor: '#FFD700', // Gold border like top section
+    borderBottomWidth: 2,
+    borderBottomColor: '#B22222',
+  },
+  celebrationBottomBorder: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 8,
+    backgroundColor: '#FFD700', // Gold border like bottom section
+    borderTopWidth: 2,
+    borderTopColor: '#B22222',
+  },
+  celebrationContent: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 40,
+    paddingVertical: 60,
+  },
   celebrationTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#B22222',
+    fontSize: 'clamp(48px, 8vw, 96px)',
+    fontWeight: '900',
+    color: '#FFD700', // Gold text like top/bottom sections
     textAlign: 'center',
-    marginBottom: 10,
-    textShadow: '2px 2px 4px rgba(255,215,0,0.8)',
-    zIndex: 10,
+    marginBottom: 40,
+    textShadow: '4px 4px 8px rgba(0, 0, 0, 0.6)',
+    letterSpacing: 6,
+    textTransform: 'uppercase',
+  },
+  prizeContainer: {
+    paddingHorizontal: 40,
+    paddingVertical: 20,
+    borderRadius: 20,
+    marginBottom: 30,
+    borderWidth: 4,
+    borderColor: '#FFD700',
+    minWidth: 300,
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 10,
+    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)',
   },
   celebrationPrize: {
-    fontSize: 32,
+    fontSize: 'clamp(36px, 6vw, 72px)',
     fontWeight: '900',
-    color: '#FFD700',
+    color: '#B22222', // Red text on colored background
     textAlign: 'center',
-    marginBottom: 10,
-    textShadow: '3px 3px 6px rgba(178,34,34,0.8)',
-    zIndex: 10,
+    textShadow: '2px 2px 4px rgba(0, 0, 0, 0.3)',
     textTransform: 'uppercase',
-    letterSpacing: 2,
+    letterSpacing: 3,
   },
   celebrationSubtext: {
-    fontSize: 16,
-    color: '#B22222',
+    fontSize: 'clamp(20px, 3vw, 36px)',
+    color: '#FFD700', // Gold text like top/bottom sections
     textAlign: 'center',
-    marginBottom: 20,
-    fontStyle: 'italic',
-    zIndex: 10,
+    marginBottom: 40,
+    fontWeight: '600',
+    textShadow: '2px 2px 4px rgba(0, 0, 0, 0.5)',
+    letterSpacing: 2,
   },
-  closeButton: {
-    backgroundColor: '#B22222',
-    paddingHorizontal: 30,
-    paddingVertical: 12,
-    borderRadius: 25,
-    elevation: 5,
-    boxShadow: '0 3px 5px rgba(0, 0, 0, 0.3)',
-    zIndex: 10,
+  celebrationCloseButton: {
+    backgroundColor: '#FFD700', // Gold background
+    paddingHorizontal: 40,
+    paddingVertical: 16,
+    borderRadius: 30,
+    borderWidth: 3,
+    borderColor: '#B22222', // Red border
+    elevation: 8,
+    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.4)',
+    minWidth: 200,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  closeButtonText: {
-    color: '#FFFFFF',
-    fontSize: 18,
-    fontWeight: 'bold',
+  celebrationCloseButtonText: {
+    color: '#B22222', // Red text on gold background
+    fontSize: 'clamp(18px, 2.5vw, 28px)',
+    fontWeight: '900',
+    textTransform: 'uppercase',
+    letterSpacing: 2,
+    textShadow: '1px 1px 2px rgba(0, 0, 0, 0.3)',
   },
   alertOverlay: {
     position: 'absolute',
