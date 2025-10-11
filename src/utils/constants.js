@@ -227,17 +227,17 @@ export const DEFAULT_CATEGORIES = {
     { id: 11, name: 'Parle G 10Pcs', color: '#228B22', image: null, number: 100 }, // Forest Green
   ],
   100: [
-    { id: 1, name: 'Any Dal 4LB', color: '#FF6B35', image: null, number: 80 }, // Diwali Orange
-    { id: 2, name: '$10', color: '#FFD700', image: null, number: 20 }, // Gold
-    { id: 3, name: 'Maharaja Almonds 3LB', color: '#4B0082', image: null, number: 70 }, // Indigo
-    { id: 4, name: '$25', color: '#FF1493', image: null, number: 10 }, // Deep Pink
+    { id: 1, name: 'Any Dal 4Lb', color: '#FF6B35', image: null, number: 80 }, // Diwali Orange
+    { id: 2, name: '$10', color: '#FFD700', image: null, number: 80 }, // Gold
+    { id: 3, name: 'Bikkaji Sweets', color: '#4B0082', image: null, number: 80 }, // Indigo
+    { id: 4, name: '$25', color: '#FF1493', image: null, number: 40 }, // Deep Pink
     { id: 5, name: 'Any Bakery Items worth $10', color: '#32CD32', image: null, number: 80 }, // Lime Green
     { id: 6, name: '$50', color: '#FF8C00', image: null, number: 1 }, // Deep Orange
-    { id: 7, name: 'Laxmi Basmati Rice 10LB', color: '#00BFFF', image: null, number: 80 }, // Deep Sky Blue
-    { id: 8, name: 'Wagh Bakri Tea 2LB', color: '#FFA500', image: null, number: 80 }, // Saffron
+    { id: 7, name: 'Laxmi Basmati Rice 10Lb', color: '#00BFFF', image: null, number: 80 }, // Deep Sky Blue
+    { id: 8, name: 'Soan Papdi Sweet 500GM', color: '#FFA500', image: null, number: 80 }, // Saffron
     { id: 9, name: '$300', color: '#8A2BE2', image: null, number: 1 }, // Blue Violet
-    { id: 10, name: 'Wesson Oil 1Gallon', color: '#FF6347', image: null, number: 80 }, // Tomato
-    { id: 11, name: 'Shezan Mango Drink 1Case', color: '#228B22', image: null, number: 85 }, // Forest Green
+    { id: 10, name: 'Maharaja Almonds 3Lb', color: '#FF6347', image: null, number: 80 }, // Tomato
+    { id: 11, name: 'Cup Dates 28Oz', color: '#228B22', image: null, number: 80 }, // Forest Green
   ]
 };
 
