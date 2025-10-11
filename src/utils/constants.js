@@ -232,7 +232,7 @@ export const DEFAULT_CATEGORIES = {
     { id: 3, name: 'Maharaja Almonds 3LB', color: '#4B0082', image: null, number: 70 }, // Indigo
     { id: 4, name: '$25', color: '#FF1493', image: null, number: 10 }, // Deep Pink
     { id: 5, name: 'Olio villa Oil', color: '#32CD32', image: null, number: 80 }, // Lime Green
-    { id: 6, name: '$50', color: '#FF8C00', image: null, number: 5 }, // Deep Orange
+    { id: 6, name: '$50', color: '#FF8C00', image: null, number: 1 }, // Deep Orange
     { id: 7, name: 'Laxmi Basmati Rice 10LB', color: '#00BFFF', image: null, number: 80 }, // Deep Sky Blue
     { id: 8, name: 'Wagh Bakri Tea 2LB', color: '#FFA500', image: null, number: 80 }, // Saffron
     { id: 9, name: '$300', color: '#8A2BE2', image: null, number: 1 }, // Blue Violet
