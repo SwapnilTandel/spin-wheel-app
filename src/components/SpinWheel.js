@@ -7,6 +7,7 @@ import { WHEEL_SIZE, CENTER_LOGO_SIZE } from '../styles/theme';
 const SpinWheel = ({ categories, isSpinning, winner, selectedCategory, isColorToggling, isKeyboardSpinning, canStopSpin, userRequestedStop, onReset, onSpinComplete, resetRef }) => {
   const wheelRef = useRef(null);
   const currentRotationRef = useRef(0);
+  const tickAudioRef = useRef(null);
   const { settings } = useSelector(state => state.wheel);
   const [winningIndex, setWinningIndex] = useState(null);
   const [colorToggle, setColorToggle] = useState(false);
@@ -100,6 +101,40 @@ const SpinWheel = ({ categories, isSpinning, winner, selectedCategory, isColorTo
   const [isStopping, setIsStopping] = useState(false);
   const [targetRotation, setTargetRotation] = useState(0);
 
+  // Initialize audio for tick sound
+  useEffect(() => {
+    tickAudioRef.current = new Audio('/tick.mp3');
+    tickAudioRef.current.preload = 'auto';
+    tickAudioRef.current.volume = 0.3; // Set volume to 30%
+    
+    return () => {
+      if (tickAudioRef.current) {
+        tickAudioRef.current.pause();
+        tickAudioRef.current = null;
+      }
+    };
+  }, []);
+
+  // Function to play tick sound based on wheel speed
+  const playTickSound = () => {
+    if (tickAudioRef.current && isSpinning) {
+      // Reset audio to beginning for immediate playback
+      tickAudioRef.current.currentTime = 0;
+      
+      // Adjust playback rate based on spinning speed
+      // Fast spinning: higher rate (1.5x), slowing down: lower rate (0.8x)
+      if (isSpinning && !isStopping) {
+        tickAudioRef.current.playbackRate = 1.5; // Fast spinning
+      } else if (isStopping) {
+        tickAudioRef.current.playbackRate = 0.8; // Slowing down
+      }
+      
+      tickAudioRef.current.play().catch(error => {
+        console.log('Audio play failed:', error);
+      });
+    }
+  };
+
   useEffect(() => {
     if (isSpinning && wheelRef.current && isKeyboardSpinning) {
       console.log('Starting fast spin');
@@ -120,6 +155,9 @@ const SpinWheel = ({ categories, isSpinning, winner, selectedCategory, isColorTo
           currentRotationRef.current += 360; // Add one full rotation
           wheelRef.current.style.transition = 'transform 0.1s linear';
           wheelRef.current.style.transform = `rotate(${currentRotationRef.current}deg)`;
+          
+          // Play tick sound for each rotation
+          playTickSound();
           
           const animationId = setTimeout(startFastSpin, 100);
           setSpinAnimationId(animationId);
@@ -149,6 +187,24 @@ const SpinWheel = ({ categories, isSpinning, winner, selectedCategory, isColorTo
         // Apply slow deceleration
         wheelRef.current.style.transition = 'transform 2s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
         wheelRef.current.style.transform = `rotate(${finalRotation}deg)`;
+        
+        // Play tick sound during deceleration (slower rate)
+        setIsStopping(true);
+        playTickSound();
+        
+        // Play a few more ticks during deceleration
+        const decelerationTicks = [500, 1000, 1500]; // Play ticks at these intervals
+        decelerationTicks.forEach(delay => {
+          setTimeout(() => {
+            if (tickAudioRef.current) {
+              tickAudioRef.current.currentTime = 0;
+              tickAudioRef.current.playbackRate = 0.8; // Slower rate for deceleration
+              tickAudioRef.current.play().catch(error => {
+                console.log('Deceleration tick sound failed:', error);
+              });
+            }
+          }, delay);
+        });
         
         // Calculate winner after deceleration
         setTimeout(() => {
@@ -187,6 +243,12 @@ const SpinWheel = ({ categories, isSpinning, winner, selectedCategory, isColorTo
       if (spinAnimationId) {
         clearTimeout(spinAnimationId);
         setSpinAnimationId(null);
+      }
+      
+      // Stop any playing tick sound
+      if (tickAudioRef.current) {
+        tickAudioRef.current.pause();
+        tickAudioRef.current.currentTime = 0;
       }
       
       // Reset to initial position
