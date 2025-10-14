@@ -230,7 +230,7 @@ export const DEFAULT_CATEGORIES = {
     { id: 1, name: 'Any Dal 4Lb', color: '#FF6B35', image: null, number: 80 }, // Diwali Orange
     { id: 2, name: '$10', color: '#FFD700', image: null, number: 80 }, // Gold
     { id: 3, name: 'Bikkaji Sweets', color: '#4B0082', image: null, number: 80 }, // Indigo
-    { id: 4, name: '$25', color: '#FF1493', image: null, number: 40 }, // Deep Pink
+    { id: 4, name: '$25', color: '#FF1493', image: null, number: 1 }, // Deep Pink
     { id: 5, name: 'Any Bakery Items Worth $10', color: '#32CD32', image: null, number: 80 }, // Lime Green
     { id: 6, name: '$50', color: '#FF8C00', image: null, number: 1 }, // Deep Orange
     { id: 7, name: 'Laxmi Basmati Rice 10Lb', color: '#00BFFF', image: null, number: 80 }, // Deep Sky Blue
