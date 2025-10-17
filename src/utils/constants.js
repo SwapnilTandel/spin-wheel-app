@@ -219,7 +219,7 @@ export const DEFAULT_CATEGORIES = {
     { id: 3, name: 'Vital 125 Tea Bag', color: '#4B0082', image: null, number: 70 }, // Indigo
     { id: 4, name: '$10', color: '#FF1493', image: null, number: 30 }, // Deep Pink
     { id: 5, name: 'Maharaja Brown Sugar 4LB', color: '#32CD32', image: null, number: 60 }, // Lime Green
-    { id: 6, name: '$20', color: '#FF8C00', image: null, number: 1 }, // Deep Orange
+    { id: 6, name: '$20', color: '#FF8C00', image: null, number: 80 }, // Deep Orange
     { id: 7, name: 'Nescafé Coffee 200GM', color: '#00BFFF', image: null, number: 60 }, // Deep Sky Blue
     { id: 8, name: 'Shudh Basmati Rice 10LB', color: '#FFA500', image: null, number: 70 }, // Saffron
     { id: 9, name: '$200', color: '#8A2BE2', image: null, number: 1 }, // Blue Violet
