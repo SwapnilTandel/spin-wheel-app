@@ -237,7 +237,7 @@ export const DEFAULT_CATEGORIES = {
     { id: 8, name: 'Soan Papdi Sweet 500GM', color: '#FFA500', image: null, number: 80 }, // Saffron
     { id: 9, name: '$300', color: '#8A2BE2', image: null, number: 1 }, // Blue Violet
     { id: 10, name: 'Maharaja Almonds 3Lb', color: '#FF6347', image: null, number: 80 }, // Tomato
-    { id: 11, name: 'Maggi 560GM', color: '#228B22', image: null, number: 80 }, // Forest Green
+    { id: 11, name: 'Maggi Noodles 560GM', color: '#228B22', image: null, number: 80 }, // Forest Green
   ]
 };
 
