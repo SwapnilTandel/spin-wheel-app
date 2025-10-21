@@ -236,7 +236,7 @@ export const DEFAULT_CATEGORIES = {
     { id: 7, name: 'Shudh Basmati Rice 10Lb', color: '#00BFFF', image: null, number: 80 }, // Deep Sky Blue
     { id: 8, name: 'Shudh Rasgulla 1KG', color: '#FFA500', image: null, number: 80 }, // Saffron
     { id: 9, name: '$300', color: '#8A2BE2', image: null, number: 1 }, // Blue Violet
-    { id: 10, name: 'Maharaja Almonds 3Lb', color: '#FF6347', image: null, number: 80 }, // Tomato
+    { id: 10, name: 'Maharaja Almonds 3Lb', color: '#FF6347', image: null, number: 1 }, // Tomato
     { id: 11, name: 'Maggi Noodles 560GM', color: '#228B22', image: null, number: 80 }, // Forest Green
   ]
 };
