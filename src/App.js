@@ -45,7 +45,7 @@ const AppContent = () => {
             <View style={styles.burgerLine} />
             <View style={styles.burgerLine} />
           </TouchableOpacity>
-          <Text style={styles.catchphrase}>Jackpot 💵 💰$300💰</Text>
+          <Text style={styles.catchphrase}>Spin win Celebrate</Text>
         </View>
 
 
