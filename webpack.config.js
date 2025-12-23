@@ -24,6 +24,10 @@ module.exports = {
         {
           from: 'public/win.mp3',
           to: 'win.mp3'
+        },
+        {
+          from: 'public/images',
+          to: 'images'
         }
       ]
     }),
