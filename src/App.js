@@ -45,12 +45,25 @@ const AppContent = () => {
             <View style={styles.burgerLine} />
             <View style={styles.burgerLine} />
           </TouchableOpacity>
-          <Text style={styles.catchphrase}>Spin win Celebrate</Text>
+          <Text style={styles.catchphrase}>🎄 Spin Win Celebrate 🎅</Text>
         </View>
 
 
         {/* Wheel Section - Main Content Area (90%) */}
         <View style={styles.wheelSection}>
+          {/* Christmas Snowflakes */}
+          <View style={styles.snowflakesContainer}>
+            <Text style={[styles.snowflake, { left: '10%', animationDelay: '0s' }]}>❄</Text>
+            <Text style={[styles.snowflake, { left: '20%', animationDelay: '2s' }]}>❄</Text>
+            <Text style={[styles.snowflake, { left: '30%', animationDelay: '4s' }]}>❄</Text>
+            <Text style={[styles.snowflake, { left: '40%', animationDelay: '1s' }]}>❄</Text>
+            <Text style={[styles.snowflake, { left: '50%', animationDelay: '3s' }]}>❄</Text>
+            <Text style={[styles.snowflake, { left: '60%', animationDelay: '5s' }]}>❄</Text>
+            <Text style={[styles.snowflake, { left: '70%', animationDelay: '2.5s' }]}>❄</Text>
+            <Text style={[styles.snowflake, { left: '80%', animationDelay: '4.5s' }]}>❄</Text>
+            <Text style={[styles.snowflake, { left: '90%', animationDelay: '1.5s' }]}>❄</Text>
+            <Text style={[styles.snowflake, { left: '15%', animationDelay: '3.5s' }]}>❄</Text>
+          </View>
           {renderTabContent()}
         </View>
 
@@ -119,7 +132,7 @@ const styles = StyleSheet.create({
   },
   topSection: {
     height: '7vh',
-    backgroundColor: '#B22222',
+    backgroundColor: '#165e3f',
     borderBottomWidth: 4,
     borderBottomColor: '#FFD700',
     boxShadow: '0 4px 8px rgba(0, 0, 0, 0.3)',
@@ -131,7 +144,7 @@ const styles = StyleSheet.create({
   },
   bottomSection: {
     height: '5vh',
-    backgroundColor: '#B22222',
+    backgroundColor: '#165e3f',
     borderTopWidth: 4,
     borderTopColor: '#FFD700',
     boxShadow: '0 4px 8px rgba(0, 0, 0, 0.3)',
@@ -183,11 +196,29 @@ const styles = StyleSheet.create({
   },
   wheelSection: {
     height: '88vh',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#0a4d2e',
+    backgroundImage: 'radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%), radial-gradient(circle at 40% 90%, rgba(255, 255, 255, 0.1) 0%, transparent 50%)',
     position: 'relative',
     overflow: 'hidden',
     display: 'flex',
     flexDirection: 'column',
+  },
+  snowflakesContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    pointerEvents: 'none',
+    zIndex: 1,
+  },
+  snowflake: {
+    position: 'absolute',
+    top: '-20px',
+    color: '#FFFFFF',
+    fontSize: 20,
+    opacity: 0.8,
+    userSelect: 'none',
   },
   statusContainer: {
     height: '6vh',
