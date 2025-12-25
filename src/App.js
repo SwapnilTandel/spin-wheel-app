@@ -184,7 +184,7 @@ const styles = StyleSheet.create({
   wheelSection: {
     height: '88vh',
     backgroundColor: '#FFFFFF',
-    backgroundImage: 'url(/images/Christmas%20background.jpeg)',
+    backgroundImage: 'url(/spin-wheel-app/images/Christmas%20background.jpeg)',
     backgroundSize: 'cover',
     backgroundPosition: 'center',
     backgroundRepeat: 'no-repeat',
