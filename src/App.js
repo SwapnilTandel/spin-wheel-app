@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { View, StyleSheet, StatusBar, Text, TouchableOpacity, Alert, Modal } from 'react-native';
+import { View, StyleSheet, StatusBar, Text, TouchableOpacity, Alert, Modal, Image } from 'react-native';
 import SpinWheelScreen from './components/SpinWheelScreen';
 import { Provider, useSelector } from 'react-redux';
 import { store } from './store/store';
@@ -51,6 +51,12 @@ const AppContent = () => {
 
         {/* Wheel Section - Main Content Area (90%) */}
         <View style={styles.wheelSection}>
+          {/* Christmas Background Image */}
+          <Image 
+            source={{ uri: '/spin-wheel-app/images/Christmas background.jpeg' }}
+            style={styles.backgroundImage}
+            resizeMode="cover"
+          />
           {renderTabContent()}
         </View>
 
@@ -184,14 +190,20 @@ const styles = StyleSheet.create({
   wheelSection: {
     height: '88vh',
     backgroundColor: '#FFFFFF',
-    backgroundImage: 'url(/spin-wheel-app/images/Christmas%20background.jpeg)',
-    backgroundSize: 'cover',
-    backgroundPosition: 'center',
-    backgroundRepeat: 'no-repeat',
     position: 'relative',
     overflow: 'hidden',
     display: 'flex',
     flexDirection: 'column',
+  },
+  backgroundImage: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    width: '100%',
+    height: '100%',
+    zIndex: 0,
   },
   statusContainer: {
     height: '6vh',
